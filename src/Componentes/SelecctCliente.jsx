@@ -83,13 +83,6 @@ export const SelecctCliente = React.memo(() => {
 
     try {
       const response = await fetch(UrlCliente, requestOptionsCliente);
-
-      if (!response.ok) {
-        // Verifica el código de estado HTTP y lanza un error con un mensaje apropiado
-        const errorMessage = getErrorMessage(response.status);
-        throw new Error(errorMessage);
-      }
-
       const result = await response.json();
       console.log("Cliente creado", result);
       return result.id;

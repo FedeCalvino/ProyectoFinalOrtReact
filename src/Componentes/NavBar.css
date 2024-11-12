@@ -1,8 +1,6 @@
 .bg-body-tertiary {
   padding: 0px;
   background-color: rgba(61, 53, 42, 0.5); /* Usa RGBA para controlar la opacidad */
-  border-bottom: 4px solid transparent;
-  border-image: linear-gradient(83deg, rgba(255, 255, 255, 1) 0%, #007bff 50%, rgba(249, 249, 249, 1) 100%);
   border-image-slice: 1;
 }
 

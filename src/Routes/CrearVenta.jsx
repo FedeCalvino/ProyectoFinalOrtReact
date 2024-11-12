@@ -1,19 +1,15 @@
 import React, { useEffect, useCallback } from "react";
 import { useState, useRef } from "react";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
 import { SelecctCliente } from "../Componentes/SelecctCliente";
 import Alert from "react-bootstrap/Alert";
 import { Toaster, toast } from "react-hot-toast";
 import "./Css/CrearVenta.css";
 import { useDispatch, useSelector } from 'react-redux';
 import {selectCliente} from "../Features/ClienteReducer"
-import { selectRieles,selectRollers,selectTradicional } from "../Features/CortinasReducer";
-import { Modal } from "react-bootstrap";
 
 
 export const CrearVenta = () => {
+
   const dispatch = useDispatch()
   const [IdVentaView, setIdVentaView] = useState(null);
   const [loading, setloading] = useState(false);
