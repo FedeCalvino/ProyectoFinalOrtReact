@@ -1,0 +1,52 @@
+.bg-body-tertiary {
+  padding: 0px;
+  background-color: rgba(61, 53, 42, 0.5); /* Usa RGBA para controlar la opacidad */
+  border-bottom: 4px solid transparent;
+  border-image: linear-gradient(83deg, rgba(255, 255, 255, 1) 0%, #007bff 50%, rgba(249, 249, 249, 1) 100%);
+  border-image-slice: 1;
+}
+
+.brand-custom {
+  font-size: 1.8rem;
+  height: auto;
+  font-weight: 500;
+  font-family: 'Arial', sans-serif;
+}
+
+.nav-link-custom {
+  width: 100%;
+  border-left: 2px solid #007bff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding-bottom: 0%;
+  border-radius: 0px 0px 10px 10px;
+  transition: all 0.3s ease-in-out;
+  background-color: transparent; /* Asegúrate de que el fondo sea transparente */
+}
+
+.nav-link-custom:hover {
+  background: rgba(0, 123, 255, 0.7); /* Cambia el fondo al pasar el mouse */
+  color: #ffffff !important;
+}
+
+.container_nav {
+  padding: 0;
+  width: 100%;
+  max-height: 65px;
+  background-color: transparent; /* Hacer el fondo del contenedor transparente */
+}
+
+.navb {
+  width: 100%;
+  background-color: transparent; /* Hacer el fondo del nav transparente */
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.icon {
+  margin-bottom: 4px;
+}

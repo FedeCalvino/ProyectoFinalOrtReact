@@ -1,0 +1,14 @@
+.custom-form {
+    color: white;
+    padding: 20px;
+    text-align: center;
+    justify-content: center;
+    display: felx;
+}
+body{
+   /* height: 100vh;
+    background: rgb(0,0,0);
+    background: linear-gradient(180deg, rgba(0,0,0,0.2497373949579832) 0%, rgba(107,50,102,1) 67%, rgba(121,63,157,1) 95%);
+    /* Otros estilos para el cuerpo, como color de texto, fuente, etc. */
+
+  }

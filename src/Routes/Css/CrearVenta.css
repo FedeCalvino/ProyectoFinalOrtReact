@@ -1,0 +1,38 @@
+
+.button-row {
+    margin-top: 20px;
+}
+
+.custom-button3 {
+    width: 100%; /* El botón ocupará el 100% del ancho de su contenedor */
+    height: 40px; /* Altura del botón */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff; /* Color de fondo blanco */
+    border: 1px solid black; /* Borde negro de 3px de grosor */
+    color: rgb(14, 9, 9); /* Color del texto (muy oscuro, casi negro) */
+    padding: 10px 20px; /* Espaciado interno (10px arriba y abajo, 20px a los lados) */
+    font-size: 16px; /* Tamaño de la fuente */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Transición suave para el cambio de color de fondo */
+}
+
+.custom-tabs .nav-link {
+    font-size: 1.2rem; /* Ajusta el tamaño según tus necesidades */
+    font-weight: 500;
+  }
+
+  
+.custom-button3:hover {
+    background-color: #010201; /* Color de fondo al hacer hover */
+}
+
+.custom-button3active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #cd27a0; /* Color de fondo al hacer click */
+    width: 100%;
+    border: none
+}
