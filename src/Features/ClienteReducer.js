@@ -13,7 +13,7 @@ const initialState = {
 };
 
 export const ClienteReducer = createSlice({
-    name: "Cliente",
+    name: "Cliente", 
     initialState,
     reducers: {
         setClienteFeature: (state, action) => {
@@ -28,3 +28,4 @@ export const { setClienteFeature } = ClienteReducer.actions;
 export const selectCliente = (state) => state.Cliente.Cliente;
 
 export default ClienteReducer.reducer;
+ 
