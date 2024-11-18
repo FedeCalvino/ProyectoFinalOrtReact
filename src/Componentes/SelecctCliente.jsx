@@ -62,7 +62,7 @@ export const SelecctCliente = React.memo(() => {
       console.log(error);
     }
   };
-
+/*
   async function CrearCliente() {
     const RutParse = parseInt(RutCliN, 10);
     const TelParse = parseInt(TelefonoCliN, 10);
@@ -96,6 +96,18 @@ export const SelecctCliente = React.memo(() => {
       });
       return null;
     }
+  }*/
+  function CrearCliente() {
+    const NewClienteData = {
+        Name: NombreCliN,
+        Direcc: DireccCliN,
+        Tel: TelefonoCliN,
+        Rut: RutCliN,
+        Tipo: Tipo,
+        set:true
+    }
+    console.log("NewClienteData",NewClienteData)
+    dispatch(setClienteFeature(NewClienteData));
   }
 
   const handleSearchTextChange = (e) => {
