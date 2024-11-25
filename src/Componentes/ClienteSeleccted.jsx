@@ -17,7 +17,6 @@ export const ClienteSeleccted = () => {
     return (
         <Row>
             <div style={{
-                marginTop:"80px",
                 fontSize:"20px",
                 width: '100%',
                 padding: '10px',
@@ -29,18 +28,18 @@ export const ClienteSeleccted = () => {
                 alignItems: 'center',
                 borderBottom: '2px solid #ccc' // Adds a bottom border
             }}>
-                <h2 style={{ margin: '0 20px 0 0',marginLeft:"20px" }}>{ClienteData.Name}</h2>
+                <h2 style={{ margin: '0 20px 0 0',marginLeft:"20px" }}>{ClienteData.Nombre}</h2>
                 <p style={{ margin: '0 20px' }}>
                     <span style={{ fontWeight: 'bold' }}>Tipo:</span> {ClienteData.Tipo}
                 </p>
                 <p style={{ margin: '0 20px' }}>
-                    <span style={{ fontWeight: 'bold' }}>Telefono:</span> {ClienteData.Tel}
+                    <span style={{ fontWeight: 'bold' }}>Telefono:</span> {ClienteData.NumeroTelefono}
                 </p>
                 <p style={{ margin: '0 20px' }}>
-                    <span style={{ fontWeight: 'bold' }}>Rut:</span> {ClienteData.Rut}
+                    <span style={{ fontWeight: 'bold' }}>Rut:</span> {ClienteData.rut}
                 </p>
                 <p style={{ margin: '0 20px' }}>
-                    <span style={{ fontWeight: 'bold' }}>Direccion:</span> {ClienteData.Direcc}
+                    <span style={{ fontWeight: 'bold' }}>Direccion:</span> {ClienteData.direccion}
                 </p>
                 <Button variant="primary" onClick={(()=>cambiarCli())}>Cambiar Cliente</Button>
             </div>

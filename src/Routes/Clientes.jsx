@@ -27,7 +27,6 @@ export const Clientes = () => {
       console.log(Cli)
       console.log(CliChanged)
       if (CliChanged) {
-        // Realizar la petición PUT
         const res = await fetch(UrlClientes, {
           method: "PUT",
           headers: {

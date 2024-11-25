@@ -29,7 +29,7 @@ export const Login = ({ loginFnct, error }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '1.5rem' // Puedes ajustar este valor según tus necesidades
+          fontSize: '1.5rem'
         }}
       >
         Error en el login 
@@ -40,7 +40,7 @@ export const Login = ({ loginFnct, error }) => {
   return (
     <div className="login">
       <Row> {error ? <AlertaCliente /> : null}</Row>
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '90vh' }}> {/* Centrar horizontalmente */}
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '90vh' }}>
         <Form className="custom-form"> {/* Reacuadrar y aplicar estilos personalizados */}
           <Figure style={{ marginBottom: "100px" }}>
             <Figure.Image

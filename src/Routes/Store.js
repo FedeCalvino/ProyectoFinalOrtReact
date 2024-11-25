@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import CortinasReducer from '../Features/CortinasReducer'; 
+import ArticulosReducer from '../Features/ArticulosReducer'; 
 import TelasReducer from '../Features/TelasReducer';
 import ClienteReducer from '../Features/ClienteReducer'
 export const store = configureStore({
   reducer: {
-    Cortinas: CortinasReducer,
+    Articulos: ArticulosReducer,
     Telas:TelasReducer,
     Cliente:ClienteReducer,
   },

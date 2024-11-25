@@ -8,7 +8,7 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import "../Routes/Css/CrearVenta.css";
 import { useDispatch, useSelector } from 'react-redux';
 import {selectTelasRoller,selectTelas} from "../Features/TelasReducer"
-import {addRoller,removeRoller} from "../Features/CortinasReducer"
+import {addArticulo} from "../Features/ArticulosReducer"
 import { TableRollers } from "../Tables/TableRollers";
 import { GoCheckCircle } from "react-icons/go";
 
@@ -24,10 +24,7 @@ export const FormRollers = () => {
     const [CanoRoller, setCanoRoller] = useState("");
     const [IzqDer, setIzqDer] = useState("");
     const [AdlAtr, setAdlAtr] = useState("");
-    const [Cadena, setCadena] = useState("");
-    const [NumeroCor, setNumeroCor] = useState(1);
     const [selectedColorRoler, setselectedColorRoler] = useState("");
-    const [idCor, setidCor] = useState(0);
     const [TelasDelTipo,setTelasDelTipo]=useState([])
     const dispatch = useDispatch()
     const TiposTelas = useSelector(selectTelasRoller)
@@ -35,8 +32,8 @@ export const FormRollers = () => {
 
     TiposTelas.forEach(tela => {
         let esta = false;
-        NombreTelas.forEach(nombre => {
-            if (nombre.nombre === tela.nombre) {
+        NombreTelas.forEach(Nombre => {
+            if (Nombre.Nombre === tela.Nombre) {
                 esta = true;
             }
         });
@@ -44,19 +41,21 @@ export const FormRollers = () => {
             NombreTelas.push(tela);
         }
     });
+
     const nuevaCortinaRoler = {
         Ambiente: selectedAreaRoler,
-        IdTipoTela: selectedTelaRoler.Id,
-        ancho: AnchoRoller,
-        alto: LargoRoller,
+        IdTipoTela: selectedTelaRoler.id,
+        Ancho: AnchoRoller,
+        Alto: LargoRoller,
         Posicion: AdlAtr,
         LadoCadena: IzqDer,
-        cadena: Cadena,
         Tubo: CanoRoller,
         motorizada: motorizada,
-        TelaNombre: selectedTelaRoler.nombre + " "+selectedTelaRoler.Color,
+        TelaNombre: selectedTelaRoler.Nombre + " "+selectedTelaRoler.Color,
+        LargoCadena:"10",
         detalle: ComentarioCor,
-        numeroCortina: NumeroCor,
+        tipoArticulo:"roller",
+        nombre:"Cortina",
     };
     
     console.log("NombreTelas",NombreTelas)
@@ -65,33 +64,35 @@ export const FormRollers = () => {
         //console.log(e.target.value)
         const selectedValue = parseInt(e.target.value, 10);
         console.log(selectedValue)
-        const selectedTela = TiposTelas.find((tela) => tela.Id === selectedValue);
+        const selectedTela = TiposTelas.find((tela) => tela.id === selectedValue);
         console.log(selectedTela)
         console.log("nuevaCortinaRoler",nuevaCortinaRoler)
         SetselectedTelaRoler(selectedTela);
-        console.log("selectedTelaID",selectedTela.Id);
+        console.log("selectedTelaID",selectedTela.id);
         setselectedColorRoler(e.target.value);
     };
 
       const AlertaCorA = () => {
         return <GoCheckCircle style={{ color: "green" }} size={30} />;
       };
-    const handleSelectChange = (e) => {
-
+      const handleSelectChange = (e) => {
         const selectedValue = parseInt(e.target.value, 10);
-        const selectedTela = TiposTelas.find((tela) => tela.Id === selectedValue);
-        console.log("selectedTela",selectedTela)
+        console.log(selectedValue);
+      
+        const selectedTela = TiposTelas.find((tela) => tela.id === selectedValue);
+        console.log("selectedTela", selectedTela);
+      
         SetselectedTelaMostrarRoler(e.target.value);
-        const SetTelas = TiposTelas.filter(
-          (Tela) => Tela.Nombre === selectedTela.Nombre
-        );
-        console.log("SetTelas",SetTelas)
-        //SetTelas.sort((a, b) => a.Color.localeCompare(b.Color));
+      
+        const SetTelas = TiposTelas.filter((Tela) => Tela.Nombre === selectedTela.Nombre);
+        console.log("SetTelas", SetTelas);
+      
         setTelasDelTipo(SetTelas);
       };
+      
 
     function AgregarRoller() {
-        dispatch(addRoller(nuevaCortinaRoler))
+        dispatch(addArticulo(nuevaCortinaRoler))
     }
 
   return (
@@ -255,11 +256,11 @@ export const FormRollers = () => {
               value={AdlAtr}
             >
               <option style={{ textAlign: "center" }} value=""></option>
-              <option style={{ textAlign: "center" }} value="Adl">
+              <option style={{ textAlign: "center" }} value="adelante">
                 Adelante
               </option>
-              <option style={{ textAlign: "center" }} value="Atr">
-                Atras
+              <option style={{ textAlign: "center" }} value="pegada">
+                Pegada
               </option>
             </Form.Select>
           </Form.Group>
@@ -283,10 +284,10 @@ export const FormRollers = () => {
               value={IzqDer}
             >
               <option style={{ textAlign: "center" }} value=""></option>
-              <option style={{ textAlign: "center" }} value="Izq">
+              <option style={{ textAlign: "center" }} value="izquierda">
                 Izquierda
               </option>
-              <option style={{ textAlign: "center" }} value="Der">
+              <option style={{ textAlign: "center" }} value="derecha">
                 Derecha
               </option>
             </Form.Select>
@@ -358,7 +359,7 @@ export const FormRollers = () => {
                           }}
                           type="submit"
                           as={Col}
-                          md="auto" // Adjust width based on content or requirement
+                          md="auto"
                           onClick={AgregarRoller}
                         >
                           Agregar Roller

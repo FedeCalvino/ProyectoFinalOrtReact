@@ -4,7 +4,8 @@ import { CrearVenta } from '../Routes/CrearVenta';
 import { Clientes } from '../Routes/Clientes';
 import { ProtectedRoute } from '../Routes/ProtectedRoute';
 import { useDispatch } from 'react-redux';
-
+import { Ventas } from '../Routes/Ventas';
+import "../Routes/Css/App.css"
 const App = () => {
     const UrlTelas = "/TipoTela";
     
@@ -22,7 +23,6 @@ const App = () => {
     const login = async (usuario) => {
         try {
             const url = `/Usuario/${usuario.mail}/${usuario.Pass}`;
-            //const url = `http://192.168.1.130:8085/Usuario/${usuario.mail}/${usuario.Pass}`;
             console.log(url);
     
             const requestOptions = {
@@ -79,8 +79,14 @@ const App = () => {
                         <CrearVenta />
                     </ProtectedRoute>
                 }>
-
+                    </Route>
+                <Route path='/Ventas' element={
+                    <ProtectedRoute user={User} login={login} errorLogin={Loginerror}>
+                        <Ventas/>
+                    </ProtectedRoute>
+                } >
                 </Route>
+
                 <Route path='/*' element={
                     <ProtectedRoute user={User} login={login} errorLogin={Loginerror}>
                        <CrearVenta />

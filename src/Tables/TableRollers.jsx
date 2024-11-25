@@ -1,69 +1,64 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from "react";
 import Table from "react-bootstrap/Table";
-import { useDispatch, useSelector } from 'react-redux';
-import {selectRollers,removeRoller} from "../Features/CortinasReducer"
+import { useDispatch, useSelector } from "react-redux";
+import { selectArticulos, removeArticulos } from "../Features/ArticulosReducer";
 import Button from "react-bootstrap/Button";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
+
 export const TableRollers = () => {
-    const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const Articulos = useSelector(selectArticulos);
 
-    const Rollers = useSelector(selectRollers)
+  const Rollers = useMemo(
+    () => Articulos.filter((articulo) => articulo.tipoArticulo === "roller"),
+    [Articulos]
+  );
 
-    function BorrarCor(num) {dispatch(removeRoller({numeroCortina:num}))}
+  const handleDelete = (num) => {
+    dispatch(removeArticulos({ numeroArticulo: num }));
+  };
 
-    useEffect(()=>{console.log("Rollers",Rollers)},[Rollers])
+  useEffect(() => {
+    console.log("Rollers", Rollers);
+  }, [Rollers]);
+
   return (
     <Table responsive>
-                <thead>
-                  <tr>
-                    <th>Numero</th>
-                    <th>Area</th>
-                    <th>Tela</th>
-                    <th>Ancho</th>
-                    <th>Largo</th>
-                    <th>Caño</th>
-                    <th>Lado Cadena</th>
-                    <th>Posicion</th>
-                    <th>Motorizada</th>
-                    <th>Comentario</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Rollers.map(
-                    (Cor, index) =>
-                        <tr key={index} style={{ marginBottom: "1em" }}>
-                          <td>{Cor.numeroCortina}</td>
-                          <td>{Cor.Ambiente}</td>
-                          <td>{Cor.TelaNombre}</td>
-                          <td>{Cor.ancho}</td>
-                          <td>{Cor.alto}</td>
-                          <td>{Cor.Tubo}</td>
-                          <td>{Cor.LadoCadena}</td>
-                          <td>{Cor.Posicion}</td>
-                          {Cor.motorizada ? <td> Si</td> : <td>No</td>}
-                          <td>
-                            <OverlayTrigger
-                              key="top"
-                              placement="top"
-                              overlay={
-                                <Tooltip id={`tooltip-top`}>
-                                  {Cor.detalle}
-                                </Tooltip>
-                              }
-                            >
-                              <Button variant="secondary">Comentario</Button>
-                            </OverlayTrigger>
-                          </td>
-                          <td>
-                            <Button onClick={() => BorrarCor(Cor.numeroCortina)}>
-                              Borrar
-                            </Button>
-                          </td>
-                        </tr>
-                      
-                  )}
-                </tbody>
-              </Table>
-  )
-}
+      <thead>
+        <tr>
+          <th>Numero</th>
+          <th>Area</th>
+          <th>Tela</th>
+          <th>Ancho</th>
+          <th>Largo</th>
+          <th>Caño</th>
+          <th>Lado Cadena</th>
+          <th>Posicion</th>
+          <th>Motorizada</th>
+          <th>Borrar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Rollers.map((Cor) => (
+          <tr key={Cor.numeroArticulo}>
+            <td>{Cor.numeroArticulo}</td>
+            <td>{Cor.Ambiente}</td>
+            <td>{Cor.TelaNombre}</td>
+            <td>{Cor.Ancho}</td>
+            <td>{Cor.Alto}</td>
+            <td>{Cor.Tubo}</td>
+            <td>{Cor.LadoCadena}</td>
+            <td>{Cor.Posicion}</td>
+            <td>{Cor.motorizada ? "Si" : "No"}</td>
+            <td>
+              <Button variant="danger" onClick={() => handleDelete(Cor.numeroArticulo)}>
+                Borrar
+              </Button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  );
+};

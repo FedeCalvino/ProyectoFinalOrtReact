@@ -4,15 +4,6 @@ import { ClipLoader } from "react-spinners";
 
 export const Loading = ({tipo}) => {
     console.log(tipo)
-        if(tipo=="tab"){
-        return (
-            <>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '20vh' }}>
-                <ClipLoader color={"#123abc"} loading={true} size={80} />
-            </div>
-            </>
-        );
-        } 
         if(tipo=="all"){
             return (
                 <>
@@ -22,14 +13,4 @@ export const Loading = ({tipo}) => {
                 </>
             );
         }  
-        if(tipo=="Ticket"){
-            return (
-                <>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '5vh' }}>
-                <ClipLoader color={"#123abc"} loading={true} size={50} />
-                </div>
-                </>
-            );
-        }  
-    
 }

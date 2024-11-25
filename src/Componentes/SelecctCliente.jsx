@@ -99,10 +99,10 @@ export const SelecctCliente = React.memo(() => {
   }*/
   function CrearCliente() {
     const NewClienteData = {
-        Name: NombreCliN,
-        Direcc: DireccCliN,
-        Tel: TelefonoCliN,
-        Rut: RutCliN,
+      Nombre: NombreCliN,
+      direccion: DireccCliN,
+        NumeroTelefono: TelefonoCliN,
+        rut: RutCliN,
         Tipo: Tipo,
         set:true
     }

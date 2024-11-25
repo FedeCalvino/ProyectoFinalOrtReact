@@ -13,6 +13,7 @@ import './NavBar.css'
 import { Link } from 'react-router-dom';
 
 export const NavBar = ({ logged, onLogout }) => {
+  
   const handleLogout = () => {
     onLogout();
   };

@@ -4,70 +4,33 @@ import { SelecctCliente } from "../Componentes/SelecctCliente";
 import Alert from "react-bootstrap/Alert";
 import { Toaster, toast } from "react-hot-toast";
 import "./Css/CrearVenta.css";
-import { useDispatch, useSelector } from 'react-redux';
-import {selectCliente} from "../Features/ClienteReducer"
+import { useDispatch, useSelector } from "react-redux";
+import { selectCliente } from "../Features/ClienteReducer";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import { ClienteSeleccted } from "../Componentes/ClienteSeleccted";
-
+import { selectArticulos } from "../Features/ArticulosReducer";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import { FormRollers } from "../Forms/FormRollers";
-export const CrearVenta = () => {
+import Button from "react-bootstrap/Button";
 
-  const dispatch = useDispatch()
+export const CrearVenta = () => {
+  const dispatch = useDispatch();
   const [IdVentaView, setIdVentaView] = useState(null);
   const [loading, setloading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const DataCli = useSelector(selectCliente)
-
+  const cliente = useSelector(selectCliente);
+  const Articulos = useSelector(selectArticulos);
   const [Obra, setObra] = useState("");
   const [FechaInstalacion, setFechaInstalacion] = useState("");
 
   //alertas y validaciones
   const [ErrorCrear, setErrorCrear] = useState(false);
 
-  const UrlCliente = "HTTP//localhost:8083/Cliente";
-
-  async function crearVenta(idCliente, precioFinal, obra, fechaInstalacion) {
-    const requestOptionsVenta = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        IdCliente: idCliente,
-        PrecioFinal: 0,
-        Obra: obra,
-        FechaInstalacion: fechaInstalacion,
-      }),
-    };
-
-    try {
-      const response = await fetch(UrlVentas, requestOptionsVenta);
-
-      if (!response.ok) {
-        // Verifica el código de estado HTTP y lanza un error con un mensaje apropiado
-        const errorMessage = getErrorMessage(response.status);
-        throw new Error(errorMessage);
-      }
-
-      const result = await response.json();
-      handleResult(result);
-      console.log("Venta creada", result);
-    } catch (error) {
-        setloading(false);
-      console.error("Error al crear la venta:", error);
-      toast.error(`Error al crear la venta: ${error.message}`, {
-        style: {
-          background: "#333",
-          color: "#fff",
-        },
-      });
-    } finally {
-      setloading(false);
-    }
-  }
+  const UrlVenta = "http://localhost:8083/Ventas";
 
   async function crearCliente(dataCli) {
     const RutParse = parseInt(dataCli.Rut, 10);
@@ -111,21 +74,42 @@ export const CrearVenta = () => {
     */
   }
 
-  const ConfirmCrearVenta = async ()=>{
-   console.log(DataCli)
-    setloading(true)
-    
-    if (DataCli.Id) {
-      console.log("Cliente con id", DataCli);
-      await crearVenta(DataCli.Id, "0", Obra, FechaInstalacion);
-    } else {
-      console.log("Cliente sin id", DataCli);
-      const clienteId = await crearCliente(DataCli);
-      if (clienteId) {
-        await crearVenta(clienteId, 0, Obra, FechaInstalacion);
+  const ConfirmCrearVenta = async () => {
+    const VentaModel = {
+      cliente,
+      Articulos,
+      obra: Obra,
+      id: 1,
+      fechaInstalacion: FechaInstalacion,
+    };
+
+    console.log("VentaModel", VentaModel);
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(VentaModel),
+    };
+
+    try {
+      const response = await fetch(
+        "http://localhost:8083/Ventas",
+        requestOptions
+      );
+
+      console.log("Response:", response);
+
+      if (!response.ok) {
+        console.error("Error en la solicitud:", response.statusText);
+        return;
       }
+
+      const result = await response.json();
+      console.log("Response Venta", result);
+    } catch (error) {
+      console.error("Error al realizar la solicitud:", error);
     }
-  }
+  };
 
   const AlertaError = ({ Mensaje }) => {
     setloading(false);
@@ -152,24 +136,24 @@ export const CrearVenta = () => {
           />
         </div>
         {ErrorCrear ? <AlertaError /> : null}
-        {!DataCli.set ? (
-          <SelecctCliente/>
+        {!cliente.set ? (
+          <SelecctCliente />
         ) : (
           <>
-          <Row>
-            <ClienteSeleccted/>
+            <Row>
+              <ClienteSeleccted />
               <Col md="12">
                 <div
                   style={{
                     left: 0,
                     width: "100%",
                     padding: "10px",
-                    marginTop:"20px",
+                    marginTop: "20px",
                     backgroundColor: "white",
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds a soft shadow
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
                     zIndex: 999, // Ensures it's on top
                     display: "flex",
-                    justifyContent:"space-around",
+                    justifyContent: "space-around",
                     alignItems: "center",
                     borderBottom: "2px solid #ccc",
                     fontSize: "20px",
@@ -222,17 +206,23 @@ export const CrearVenta = () => {
             <Row>
               <h2 style={{ textAlign: "center", marginTop: "10px" }}></h2>
               <Tabs
-                defaultActiveKey="Roll"
+                defaultActiveKey="Roller"
                 id="fill-tab-example"
                 className="mb-2 custom-tabs"
                 fill
               >
-                <Tab eventKey="Roll" title="Roller">
-                  <FormRollers/>
+                <Tab eventKey="Roller" title="Roller">
+                  <FormRollers />
                 </Tab>
-                <Tab eventKey="Tra" title="Tradicional">
-                </Tab>
+                <Tab eventKey="Tradicional" title="Tradicional"></Tab>
               </Tabs>
+            </Row>
+            <Row>
+              <Col></Col>
+              <Button as={Col} onClick={ConfirmCrearVenta}>
+                Crear Venta
+              </Button>
+              <Col></Col>
             </Row>
           </>
         )}
