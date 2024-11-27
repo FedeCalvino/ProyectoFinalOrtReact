@@ -13,7 +13,7 @@
       "destination": "/index.html"
     },
     {
-      "source": "/Ventas",
+      "source": "/GetVentas",
       "destination": "http://18.223.172.225:8083/Ventas"
     }
     

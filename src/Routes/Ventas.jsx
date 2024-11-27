@@ -26,7 +26,7 @@ export const Ventas = () => {
     const [loadingTable, setloadingTable] = useState(true)
     const [Ventas, setVentas] = useState([])
     //const Rollers = Venta.listaArticulos.filter(art=>art.tipoArticulo="roller")
-    const UrlVentas = "http://18.223.172.225:8083/Ventas"
+    const UrlVentas = "/GetVentas"
 
 
     const FetchVentas = async () => {
