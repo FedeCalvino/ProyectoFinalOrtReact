@@ -30,56 +30,14 @@ export const CrearVenta = () => {
   //alertas y validaciones
   const [ErrorCrear, setErrorCrear] = useState(false);
 
-  const UrlVenta = "http://localhost:8083/Ventas";
-
-  async function crearCliente(dataCli) {
-    const RutParse = parseInt(dataCli.Rut, 10);
-    const TelParse = parseInt(dataCli.Tel, 10);
-
-    const requestOptionsCliente = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        rut: RutParse,
-        Nombre: dataCli.Name,
-        NumeroTelefono: TelParse,
-        direccion: dataCli.Direcc,
-        Tipo: dataCli.a,
-      }),
-    };
-    /*
-    try {
-      const response = await fetch(UrlCliente, requestOptionsCliente);
-
-      if (!response.ok) {
-        // Verifica el código de estado HTTP y lanza un error con un mensaje apropiado
-        const errorMessage = getErrorMessage(response.status);
-        throw new Error(errorMessage);
-      }
-
-      const result = await response.json();
-      console.log("Cliente creado", result);
-      return result.id;
-    } catch (error) {
-        setloading(false);
-      console.error("Error al crear el cliente:", error);
-      toast.error(`Error al crear el cliente: ${error.message}`, {
-        style: {
-          background: "#333",
-          color: "#fff",
-        },
-      });
-      return null;
-    }
-    */
-  }
+  const UrlVenta = "/VentasEP";
 
   const ConfirmCrearVenta = async () => {
     const VentaModel = {
       cliente,
       Articulos,
       obra: Obra,
-      id: 1,
+      Id: 1,
       fechaInstalacion: FechaInstalacion,
     };
 
@@ -92,10 +50,7 @@ export const CrearVenta = () => {
     };
 
     try {
-      const response = await fetch(
-        "http://localhost:8083/Ventas",
-        requestOptions
-      );
+      const response = await fetch( UrlVenta,requestOptions);
 
       console.log("Response:", response);
 
@@ -130,7 +85,7 @@ export const CrearVenta = () => {
             reverseOrder={false}
             toastOptions={{
               style: {
-                zIndex: 9999, // Configuración global del z-index
+                zIndex: 9999,
               },
             }}
           />

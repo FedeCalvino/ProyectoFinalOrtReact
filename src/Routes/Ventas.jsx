@@ -26,7 +26,7 @@ export const Ventas = () => {
     const [loadingTable, setloadingTable] = useState(true)
     const [Ventas, setVentas] = useState([])
     //const Rollers = Venta.listaArticulos.filter(art=>art.tipoArticulo="roller")
-    const UrlVentas = "/GetVentas"
+    const UrlVentas = "/VentasEP"
 
 
     const FetchVentas = async () => {
