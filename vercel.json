@@ -1,0 +1,166 @@
+{
+  "rewrites": [
+    {
+      "source": "/Ventas/Del/:idVenta",
+      "destination": "http://200.40.89.254:8085/Ventas/:idVenta"
+    },
+    {
+      "source": "/SaveVentas",
+      "destination": "http://200.40.89.254:8085/Ventas"
+    },
+    {
+      "source": "/CrearVenta",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/Home",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/Ventas",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/Provedores",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/Clientes",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/Deposito",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/MesaCorteCano",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/MesaArmado",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/EstadoVentas",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/MesaCorteTela",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/Facturas",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/Instalaciones",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/Cortinas/Rollers/:idVenta",
+      "destination": "http://200.40.89.254:8085/Cortinas/Rollers/:idVenta"
+    },
+    {
+      "source": "/Cortinas/Tradicionales/:idVenta",
+      "destination": "http://200.40.89.254:8085/Cortinas/Tradicionales/:idVenta"
+    },
+    {
+      "source": "/Ventas/Dto",
+      "destination": "http://200.40.89.254:8085/Ventas/Dto"
+    },
+    {
+      "source": "/Ventas/DtoVentaCor/:IdVenta",
+      "destination": "http://200.40.89.254:8085/Ventas/DtoVentaCor/:IdVenta"
+    },
+    {
+      "source": "/Factura/:IdVenta",
+      "destination": "http://200.40.89.254:8085/Factura/:IdVenta"
+    },
+    {
+      "source": "/Ventas/Dto",
+      "destination": "http://200.40.89.254:8085/Ventas/Dto"
+    },
+    {
+      "source": "/Cortinas/Roller/Add/:IdVenta",
+      "destination": "http://200.40.89.254:8085/Cortinas/Roller/:IdVenta"
+    },{
+      "source": "/Cortinas/Edit/:IdVenta",
+      "destination": "http://200.40.89.254:8085/Cortinas/:IdVenta"
+    },
+    {
+      "source": "/Factura/Recibos/:IdVenta",
+      "destination": "http://200.40.89.254:8085/Factura/Recibos/:IdVenta"
+    },
+    {
+      "source": "/Instalacion",
+      "destination": "http://200.40.89.254:8085/Instalacion"
+    },
+    {
+      "source": "/Instalacion/:IdInstalacion",
+      "destination": "http://200.40.89.254:8085/Instalacion/:IdInstalacion"
+    },
+    {
+      "source": "/TipoTela",
+      "destination": "http://200.40.89.254:8085/TipoTela"
+    },
+    {
+      "source": "/Cliente",
+      "destination": "http://200.40.89.254:8085/Cliente"
+    },{
+      "source": "/Cliente/:IdCli",
+      "destination": "http://200.40.89.254:8085/Cliente/:IdCli"
+    },
+    {
+      "source": "/Cliente/strL/:Search",
+      "destination": "http://200.40.89.254:8085/Cliente/strL/:Search"
+    },
+    {
+      "source": "/Ventas/Dto/:Search",
+      "destination": "http://200.40.89.254:8085/Ventas/Dto/:Search"
+    },
+    {
+      "source": "/Ventas/:cortinaId/:idVenta",
+      "destination": "http://200.40.89.254:8085/Ventas/:cortinaId/:idVenta"
+    },
+    {
+      "source": "/Cortinas/Roller",
+      "destination": "http://200.40.89.254:8085/Cortinas/Roller"
+    },
+    {
+      "source": "/Factura",
+      "destination": "http://200.40.89.254:8085/Factura"
+    },{
+      "source": "/Cliente/str/:Nombre",
+      "destination": "http://200.40.89.254:8085/Cliente/str/:Nombre"
+    }
+    ,{
+      "source": "/EstadoCortina/:idCortina",
+      "destination": "http://200.40.89.254:8085/EstadoCortina/:idCortina"
+    },{
+      "source": "/Ventas/DtoVentaCor/MesaTela",
+      "destination": "http://200.40.89.254:8085/Ventas/DtoVentaCor/MesaTela"
+    },{
+      "source": "/Usuario/:Mail/:Pass",
+      "destination": "http://200.40.89.254:8085/Usuario/:Mail/:Pass"
+    },{
+      "source": "/Ventas/Page",
+      "destination": "http://200.40.89.254:8085/Ventas/Dto"
+    },{
+      "source": "/Ventas/Instalado/:IdVenta",
+      "destination": "http://200.40.89.254:8085/Ventas/Instalado/:IdVenta"
+    },{
+      "source": "/Cliente/Provedores",
+      "destination": "http://200.40.89.254:8085/Cliente/Provedores"
+    },{
+      "source": "/Ventas/Datos/Tela",
+      "destination": "http://200.40.89.254:8085/Ventas/Datos/Tela"
+    },{
+      "source": "/Ventas/Datos/Tela/Metros",
+      "destination": "http://200.40.89.254:8085/Ventas/Datos/Tela/Metros"
+    }
+    ,{
+      "source": "/Cortinas/Riel/:idVenta",
+      "destination": "http://200.40.89.254:8085/Cortinas/Riel/:idVenta"
+    }
+  ]
+}
