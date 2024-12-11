@@ -15,6 +15,14 @@
     {
       "source": "/VentasEP",
       "destination": "http://18.223.172.225:8083/Ventas"
+    },
+    {
+      "source": "/InstalacionEP",
+      "destination": "http://18.223.172.225:8083/Instalacion"
+    },
+    {
+      "source": "/ClientesEP",
+      "destination": "http://18.223.172.225:8083/Clientes"
     }
     
   ]

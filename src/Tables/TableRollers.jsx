@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo } from "react";
 import Table from "react-bootstrap/Table";
 import { useDispatch, useSelector } from "react-redux";
-import { selectArticulos, removeArticulos } from "../Features/ArticulosReducer";
+import { selectArticulos, removeArticulo } from "../Features/ArticulosReducer";
 import Button from "react-bootstrap/Button";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
 
 export const TableRollers = () => {
   const dispatch = useDispatch();
@@ -16,7 +14,7 @@ export const TableRollers = () => {
   );
 
   const handleDelete = (num) => {
-    dispatch(removeArticulos({ numeroArticulo: num }));
+    dispatch(removeArticulo({ numeroArticulo: num }));
   };
 
   useEffect(() => {

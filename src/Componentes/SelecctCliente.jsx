@@ -24,20 +24,19 @@ export const SelecctCliente = React.memo(() => {
   const dispatch = useDispatch();
   const ClienteData = useSelector(selectCliente);
   //CrearCliente
-  const [NombreCliN, setCliNomN] = useState();
-  const [TelefonoCliN, setCliTelN] = useState();
-  const [RutCliN, setCliRutN] = useState();
-  const [DireccCliN, setCliDireccN] = useState();
+  const [NombreCliN, setCliNomN] = useState(ClienteData.Nombre);
+  const [TelefonoCliN, setCliTelN] = useState(ClienteData.NumeroTelefono);
+  const [RutCliN, setCliRutN] = useState(ClienteData.rut);
+  const [DireccCliN, setCliDireccN] = useState(ClienteData.direccion);
   const [KeyTab, setKeyTab] = useState("Crear");
   const [loadingSearch, setloadingSearch] = useState(false);
-
+  const [NombreVacio,setNombreVacio] = useState(false)
   //SeleccCliente
   const [Tipo, setTipo] = useState("Cliente");
 
   const UrlCLientesLike = "/Cliente/strL/";
 
   const [SearchText, setSearchText] = useState("");
-
 
   const UrlCliente = "http://localhost:8083/Cliente";
   useEffect(() => {
@@ -62,52 +61,22 @@ export const SelecctCliente = React.memo(() => {
       console.log(error);
     }
   };
-/*
-  async function CrearCliente() {
-    const RutParse = parseInt(RutCliN, 10);
-    const TelParse = parseInt(TelefonoCliN, 10);
-    const cliente = {
-      rut: RutParse,
-      Nombre: NombreCliN,
-      NumeroTelefono: TelParse,
-      direccion: DireccCliN,
-      Tipo: Tipo,
-    };
-    console.log(cliente);
-
-    const requestOptionsCliente = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(cliente),
-    };
-
-    try {
-      const response = await fetch(UrlCliente, requestOptionsCliente);
-      const result = await response.json();
-      console.log("Cliente creado", result);
-      return result.id;
-    } catch (error) {
-      console.error("Error al crear el cliente:", error);
-      toast.error(`Error al crear el cliente: ${error.message}`, {
-        style: {
-          background: "#333",
-          color: "#fff",
-        },
-      });
-      return null;
-    }
-  }*/
-  function CrearCliente() {
+ 
+  function GuardarCliente() {
+    if (NombreCliN.trim() === "") {
+      setNombreVacio(true);
+    }else{
     const NewClienteData = {
       Nombre: NombreCliN,
       direccion: DireccCliN,
-        NumeroTelefono: TelefonoCliN,
-        rut: RutCliN,
-        Tipo: Tipo,
-        set:true
-    }
-    console.log("NewClienteData",NewClienteData)
+      NumeroTelefono: TelefonoCliN,
+      rut: RutCliN,
+      Tipo: Tipo,
+      set: true,
+    };
+    console.log("NewClienteData", NewClienteData);
     dispatch(setClienteFeature(NewClienteData));
+  }
   }
 
   const handleSearchTextChange = (e) => {
@@ -200,7 +169,11 @@ export const SelecctCliente = React.memo(() => {
                       value={NombreCliN}
                       onChange={(e) => setCliNomN(e.target.value)}
                       placeholder="Nombre"
+                      isInvalid={NombreVacio}
                     />
+                    <Form.Control.Feedback type="invalid">
+                      El nombre no puede estar vacío
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col md="5">
@@ -283,8 +256,8 @@ export const SelecctCliente = React.memo(() => {
               </Row>
               <Row className="justify-content-center">
                 <Col md="2">
-                  <Button onClick={CrearCliente} className="w-100">
-                    Crear Cliente
+                  <Button onClick={GuardarCliente} className="w-100">
+                    Guardar Cliente
                   </Button>
                 </Col>
               </Row>

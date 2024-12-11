@@ -1,23 +1,24 @@
-import React, { useEffect, useCallback } from "react";
-import { useState, useRef } from "react";
+import React from "react";
+import { useState } from "react";
 import { SelecctCliente } from "../Componentes/SelecctCliente";
-import Alert from "react-bootstrap/Alert";
 import { Toaster, toast } from "react-hot-toast";
 import "./Css/CrearVenta.css";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCliente } from "../Features/ClienteReducer";
+import { selectCliente,Reset } from "../Features/ClienteReducer";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import { ClienteSeleccted } from "../Componentes/ClienteSeleccted";
-import { selectArticulos } from "../Features/ArticulosReducer";
+import { selectArticulos,removeAllArticulos } from "../Features/ArticulosReducer";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import { FormRollers } from "../Forms/FormRollers";
 import Button from "react-bootstrap/Button";
+import { useNavigate } from "react-router-dom";
 
 export const CrearVenta = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [IdVentaView, setIdVentaView] = useState(null);
   const [loading, setloading] = useState(false);
@@ -26,13 +27,15 @@ export const CrearVenta = () => {
   const Articulos = useSelector(selectArticulos);
   const [Obra, setObra] = useState("");
   const [FechaInstalacion, setFechaInstalacion] = useState("");
-
   //alertas y validaciones
   const [ErrorCrear, setErrorCrear] = useState(false);
 
-  const UrlVenta = "/VentasEP";
+  //const UrlVenta = "/VentasEP";
+  const UrlVenta = "/VentasEP"
 
   const ConfirmCrearVenta = async () => {
+    setloading(true)
+    const loadingToast = toast.loading("Cargando...");
     const VentaModel = {
       cliente,
       Articulos,
@@ -61,19 +64,27 @@ export const CrearVenta = () => {
 
       const result = await response.json();
       console.log("Response Venta", result);
+
+      if(result.status==="OK"){
+        dispatch(Reset)
+        dispatch(removeAllArticulos)
+        navigate("/Ventas")
+      }else{
+        console.log("error")
+        AlertaError(result.message)
+      }
+      toast.dismiss(loadingToast)
+      setloading(false)
     } catch (error) {
-      console.error("Error al realizar la solicitud:", error);
+      setloading(false)
+      toast.dismiss(loadingToast)
+      AlertaError("Error al realizar la solicitud");
     }
   };
 
-  const AlertaError = ({ Mensaje }) => {
-    setloading(false);
-    setErrorCrear(true);
-    return (
-      <>
-        <Alert variant="danger">{Mensaje}</Alert>
-      </>
-    );
+  const AlertaError = ( Mensaje ) => {
+    console.log(Mensaje)
+    toast.error(Mensaje);
   };
 
   if (!IdVentaView) {
@@ -90,7 +101,6 @@ export const CrearVenta = () => {
             }}
           />
         </div>
-        {ErrorCrear ? <AlertaError /> : null}
         {!cliente.set ? (
           <SelecctCliente />
         ) : (
@@ -114,7 +124,7 @@ export const CrearVenta = () => {
                     fontSize: "20px",
                   }}
                 >
-                  <p
+                  <div
                     style={{
                       margin: "0 20px",
                       marginLeft: "20px",
@@ -137,8 +147,8 @@ export const CrearVenta = () => {
                         onChange={(e) => setObra(e.target.value)}
                       />
                     </InputGroup>
-                  </p>
-                  <p style={{ margin: "0 20px" }}>
+                  </div>
+                  <div style={{ margin: "0 20px" }}>
                     <InputGroup
                       style={{ width: "100%", alignContent: "center" }}
                     >
@@ -154,7 +164,7 @@ export const CrearVenta = () => {
                         onChange={(e) => setFechaInstalacion(e.target.value)}
                       />
                     </InputGroup>
-                  </p>
+                  </div>
                 </div>
               </Col>
             </Row>
@@ -174,9 +184,11 @@ export const CrearVenta = () => {
             </Row>
             <Row>
               <Col></Col>
+              { !loading &&
               <Button as={Col} onClick={ConfirmCrearVenta}>
                 Crear Venta
               </Button>
+              }
               <Col></Col>
             </Row>
           </>

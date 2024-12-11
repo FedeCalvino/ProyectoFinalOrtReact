@@ -1,6 +1,6 @@
 .bg-body-tertiary {
   padding: 0px;
-  background-color: rgba(61, 53, 42, 0.5); /* Usa RGBA para controlar la opacidad */
+  background-color: rgba(61, 53, 42, 0.5);
   border-image-slice: 1;
 }
 
@@ -19,11 +19,10 @@
   padding-bottom: 0%;
   border-radius: 0px 0px 10px 10px;
   transition: all 0.3s ease-in-out;
-  background-color: transparent; /* Asegúrate de que el fondo sea transparente */
 }
 
 .nav-link-custom:hover {
-  background: rgba(0, 123, 255, 0.7); /* Cambia el fondo al pasar el mouse */
+  background: rgba(0, 123, 255, 0.7); 
   color: #ffffff !important;
 }
 
@@ -31,12 +30,11 @@
   padding: 0;
   width: 100%;
   max-height: 65px;
-  background-color: transparent; /* Hacer el fondo del contenedor transparente */
 }
 
 .navb {
   width: 100%;
-  background-color: transparent; /* Hacer el fondo del nav transparente */
+
 }
 
 .nav-item {

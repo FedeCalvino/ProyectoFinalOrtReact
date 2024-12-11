@@ -13,4 +13,13 @@ export const Loading = ({tipo}) => {
                 </>
             );
         }  
+        if(tipo=="loading"){
+            return (
+                <>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <ClipLoader color={"#123abc"} loading={true} size={100} />
+                </div>
+                </>
+            );
+        }  
 }

@@ -1,73 +1,110 @@
-import { React, useState } from 'react'
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import './Css/Login.css'
-import Figure from 'react-bootstrap/Figure';
-import { Row } from 'react-bootstrap';
-import Alert from 'react-bootstrap/Alert';
+import { React, useState } from "react";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import "./Css/Login.css";
+import Figure from "react-bootstrap/Figure";
+import { Toaster, toast } from "react-hot-toast";
+import { Loading } from "../Componentes/Loading";
 
-export const Login = ({ loginFnct, error }) => {
+export const Login = ({ loginFnct }) => {
+  const [Nombre, setNombre] = useState("");
+  const [Pass, setPass] = useState("");
+  const [loading, setloading] = useState(false);
+  const LoginValidation = async () => {
+    setloading(true);
+    const user = { nombre: Nombre, password: Pass };
+    const result = await loginFnct(user);
 
+    if (result.status !== "OK") {
+      console.log("result.message", result.message);
+      if(result.message!=null){
+      toast.error(result.message);
+      }else{
+        toast.error("Error en la conexion"); 
+      }
+      setloading(false);
+    } else [];
 
-  const [Mail, setMail] = useState("")
-  const [Pass, setPass] = useState("")
+    console.log("result", result);
+  };
 
-  const LoginValidation = () => {
-    console.log("error?",error)
-    const user = { "mail": Mail + "@Gmail.com", "Pass": Pass }
-    loginFnct(user)
-  }
-
-  const AlertaCliente = () => {
-    console.log('entro')
-    return (
-      <>
-         <Alert 
-        variant="danger" 
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '1.5rem'
-        }}
-      >
-        Error en el login 
-      </Alert>
-      </>
-    )
-  }
   return (
     <div className="login">
-      <Row> {error ? <AlertaCliente /> : null}</Row>
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '90vh' }}>
-        <Form className="custom-form"> {/* Reacuadrar y aplicar estilos personalizados */}
-          <Figure style={{ marginBottom: "100px" }}>
-            <Figure.Image
-              width={400}
-              height={440}
-              alt="200x480"
-              src="\ImgLogo.png"
-            />
-          </Figure>
+      <Toaster
+        position="bottom-center"
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            zIndex: 9999,
+          },
+        }}
+      />
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "90vh" }}
+      >
+        <Form className="custom-form">
+          <div style={{ height: "300px", width: "400px" }}>
+            {loading ? (
+              <Loading tipo="loading" />
+            ) : (
+              <Figure style={{ marginBottom: "100px" }}>
+                <Figure.Image
+                  width={400}
+                  height={440}
+                  alt="200x480"
+                  src="\ImgLogo.png"
+                />
+              </Figure>
+            )}
+          </div>
           <InputGroup className="mb-3">
-            <Form.Control
-              placeholder="Mail"
-              value={Mail}
-              onChange={(e) => { setMail(e.target.value) }}
-              aria-label="Recipient's username"
-              aria-describedby="basic-addon2"
-            />
-            <InputGroup.Text id="basic-addon2">@Gmail.com</InputGroup.Text>
+            {loading ? (
+              <Form.Control
+                placeholder="Nombre"
+                disabled
+                value={Nombre}
+                onChange={(e) => {
+                  setNombre(e.target.value);
+                }}
+                aria-label="Recipient's username"
+                aria-describedby="basic-addon2"
+              />
+            ) : (
+              <Form.Control
+                placeholder="Nombre"
+                value={Nombre}
+                onChange={(e) => {
+                  setNombre(e.target.value);
+                }}
+                aria-label="Recipient's username"
+                aria-describedby="basic-addon2"
+              />
+            )}
           </InputGroup>
           <Form.Group className="mb-3" controlId="formBasicPassword">
-
             <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              value={Pass}
-              onChange={(e) => { setPass(e.target.value) }}
-              placeholder="Password" />
+            {loading ? (
+              <Form.Control
+              disabled
+                type="password"
+                value={Pass}
+                onChange={(e) => {
+                  setPass(e.target.value);
+                }}
+                placeholder="Password"
+              />
+            ) : (
+              <Form.Control
+                type="password"
+                value={Pass}
+                onChange={(e) => {
+                  setPass(e.target.value);
+                }}
+                placeholder="Password"
+              />
+            )}
           </Form.Group>
           <Button variant="primary" onClick={() => LoginValidation()}>
             Login
@@ -75,5 +112,5 @@ export const Login = ({ loginFnct, error }) => {
         </Form>
       </div>
     </div>
-  )
-}
+  );
+};

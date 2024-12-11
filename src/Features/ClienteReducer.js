@@ -3,12 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     Cliente: {
         Id: "",
-        Name: "",
-        Direcc: "",
-        Tel: "",
-        Rut: "",
-        Tipo: "",
-        set:false
+        Nombre: "",
+        direccion: "",
+        NumeroTelefono: "",
+        rut: "",
+        Tipo: "Cliente",
+        set: false,
     }
 };
 
@@ -18,12 +18,22 @@ export const ClienteReducer = createSlice({
     reducers: {
         setClienteFeature: (state, action) => {
             state.Cliente = action.payload;
-            console.log(state.Cliente)
+        },
+        Reset: (state) => {
+            state.Cliente ={
+                Id: "",
+                Nombre: "",
+                direccion: "",
+                NumeroTelefono: "",
+                rut: "",
+                Tipo: "Cliente",
+                set: false,
+            }
         },
     }
 });
 
-export const { setClienteFeature } = ClienteReducer.actions;
+export const { setClienteFeature,Reset } = ClienteReducer.actions;
 
 export const selectCliente = (state) => state.Cliente.Cliente;
 

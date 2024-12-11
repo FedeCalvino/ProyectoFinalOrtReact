@@ -2,20 +2,11 @@ import React from 'react'
 import Table from 'react-bootstrap/Table';
 import { useState, useEffect } from 'react';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
 import styled from 'styled-components'
 import Accordion from 'react-bootstrap/Accordion';
 import './Css/Ventas.css';
-import Spinner from 'react-bootstrap/Spinner';
-
 import { Loading } from '../Componentes/Loading';
 
-const StyledTableRow = styled.tr`
-&:hover {
-    background-color: beige;
-}
-`;
 
 export const Ventas = () => {
 
@@ -33,7 +24,7 @@ export const Ventas = () => {
             try {
                 const res = await fetch(UrlVentas)
                 const data = await res.json()
-                setVentas(data.body);
+                setVentas(data.body.reverse());
                 setLoading(false);
                 console.log(data.body);
             } catch (error) {
@@ -82,21 +73,24 @@ export const Ventas = () => {
                                 <Table responsive>
                                             <thead style={{ justifyContent: "center", fontFamily: 'Arial, sans-serif' }}>
                                                 <tr>
+                                                    <th>Ambiente</th>
                                                     <th>Ancho</th>
                                                     <th>Ancho tela</th>
                                                     <th>Ancho Caño</th>
-                                                    <th>caño</th>
+                                                    <th>Tubo</th>
                                                     <th>Alto Cortina</th>
                                                     <th>Alto Tela</th>
                                                     <th>Largo Cadena</th>
                                                     <th>posicion</th>
                                                     <th>Lado Cadena</th>
+                                                    <th>Motorizada</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                               {Ven.listaArticulos.length>0 &&
                                                 Ven.listaArticulos.map(Cor =>
                                                     <tr key={Cor.idRoller}>
+                                                        <td>{Cor.Ambiente}</td>
                                                         <td>{Cor.ancho}</td>
                                                         <td>{Cor.AnchoTela}</td>
                                                         <td>{Cor.AnchoTubo}</td>
@@ -106,6 +100,7 @@ export const Ventas = () => {
                                                         <td>{Cor.largoCadena}</td>
                                                         <td>{Cor.posicion}</td>
                                                         <td>{Cor.ladoCadena}</td>
+                                                        <td>{Cor.motorizada ? "Si" : "No"}</td>
                                                     </tr>
                                                 )
                                               }

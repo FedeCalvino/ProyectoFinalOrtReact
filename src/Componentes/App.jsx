@@ -6,10 +6,10 @@ import { ProtectedRoute } from '../Routes/ProtectedRoute';
 import { useDispatch } from 'react-redux';
 import { Ventas } from '../Routes/Ventas';
 import "../Routes/Css/App.css"
+import { Login } from '../Routes/Login';
+import { Instalaciones } from './Instalaciones';
 const App = () => {
-    const UrlTelas = "/TipoTela";
     
-    const [Loginerror,setLoginError]= useState(false)
     const dispatch = useDispatch()
 
     const [User, setUser] = useState(() => {
@@ -22,27 +22,28 @@ const App = () => {
 
     const login = async (usuario) => {
         try {
-            const url = `/Usuario/${usuario.mail}/${usuario.Pass}`;
+            const url = `http://localhost:8083/auth/login`;
             console.log(url);
     
             const requestOptions = {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(usuario)
             };
+            console.log(usuario)
     
             const response = await fetch(url, requestOptions);
             const result = await response.json();
-    
             console.log(result);
             
-            if (result.id!=0) {
-                localStorage.setItem('user', JSON.stringify(result)); // Guardar el usuario en localStorage
-                setUser(result)
-
-                setLoginError(false); // Asumiendo que la función se llama setLoginError
-                window.location.reload();
+            if (result.status!="OK") {
+                return result
             } else {
-               setLoginError(true); // Asumiendo que la función se llama setLoginError
+               localStorage.setItem('user', JSON.stringify(result));
+               setUser(result)
+
+               setLoginError(false);
+               window.location.reload();
             }
 
         } catch (error) {
@@ -62,37 +63,45 @@ const App = () => {
         <>
             <Routes>
                 <Route path='/Clientes' element={
-                    <ProtectedRoute user={User} login={login} errorLogin={Loginerror}>
+                    <ProtectedRoute user={User} login={login}>
                         <Clientes />
                     </ProtectedRoute>
                 } >
                 </Route>
                 <Route path='/CrearVenta' element={
-                <ProtectedRoute user={User} login={login} errorLogin={Loginerror}>
+                <ProtectedRoute user={User} login={login}>
                     <CrearVenta />
                 </ProtectedRoute>
                 } >
 
                 </Route>
                 <Route path='/Login' element={
-                    <ProtectedRoute user={User} login={login} errorLogin={Loginerror}>
-                        <CrearVenta />
+                    <ProtectedRoute user={User} login={login}>
+                        <Login/>
                     </ProtectedRoute>
                 }>
                     </Route>
                 <Route path='/Ventas' element={
-                    <ProtectedRoute user={User} login={login} errorLogin={Loginerror}>
+                    <ProtectedRoute user={User} login={login}>
                         <Ventas/>
                     </ProtectedRoute>
                 } >
                 </Route>
 
                 <Route path='/*' element={
-                    <ProtectedRoute user={User} login={login} errorLogin={Loginerror}>
+                    <ProtectedRoute user={User} login={login}>
                        <CrearVenta />
                     </ProtectedRoute>} >
                     
                 </Route>
+
+                <Route path='/Instalaciones' element={
+                    <ProtectedRoute user={User} login={login}>
+                       <Instalaciones />
+                    </ProtectedRoute>} >
+                    
+                </Route>
+
             </Routes>
         </>
     );

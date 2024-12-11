@@ -1,6 +1,4 @@
 import { React, useState, useEffect, useCallback } from "react";
-import Table from "react-bootstrap/Table";
-import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -8,15 +6,13 @@ import "./ClienteList.css";
 import { Loading } from "../Componentes/Loading";
 
 export const Clientes = () => {
-  const UrlClientes = "/Cliente";
+  const UrlClientes = "/ClientesEP";
   const [Clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [BoolEditCli, setBoolEditCli] = useState(false);
   const [DeleteCliBoolConfirm, setDeleteCliBoolConfirm] = useState(false);
   const [EditCliId, setEditCliId] = useState(null);
   const [CliChanged, setCliChanged] = useState(false);
-
-  
 
   useEffect(() => {
     FetchClientes();
@@ -91,7 +87,7 @@ export const Clientes = () => {
       const res = await fetch(UrlClientes);
       const data = await res.json();
 
-      setClientes(data.reverse());
+      setClientes(data.body);
       setLoading(false);
       console.log(data);
     } catch (error) {

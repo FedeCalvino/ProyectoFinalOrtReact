@@ -21,7 +21,7 @@ const ArticulosReducer = createSlice({
             state.Indice++;
         },
 
-        removeArticulos: (state, action) => {
+        removeArticulo: (state, action) => {
             const numeroToRemove = action.payload.numeroArticulo;
             console.log(numeroToRemove)
             state.Articulos = state.Articulos.filter(
@@ -32,13 +32,18 @@ const ArticulosReducer = createSlice({
             });
             state.Indice--; // Reduce the index once
         },
+        removeAllArticulos: (state) => {
+            state.Articulos = []
+            state.Indice=0; 
+        }
     }
 });
 
 export const { 
     setArticulosFeature,
     addArticulo, 
-    removeArticulos
+    removeArticulo,
+    removeAllArticulos
 } = ArticulosReducer.actions;
 
 // Selectors
