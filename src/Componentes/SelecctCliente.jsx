@@ -39,7 +39,6 @@ export const SelecctCliente = React.memo(() => {
 
   const [SearchText, setSearchText] = useState("");
   const UrlTipoCLientes = "/ConfiguracionEP/TiposCli";
-  /ConfiguracionEP/TiposCli
   const FetchTipoClientes = async () => {
     try {
       const res = await fetch(UrlTipoCLientes);
