@@ -27,7 +27,6 @@ export const CrearVenta = () => {
   const Articulos = useSelector(selectArticulos);
   const [Obra, setObra] = useState("");
   const [FechaInstalacion, setFechaInstalacion] = useState("");
-
   //const UrlVenta = "http://localhost:8083/Ventas";
   const UrlVenta = "/VentasEP"
 
@@ -122,23 +121,6 @@ export const CrearVenta = () => {
                     fontSize: "20px",
                   }}
                 >
-                  <div style={{ margin: "0 20px" }}>
-                    <InputGroup
-                      style={{ width: "100%", alignContent: "center" }}
-                    >
-                      <h3>Fecha</h3>
-                      <Form.Control
-                        type="date"
-                        value={FechaInstalacion}
-                        style={{
-                          marginLeft: "10px",
-                          textAlign: "center",
-                          borderRadius: "10px",
-                        }}
-                        onChange={(e) => setFechaInstalacion(e.target.value)}
-                      />
-                    </InputGroup>
-                  </div>
                   <div
                     style={{
                       margin: "0 20px",

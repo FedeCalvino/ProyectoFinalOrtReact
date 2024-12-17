@@ -2,11 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     Telas:{
-        TelasRoller:[{
-            id:1,
-            Nombre:"Screen 5%",
-            Color:"Blanco"
-        }]
+        TelasRoller:[]
     }
 };
 

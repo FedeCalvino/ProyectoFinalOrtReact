@@ -122,6 +122,7 @@ export const SelecctCliente = React.memo(() => {
               value={NombreCliN}
               onChange={(e) => handleSearchTextChange(e.target.value)}
               isInvalid={NombreVacio}
+              autoComplete="off"
             />
             <Form.Control.Feedback type="invalid">
               El nombre no puede estar vacío
@@ -166,6 +167,7 @@ export const SelecctCliente = React.memo(() => {
                 value={TelefonoCliN}
                 onChange={(e) => setCliTelN(e.target.value)}
                 placeholder="Teléfono"
+                autoComplete="off"
               />
             </Form.Group>
 
@@ -176,6 +178,7 @@ export const SelecctCliente = React.memo(() => {
                 value={RutCliN}
                 onChange={(e) => setCliRutN(e.target.value)}
                 placeholder="RUT"
+                autoComplete="off"
               />
             </Form.Group>
 
@@ -186,6 +189,7 @@ export const SelecctCliente = React.memo(() => {
                 value={DireccCliN}
                 onChange={(e) => setCliDireccN(e.target.value)}
                 placeholder="Dirección"
+                autoComplete="off"
               />
             </Form.Group>
 
@@ -196,6 +200,7 @@ export const SelecctCliente = React.memo(() => {
                 value={MailCli}
                 onChange={(e) => setMailCli(e.target.value)}
                 placeholder="Mail"
+                autoComplete="off"
               />
             </Form.Group>
 

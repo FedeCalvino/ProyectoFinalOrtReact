@@ -13,6 +13,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/Instalaciones",
+      "destination": "/index.html"
+    },
+    {
       "source": "/VentasEP",
       "destination": "http://18.223.172.225:8083/Ventas"
     },
@@ -35,6 +39,10 @@
     {
       "source": "/ConfiguracionEP",
       "destination": "http://18.223.172.225:8083/Conf"
+    },
+    {
+      "source": "/TelasEP",
+      "destination": "http://18.223.172.225:8083/Telas"
     }
   ]
 }

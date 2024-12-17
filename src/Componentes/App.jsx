@@ -9,6 +9,7 @@ import "../Routes/Css/App.css"
 import { Login } from '../Routes/Login';
 import { Instalaciones } from './Instalaciones';
 import {setRollerConfig} from "../Features/ConfigReducer"
+import {setTelasRollerFeature} from "../Features/TelasReducer"
 
 const App = () => {
     
@@ -22,6 +23,7 @@ const App = () => {
     const urlIP = import.meta.env.REACT_APP__IPSQL;
 
     const UrlTipoConfig = "/ConfiguracionEP"
+    const UrlTelas = "/TelasEP"
 
     const fetchRollerConf = async () => {
       try {
@@ -33,13 +35,26 @@ const App = () => {
         return null; 
       }
     };
-    
+    const fetchTelas = async()=>{
+        try {
+            const res = await fetch(UrlTelas);
+            const data = await res.json();
+            return data.body; 
+        } catch (error) {
+            console.error("Error fetching roller configuration:", error);
+            return null; 
+        }
+    }
     useEffect(() => {
       const fetchData = async () => {
         const config = await fetchRollerConf();
+        const telas = await fetchTelas();
+        const TelasRoller = telas.filter(tela=>tela.tipo===1)
         if (config) {
           console.log("config",config)
           dispatch(setRollerConfig(config)); 
+          console.log(TelasRoller)
+          dispatch(setTelasRollerFeature(TelasRoller))
         }
       };
     

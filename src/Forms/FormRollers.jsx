@@ -48,7 +48,7 @@ export const FormRollers = () => {
   TiposTelas.forEach((tela) => {
     let esta = false;
     NombreTelas.forEach((Nombre) => {
-      if (Nombre.Nombre === tela.Nombre) {
+      if (Nombre.nombre === tela.nombre) {
         esta = true;
       }
     });
@@ -104,10 +104,9 @@ export const FormRollers = () => {
     SetselectedTelaMostrarRoler(e.target.value);
 
     const SetTelas = TiposTelas.filter(
-      (Tela) => Tela.Nombre === selectedTela.Nombre
+      (Tela) => Tela.nombre === selectedTela.nombre
     );
     console.log("SetTelas", SetTelas);
-
     setTelasDelTipo(SetTelas);
   };
 
@@ -164,7 +163,7 @@ export const FormRollers = () => {
                   value={Tel.id}
                   key={Tel.id}
                 >
-                  {Tel.Nombre}
+                  {Tel.nombre}
                 </option>
               ))}
           </Form.Select>
@@ -193,7 +192,7 @@ export const FormRollers = () => {
                 value={Tel.id}
                 key={Tel.id}
               >
-                {Tel.Color}
+                {Tel.color}
               </option>
             ))}
           </Form.Select>
