@@ -32,6 +32,7 @@ export const TableRollers = () => {
           <th>Largo</th>
           <th>Caño</th>
           <th>Lado Cadena</th>
+          <th>Lado Cadena</th>
           <th>Posicion</th>
           <th>Motorizada</th>
           <th>Borrar</th>
@@ -45,10 +46,11 @@ export const TableRollers = () => {
             <td>{Cor.TelaNombre}</td>
             <td>{Cor.Ancho}</td>
             <td>{Cor.Alto}</td>
-            <td>{Cor.Tubo}</td>
-            <td>{Cor.LadoCadena}</td>
-            <td>{Cor.Posicion}</td>
-            <td>{Cor.motorizada ? "Si" : "No"}</td>
+            <td>{Cor.TuboStr}</td>
+            <td>{Cor.LadoCadenaStr}</td>
+            <td>{Cor.TipoCadenaStr}</td>
+            <td>{Cor.PosicionStr}</td>
+            <td>{Cor.MotorStr}</td>
             <td>
               <Button variant="danger" onClick={() => handleDelete(Cor.numeroArticulo)}>
                 Borrar

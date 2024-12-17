@@ -25,23 +25,39 @@ export const SelecctCliente = React.memo(() => {
   const ClienteData = useSelector(selectCliente);
   //CrearCliente
   const [NombreCliN, setCliNomN] = useState(ClienteData.Nombre);
+  const [MailCli, setMailCli] = useState(ClienteData.MailCli);
   const [TelefonoCliN, setCliTelN] = useState(ClienteData.NumeroTelefono);
   const [RutCliN, setCliRutN] = useState(ClienteData.rut);
   const [DireccCliN, setCliDireccN] = useState(ClienteData.direccion);
   const [KeyTab, setKeyTab] = useState("Crear");
   const [loadingSearch, setloadingSearch] = useState(false);
-  const [NombreVacio,setNombreVacio] = useState(false)
+  const [NombreVacio, setNombreVacio] = useState(false);
   //SeleccCliente
   const [Tipo, setTipo] = useState("Cliente");
-
-  const UrlCLientesLike = "/Cliente/strL/";
+  const [TiposClientes, setTiposClientes] = useState([]);
+  const UrlCLientesLike = "/ClientesEP/";
 
   const [SearchText, setSearchText] = useState("");
+  const UrlTipoCLientes = "/ConfiguracionEP/TiposCli";
+  /ConfiguracionEP/TiposCli
+  const FetchTipoClientes = async () => {
+    try {
+      const res = await fetch(UrlTipoCLientes);
+      const data = await res.json();
+      setTiposClientes(data.body);
+      console.log(data.body);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const UrlCliente = "http://localhost:8083/Cliente";
   useEffect(() => {
     FetchClientesLike();
   }, [SearchText]);
+
+  useEffect(() => {
+    FetchTipoClientes();
+  }, []);
 
   const [Clientes, setClientes] = useState([]);
 
@@ -51,7 +67,7 @@ export const SelecctCliente = React.memo(() => {
         setloadingSearch(true);
         const res = await fetch(UrlCLientesLike + SearchText);
         const data = await res.json();
-        setClientes(data);
+        setClientes(data.body);
         setloadingSearch(false);
         console.log(data);
       } else {
@@ -61,26 +77,28 @@ export const SelecctCliente = React.memo(() => {
       console.log(error);
     }
   };
- 
+
   function GuardarCliente() {
     if (NombreCliN.trim() === "") {
       setNombreVacio(true);
-    }else{
-    const NewClienteData = {
-      Nombre: NombreCliN,
-      direccion: DireccCliN,
-      NumeroTelefono: TelefonoCliN,
-      rut: RutCliN,
-      Tipo: Tipo,
-      set: true,
-    };
-    console.log("NewClienteData", NewClienteData);
-    dispatch(setClienteFeature(NewClienteData));
-  }
+    } else {
+      const NewClienteData = {
+        Nombre: NombreCliN,
+        direccion: DireccCliN,
+        NumeroTelefono: TelefonoCliN,
+        rut: RutCliN,
+        Tipo: Tipo,
+        set: true,
+      };
+      console.log("NewClienteData", NewClienteData);
+      dispatch(setClienteFeature(NewClienteData));
+    }
   }
 
-  const handleSearchTextChange = (e) => {
-    setSearchText(e.target.value);
+  const handleSearchTextChange = (nombre) => {
+    console.log(nombre);
+    setCliNomN(nombre);
+    setSearchText(nombre);
     console.log(SearchText);
   };
 
@@ -99,172 +117,122 @@ export const SelecctCliente = React.memo(() => {
       Tipo: Cli.tipo,
       set: true,
     };
-    setKeyTab("Selecc");
     dispatch(setClienteFeature(NewClienteData));
   };
 
   return (
     <>
-      <Tabs
-        defaultActiveKey={KeyTab}
-        id="fill-tab-example"
-        as={Col}
-        className="mb-2"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          width: "100%",
-          marginTop: "90px",
-        }}
+    <h3 className="text-center mb-3">Crear Cliente</h3>
+      <Container
+        style={{ display: "flex", justifyContent: "center", gap: "20px" }}
       >
-        <Tab eventKey="Selecc" title="Seleccionar Cliente">
-          <Row className="justify-content-center mb-3">
-            <Col md="3" noValidate>
+        <div style={{ flex: 1, maxWidth: "300px" }}>
+          <Form.Group controlId="Nombre" className="mb-3">
+            <Form.Label>Nombre</Form.Label>
+            <Form.Control
+              type="text"
+              value={NombreCliN}
+              onChange={(e) => handleSearchTextChange(e.target.value)}
+              isInvalid={NombreVacio}
+            />
+            <Form.Control.Feedback type="invalid">
+              El nombre no puede estar vacío
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <ListGroup
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              marginTop: "15px",
+            }}
+          >
+            {Clientes != null &&
+              Clientes.map((Cli) => (
+                <ListGroup.Item
+                  key={Cli.id}
+                  action
+                  value={Cli.id}
+                  style={{
+                    padding: "10px 15px",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    textAlign: "center",
+                  }}
+                  onClick={() => SelecctCliFromList(Cli)}
+                >
+                  {Cli.nombre}
+                </ListGroup.Item>
+              ))}
+          </ListGroup>
+        </div>
+
+        {/* Contenedor derecho */}
+        <div style={{ flex: 2 }}>
+          <Form>
+            <Form.Group controlId="Telefono" className="mb-3">
+              <Form.Label>Teléfono</Form.Label>
+              <Form.Control
+                type="number"
+                value={TelefonoCliN}
+                onChange={(e) => setCliTelN(e.target.value)}
+                placeholder="Teléfono"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="Rut" className="mb-3">
+              <Form.Label>RUT</Form.Label>
+              <Form.Control
+                type="number"
+                value={RutCliN}
+                onChange={(e) => setCliRutN(e.target.value)}
+                placeholder="RUT"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="Direccion" className="mb-3">
+              <Form.Label>Dirección</Form.Label>
               <Form.Control
                 type="text"
-                value={SearchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                placeholder="Buscar..."
+                value={DireccCliN}
+                onChange={(e) => setCliDireccN(e.target.value)}
+                placeholder="Dirección"
               />
-            </Col>
-            {loadingSearch ? (
-              <Col md="1" className="text-center">
-                <Spinner animation="border" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              </Col>
-            ) : null}
-          </Row>
-          <Row className="justify-content-center mb-3">
-            <Col md="4" noValidate>
-              <ListGroup>
-                {Clientes.map((Cli) => (
-                  <ListGroup.Item
-                    key={Cli.id}
-                    action
-                    value={Cli.id}
-                    onClick={() => SelecctCliFromList(Cli)}
-                  >
-                    {Cli.nombre}
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            </Col>
-          </Row>
-        </Tab>
-        <Tab eventKey="Crear" title="Crear Cliente">
-          <Container>
-            <Row className="justify-content-center mb-3">
-              <Col md="4">
-                <h3 className="text-center">Crear Cliente</h3>
-              </Col>
-            </Row>
-            <Form>
-              <Row className="justify-content-center mb-3">
-                <Col md="5" className="border-start">
-                  <Form.Group controlId="Nombre">
-                    <Form.Label>Nombre</Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={NombreCliN}
-                      onChange={(e) => setCliNomN(e.target.value)}
-                      placeholder="Nombre"
-                      isInvalid={NombreVacio}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      El nombre no puede estar vacío
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                </Col>
-                <Col md="5">
-                  <Form.Group controlId="Telefono">
-                    <Form.Label>Telefono</Form.Label>
-                    <Form.Control
-                      type="number"
-                      value={TelefonoCliN}
-                      onChange={(e) => setCliTelN(e.target.value)}
-                      placeholder="Telefono"
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row className="justify-content-center mb-3">
-                <Col md="5" className="border-start">
-                  <Form.Group controlId="Rut">
-                    <Form.Label>RUT</Form.Label>
-                    <Form.Control
-                      type="number"
-                      value={RutCliN}
-                      onChange={(e) => setCliRutN(e.target.value)}
-                      placeholder="RUT"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md="5">
-                  <Form.Group controlId="Direccion">
-                    <Form.Label>Direccion</Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={DireccCliN}
-                      onChange={(e) => setCliDireccN(e.target.value)}
-                      placeholder="Direccion"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md="5">
-                  <Form.Group controlId="validationCustom01" noValidate>
-                    <Form.Label
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      Tipo
-                    </Form.Label>
-                    <Form.Select
-                      aria-label="Default select example"
-                      onChange={(e) => {
-                        setTipo(e.target.value);
-                      }}
-                      value={Tipo}
-                    >
-                      <option style={{ textAlign: "center" }} value="Cliente">
-                        Cliente
-                      </option>
-                      <option
-                        style={{ textAlign: "center" }}
-                        value="Constructora"
-                      >
-                        Constructora
-                      </option>
-                      <option
-                        style={{ textAlign: "center" }}
-                        value="Arquitecto"
-                      >
-                        Arquitecto
-                      </option>
-                      <option
-                        style={{ textAlign: "center" }}
-                        value="Interiorista"
-                      >
-                        Interiorista
-                      </option>
-                    </Form.Select>
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row className="justify-content-center">
-                <Col md="2">
-                  <Button onClick={GuardarCliente} className="w-100">
-                    Guardar Cliente
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Container>
-        </Tab>
-      </Tabs>
+            </Form.Group>
+
+            <Form.Group controlId="Mail" className="mb-3">
+              <Form.Label>Mail</Form.Label>
+              <Form.Control
+                type="text"
+                value={MailCli}
+                onChange={(e) => setMailCli(e.target.value)}
+                placeholder="Mail"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="Tipo" className="mb-3">
+              <Form.Label>Tipo</Form.Label>
+              <Form.Select
+                aria-label="Tipo de cliente"
+                onChange={(e) => setTipo(e.target.value)}
+                value={Tipo}
+              >
+                {TiposClientes != null &&
+                  TiposClientes.map((clitipo) => (
+                    <option key={clitipo.idTipoCliente} value={clitipo.tipo}>
+                      {clitipo.tipo}
+                    </option>
+                  ))}
+              </Form.Select>
+            </Form.Group>
+
+            <Button onClick={GuardarCliente} className="w-100">
+              Guardar Cliente
+            </Button>
+          </Form>
+        </div>
+      </Container>
     </>
   );
 });

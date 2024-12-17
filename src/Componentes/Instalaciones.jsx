@@ -21,7 +21,7 @@ dayjs.locale("es");
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 export const Instalaciones = () => {
-  const UrlVentas = "http://localhost:8083/Ventas";
+  const UrlVentas = "/VentasEP";
   const [Ventas, setVentas] = useState([]);
   const [VentaSelecc, setVentaSelecc] = useState(null);
   const [Events, setEvents] = useState([]);

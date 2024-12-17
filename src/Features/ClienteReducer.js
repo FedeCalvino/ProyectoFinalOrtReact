@@ -8,6 +8,7 @@ const initialState = {
         NumeroTelefono: "",
         rut: "",
         Tipo: "Cliente",
+        MailCli:"",
         set: false,
     }
 };
@@ -26,7 +27,7 @@ export const ClienteReducer = createSlice({
                 direccion: "",
                 NumeroTelefono: "",
                 rut: "",
-                Tipo: "Cliente",
+                TipoId: 0,
                 set: false,
             }
         },

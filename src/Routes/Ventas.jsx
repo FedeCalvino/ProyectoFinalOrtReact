@@ -6,7 +6,9 @@ import styled from 'styled-components'
 import Accordion from 'react-bootstrap/Accordion';
 import './Css/Ventas.css';
 import { Loading } from '../Componentes/Loading';
-
+import { PDFTela } from '../Componentes/PDFTela';
+import { pdf } from "@react-pdf/renderer";
+import Button from "react-bootstrap/Button";
 
 export const Ventas = () => {
 
@@ -31,6 +33,25 @@ export const Ventas = () => {
                 console.log(error)
             }
     };
+    const downloadPDF = async (Ven) => {
+        const blob = await pdf(
+          <PDFTela
+            Venta={Ven}
+          />
+        ).toBlob();
+    
+        // Crear un enlace de descarga
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${Ven.cliente.nombre} O.C.pdf`;
+    
+        // Simular el clic en el enlace de descarga
+        link.click();
+    
+        // Liberar la URL del objeto
+        URL.revokeObjectURL(link.href);
+        setloadingpdf(false);
+      };
 
     useEffect(() => {
 
@@ -83,6 +104,7 @@ export const Ventas = () => {
                                                     <th>Largo Cadena</th>
                                                     <th>posicion</th>
                                                     <th>Lado Cadena</th>
+                                                    <th>Tipo Cadena</th>
                                                     <th>Motorizada</th>
                                                 </tr>
                                             </thead>
@@ -90,22 +112,24 @@ export const Ventas = () => {
                                               {Ven.listaArticulos.length>0 &&
                                                 Ven.listaArticulos.map(Cor =>
                                                     <tr key={Cor.idRoller}>
-                                                        <td>{Cor.Ambiente}</td>
+                                                        <td>{Cor.ambiente}</td>
                                                         <td>{Cor.ancho}</td>
                                                         <td>{Cor.AnchoTela}</td>
                                                         <td>{Cor.AnchoTubo}</td>
-                                                        <td>{Cor.Tubo}</td>
+                                                        <td>{Cor.cano.tipo}</td>
                                                         <td>{Cor.alto}</td>
                                                         <td>{Cor.AltoTela}</td>
                                                         <td>{Cor.largoCadena}</td>
-                                                        <td>{Cor.posicion}</td>
-                                                        <td>{Cor.ladoCadena}</td>
-                                                        <td>{Cor.motorizada ? "Si" : "No"}</td>
+                                                        <td>{Cor.posicion.posicion}</td>
+                                                        <td>{Cor.ladoCadena.lado}</td>
+                                                        <td>{Cor.tipoCadena.tipoCadena}</td>
+                                                        <td>{Cor.motorRoller.nombre}</td>
                                                     </tr>
                                                 )
                                               }
                                             </tbody>
                                         </Table>
+                                        <Button onClick={()=>downloadPDF(Ven)}>PDF</Button>
                                 </Accordion.Body>
                             </Accordion.Item>
                         </>

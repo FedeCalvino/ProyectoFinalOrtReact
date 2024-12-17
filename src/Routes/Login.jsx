@@ -11,6 +11,7 @@ export const Login = ({ loginFnct }) => {
   const [Nombre, setNombre] = useState("");
   const [Pass, setPass] = useState("");
   const [loading, setloading] = useState(false);
+  
   const LoginValidation = async () => {
     setloading(true);
     const user = { nombre: Nombre, password: Pass };

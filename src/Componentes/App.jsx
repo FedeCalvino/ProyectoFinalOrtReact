@@ -8,6 +8,8 @@ import { Ventas } from '../Routes/Ventas';
 import "../Routes/Css/App.css"
 import { Login } from '../Routes/Login';
 import { Instalaciones } from './Instalaciones';
+import {setRollerConfig} from "../Features/ConfigReducer"
+
 const App = () => {
     
     const dispatch = useDispatch()
@@ -19,6 +21,30 @@ const App = () => {
 
     const urlIP = import.meta.env.REACT_APP__IPSQL;
 
+    const UrlTipoConfig = "/ConfiguracionEP"
+
+    const fetchRollerConf = async () => {
+      try {
+        const res = await fetch(UrlTipoConfig);
+        const data = await res.json();
+        return data.body; 
+      } catch (error) {
+        console.error("Error fetching roller configuration:", error);
+        return null; 
+      }
+    };
+    
+    useEffect(() => {
+      const fetchData = async () => {
+        const config = await fetchRollerConf();
+        if (config) {
+          console.log("config",config)
+          dispatch(setRollerConfig(config)); 
+        }
+      };
+    
+      fetchData();
+    }, []);
 
     const login = async (usuario) => {
         try {
