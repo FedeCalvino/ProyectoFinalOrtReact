@@ -26,7 +26,7 @@
     },
     {
       "source": "/ClientesEP",
-      "destination": "http://18.223.172.225:8083/Clientes"
+      "destination": "http://18.223.172.225:8083/Cliente"
     },
     {
       "source": "/ClientesEP/:Name",

@@ -22,8 +22,8 @@ const App = () => {
 
     const urlIP = import.meta.env.REACT_APP__IPSQL;
 
-    const UrlTipoConfig = "/ConfiguracionEP"
-    const UrlTelas = "/TelasEP"
+    const UrlTipoConfig = "http://localhost:8083/Conf"
+    const UrlTelas = "http://localhost:8083/Telas"
 
     const fetchRollerConf = async () => {
       try {

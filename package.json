@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@date-io/dayjs": "^3.0.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@mui/material": "^6.1.10",
     "@react-pdf/renderer": "^4.1.5",
     "@reduxjs/toolkit": "^2.3.0",

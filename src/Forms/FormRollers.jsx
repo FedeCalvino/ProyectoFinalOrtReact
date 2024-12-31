@@ -70,7 +70,7 @@ export const FormRollers = () => {
     TuboStr:(CanoRoller && CanosRoller) && CanosRoller.find(cano=>cano.id===parseInt(CanoRoller))?.tipo,
     motor:parseInt(MotorRoller),
     MotorStr:(MotorRoller && Motores) && Motores.find(motor=>motor.idMotor===parseInt(MotorRoller))?.nombre,
-    TelaNombre: selectedTelaRoler.Nombre + " " + selectedTelaRoler.Color,
+    TelaNombre: selectedTelaRoler.nombre + " " + selectedTelaRoler.color,
     cadena:parseInt(TipoCadena),
     TipoCadenaStr:(TipoCadena && TiposCadena) && TiposCadena.find(tipos=>tipos.idTipoCadena===parseInt(TipoCadena))?.tipoCadena,
     tipoArticulo: "roller",
@@ -373,11 +373,10 @@ export const FormRollers = () => {
             }}
             value={MotorRoller}
           >
-            <option value="">Sin motor</option>
             {
               Motores!=null && Motores.map(
                 (motor)=>(
-                  motor.tipo===1 &&
+                  (motor.tipo===1 || motor.tipo===0) &&
                   <option id={motor.idMotor} style={{ textAlign: "center" }} value={motor.idMotor}>
                     {motor.nombre}
                   </option>

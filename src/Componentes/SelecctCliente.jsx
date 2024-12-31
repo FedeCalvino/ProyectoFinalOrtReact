@@ -110,7 +110,7 @@ export const SelecctCliente = React.memo(() => {
 
   return (
     <>
-    <h3 className="text-center mb-3">Crear Cliente</h3>
+    <h3 style={{marginTop:"90px"}} className="text-center mb-3">Crear Cliente</h3>
       <Container
         style={{ display: "flex", justifyContent: "center", gap: "20px" }}
       >

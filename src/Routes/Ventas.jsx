@@ -1,142 +1,236 @@
-import React from 'react'
-import Table from 'react-bootstrap/Table';
-import { useState, useEffect } from 'react';
-import Row from 'react-bootstrap/Row';
-import styled from 'styled-components'
-import Accordion from 'react-bootstrap/Accordion';
-import './Css/Ventas.css';
-import { Loading } from '../Componentes/Loading';
-import { PDFTela } from '../Componentes/PDFTela';
-import { pdf } from "@react-pdf/renderer";
-import Button from "react-bootstrap/Button";
-
+import React, { useState, useEffect, useRef } from "react";
+import { Row, Col, Form, Button, Modal } from "react-bootstrap";
+import { VentaView } from "../Componentes/VentaView";
+import { useDispatch, useSelector } from "react-redux";
+import { setCortinas, setVenta ,selectVenta} from "../Features/VentaViewReucer.js";
+import "./Css/Ventas.css"; // Ensure this CSS file contains your styles
 export const Ventas = () => {
+  const [isLoading, setIsLoading] = useState(false); 
 
-    const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const [SearchText, setSearchText] = useState("");
+  const [Tamano, setTamano] = useState("1");
+  const [Ventas, setVentas] = useState([]);
+  const [VentasTotales, setVentasTotales] = useState([]);
+  const [showModal, setShowModal] = useState(false); 
+  const idVenta = useSelector(selectVenta).IdVenata;
+  let lastDay = "";
+  const [ConfirmDelete, setConfirmDelete] = useState(false);
+  const UrlVentas = "http://localhost:8083/Ventas";
+  const UrlVenta = "http://localhost:8083/Ventas/";
+  const UrlDelete = "/Ventas/Del/";
 
-    const [Venta, setVenta] = useState(null)
-    const [SearchText, setSearchText] = useState("")
-    const [loadingTable, setloadingTable] = useState(true)
-    const [Ventas, setVentas] = useState([])
-    //const Rollers = Venta.listaArticulos.filter(art=>art.tipoArticulo="roller")
-    const UrlVentas = "/VentasEP"
+  const setVentaView = async (Venta) => {
 
+    if (Venta.id != null) {
+      setShowModal(true);
+      setIsLoading(true);
 
-    const FetchVentas = async () => {
-            try {
-                const res = await fetch(UrlVentas)
-                const data = await res.json()
-                setVentas(data.body.reverse());
-                setLoading(false);
-                console.log(data.body);
-            } catch (error) {
-                console.log(error)
-            }
-    };
-    const downloadPDF = async (Ven) => {
-        const blob = await pdf(
-          <PDFTela
-            Venta={Ven}
-          />
-        ).toBlob();
-    
-        // Crear un enlace de descarga
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `${Ven.cliente.nombre} O.C.pdf`;
-    
-        // Simular el clic en el enlace de descarga
-        link.click();
-    
-        // Liberar la URL del objeto
-        URL.revokeObjectURL(link.href);
-        setloadingpdf(false);
-      };
+      try {
+        const res = await fetch(UrlVenta + Venta.id);
+        const data = await res.json();
+        console.log("articulos", data.body.listaArticulos);
 
-    useEffect(() => {
-
-        const fetchData = async () => {
-            try {
-                console.log("entr")
-                await FetchVentas();
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
-  
-    if (loading) {
-        return (
-            <Loading tipo="all" />
-        );
+        dispatch(setCortinas(data.body.listaArticulos));
+        dispatch(setVenta(data.body));
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false); // Desactiva el estado de carga cuando los datos se obtienen
+      }
     }
+  };
+
+  const FetchVentas = async () => {
+    try {
+      const res = await fetch(UrlVentas);
+      const data = await res.json();
+      console.log(data)
+      const sortedData = data.body.sort(
+        (a, b) => new Date(b.fecha) - new Date(a.fecha)
+      );
+      setVentas(sortedData);
+      setVentasTotales(sortedData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    FetchVentas();
+  }, []);
+
+  const MostrarDia = ({ Day }) => {
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const day = String(date.getDate()+ 1).padStart(2, "0"); 
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      return `${day}/${month}`; // Return formatted date
+    };
+
+    let Ok = false;
+    if (lastDay !== Day) {
+      Ok = true;
+      lastDay = Day;
+    }
+
     return (
-        <>
-            <Row className="text-center mt-4 mb-4">
-                <h1 style={{ fontFamily: 'Arial', fontSize: '32px', fontWeight: 'bold', color: '#333' }}>
-                    VENTAS
-                </h1>
-            </Row>
-            {Ventas.length !== 0 ?
-                <Accordion>
-                    {Ventas.map(Ven =>
-                        <>
-                            <Accordion.Item key={Ven.id} eventKey={Ven.id} >
-                                <Accordion.Header key={`header_${Ven.id}`}>
-                                    <div style={{ fontSize: "20px", fontWeight: "bold", whiteSpace: "pre-line" }}>
-                                        {Ven.cliente.nombre}{'\n'} Fecha: {Ven.fecha} {'\n'}{Ven.obra ? Ven.obra : null}
-                                    </div>
-                                </Accordion.Header>
-                                <Accordion.Body >
-                                <Table responsive>
-                                            <thead style={{ justifyContent: "center", fontFamily: 'Arial, sans-serif' }}>
-                                                <tr>
-                                                    <th>Ambiente</th>
-                                                    <th>Ancho</th>
-                                                    <th>Ancho tela</th>
-                                                    <th>Ancho Caño</th>
-                                                    <th>Tubo</th>
-                                                    <th>Alto Cortina</th>
-                                                    <th>Alto Tela</th>
-                                                    <th>Largo Cadena</th>
-                                                    <th>posicion</th>
-                                                    <th>Lado Cadena</th>
-                                                    <th>Tipo Cadena</th>
-                                                    <th>Motorizada</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                              {Ven.listaArticulos.length>0 &&
-                                                Ven.listaArticulos.map(Cor =>
-                                                    <tr key={Cor.idRoller}>
-                                                        <td>{Cor.ambiente}</td>
-                                                        <td>{Cor.ancho}</td>
-                                                        <td>{Cor.AnchoTela}</td>
-                                                        <td>{Cor.AnchoTubo}</td>
-                                                        <td>{Cor.cano.tipo}</td>
-                                                        <td>{Cor.alto}</td>
-                                                        <td>{Cor.AltoTela}</td>
-                                                        <td>{Cor.largoCadena}</td>
-                                                        <td>{Cor.posicion.posicion}</td>
-                                                        <td>{Cor.ladoCadena.lado}</td>
-                                                        <td>{Cor.tipoCadena.tipoCadena}</td>
-                                                        <td>{Cor.motorRoller.nombre}</td>
-                                                    </tr>
-                                                )
-                                              }
-                                            </tbody>
-                                        </Table>
-                                        <Button onClick={()=>downloadPDF(Ven)}>PDF</Button>
-                                </Accordion.Body>
-                            </Accordion.Item>
-                        </>
-                    )}
-                </Accordion> :
-                SearchText.length == 0 ? null : <h1></h1>
-            }
-        </>
+      <>
+        {Ok && (
+          <div className="day-header">
+            <h3>{formatDate(Day)}</h3>
+          </div>
+        )}
+      </>
     );
-}
+  };
+
+  const groupedVentas = Ventas.reduce((acc, venta) => {
+    const dateKey = venta.fecha.split("T")[0]; // Extrae la fecha
+    if (!acc[dateKey]) {
+      acc[dateKey] = [];
+    }
+    acc[dateKey].push(venta);
+    return acc;
+  }, {});
+
+  const FiltrarVentas = () => {
+    if (SearchText.trim()) {
+      const filtered = VentasTotales.filter((venta) =>
+        venta.NombreCliente.toLowerCase().includes(SearchText.toLowerCase())
+      );
+      setVentas(filtered);
+    } else {
+      setVentas(VentasTotales);
+    }
+  };
+
+  useEffect(() => {
+    FiltrarVentas();
+    lastDay = "";
+  }, [SearchText]);
+
+  const handleClose = () => {
+    setConfirmDelete(false)
+    setShowModal(false);
+    setIsLoading(false); // Restablece el estado de carga
+  };
+  const handleDelete = async () => {
+    console.log(idVenta);
+    if (idVenta != null) {
+      const requestOptionsCliente = {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" }
+      };
+      try {
+        const response = await fetch(UrlDelete + idVenta, requestOptionsCliente);
+        if (response.ok) {
+          handleClose();
+          FetchVentas();
+        } else {
+          console.error("Error al eliminar la venta", response.status);
+        }
+      } catch (error) {
+        console.error("Error al realizar la solicitud", error);
+      }
+    }
+  };
+
+  return (
+    <div className="container">
+      <Row style={{ marginTop: "80px" }}>
+        <h1 className="title">VENTAS</h1>
+      </Row>
+        <Row>
+            <Col></Col>
+            <Col>
+      <div className="search-container">
+        <Form.Control
+          type="text"
+          value={SearchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="Buscar por cliente"
+          className="search-input"
+        />
+      </div>
+      </Col>
+      <Col>
+      </Col>
+      </Row>
+
+      <div>
+        {Object.entries(groupedVentas).map(([date, ventasDelDia]) => {
+          const sortedVentasDelDia = ventasDelDia
+            .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+            .reverse();
+
+          return (
+            <React.Fragment key={date}>
+              <MostrarDia Day={date} />
+              {sortedVentasDelDia.map((Ven) => (
+                <div
+                    className={`venta-card${Tamano} shadow-sm p-3 mb-4 bg-white rounded`}
+                  onClick={() => setVentaView(Ven)}
+                  key={Ven.id}
+                >
+                  <Row className="align-items-center">
+                    <Col md={7}>
+                      <div style={{fontSize:"26px"}} className="fw-bold">{Ven.cliente.nombre}</div>
+                      <div className="text-muted">{Ven.obra && Ven.obra}</div>
+                    </Col>    
+                  </Row>
+                </div>
+              ))}
+            </React.Fragment>
+          );
+        })}
+      </div>
+
+      <Modal
+        show={showModal}
+        onHide={handleClose}
+        dialogClassName="custom-modal"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title style={{ textAlign: "center", width: "100%" }}>
+          {isLoading ? null
+          :<>
+            Detalle de la Venta
+            </>
+          }
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {isLoading ? (
+            <div className="text-center">
+            <div
+              className="spinner-border"
+              role="status"
+              style={{ width: "4rem", height: "4rem" }} // Cambia el tamaño aquí
+            >
+              <span className="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+          
+          ) : (
+            <VentaView />
+          )}
+        </Modal.Body>
+        <Modal.Footer className="d-flex justify-content-between">
+          {
+          ConfirmDelete ?
+          <Button style={{background:"red",borderColor:"red"}} onClick={()=>handleDelete()}>
+            Seguro que desea eliminar la orden?
+          </Button>:
+          <Button style={{background:"red",borderColor:"red"}} onClick={()=>setConfirmDelete(true)}>
+          Eliminar
+          </Button>
+          }
+          <Button variant="secondary" onClick={handleClose}>
+            Volver
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+};
