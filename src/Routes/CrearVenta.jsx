@@ -27,7 +27,7 @@ export const CrearVenta = () => {
   const Articulos = useSelector(selectArticulos);
   const [Obra, setObra] = useState("");
   const [FechaInstalacion, setFechaInstalacion] = useState("");
-  const UrlVenta = "http://localhost:8083/Ventas";
+  const UrlVenta = "/VentasEP";
   //const UrlVenta = "/VentasEP"
 
   const ConfirmCrearVenta = async () => {
