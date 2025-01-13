@@ -10,6 +10,8 @@ import { Login } from '../Routes/Login';
 import { Instalaciones } from './Instalaciones';
 import {setRollerConfig} from "../Features/ConfigReducer"
 import {setTelasRollerFeature} from "../Features/TelasReducer"
+import { Ordenes } from '../Routes/Ordenes';
+import { Lotes } from '../Routes/Lotes';
 
 const App = () => {
     
@@ -63,7 +65,7 @@ const App = () => {
 
     const login = async (usuario) => {
         try {
-            const url = `http://localhost:8083/auth/login`;
+            const url = `/LoginEp`;
             console.log(url);
     
             const requestOptions = {
@@ -143,6 +145,19 @@ const App = () => {
                     
                 </Route>
 
+                <Route path='/Lotes' element={
+                    <ProtectedRoute user={User} login={login}>
+                       <Lotes/>
+                    </ProtectedRoute>} >
+                    
+                </Route>
+
+                <Route path='/Ordenes' element={
+                    <ProtectedRoute user={User} login={login}>
+                       <Ordenes/>
+                    </ProtectedRoute>} >
+                    
+                </Route>
             </Routes>
         </>
     );

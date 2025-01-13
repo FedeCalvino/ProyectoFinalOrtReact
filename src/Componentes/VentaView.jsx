@@ -36,7 +36,9 @@ export const VentaView = () => {
   const [NumeroCor, setNumeroCor] = useState(false);
   const [ComentarioVenta, setComentarioVenta] = useState("");
   const [showModal, setShowModal] = useState(false);
+
   const Cortinas = useSelector(selectCortinas);
+
   console.log("Cortinas",Cortinas)
 
   const [loadingTable, setloadingTable] = useState(true);
@@ -64,9 +66,6 @@ export const VentaView = () => {
   const [IzqDer, setIzqDer] = useState("");
   const [AdlAtr, setAdlAtr] = useState("");
 
-  const [AgregarRollerBool, SetAgregarRollerBool] = useState(false);
-
-  const [TelasDelTipo, SetTelasDelTipo] = useState([]);
 
   const UrlAddCor = "/Cortinas/Roller/Add";
   const UrlEditCor = "/Cortinas/Edit";
@@ -169,6 +168,7 @@ export const VentaView = () => {
     return Posiciones.find((pos)=>pos.posicionId===idPos).posicion
   }
   const findNameTipoCadena=(idTipoCadena)=>{return TiposCadenas.find((cad)=>cad.idTipoCadena===idTipoCadena).tipoCadena}
+
   const findTela=(IdTela)=>{
    return TiposTelas.find((Tela)=>Tela.id===IdTela)
   }
@@ -256,22 +256,51 @@ export const VentaView = () => {
     });
   };
 
+  const DescPdf = () => {
+    const datos={
+      fechaInst:Ven.fechaInstalacion,
+      obra:Ven.obra,
+      cliNomb:Ven.cliente.nombre
+    }
 
-  const downloadPDF = async (Ven, CortinasRoller, CortinasTradicional) => {
-    // Generar el documento PDF utilizando la función `pdf`
-    setloadingpdf(true);
-    console.log(ComentarioVenta);
+    const ven = {
+      listaArticulos: [],
+      Datos:datos
+    };
+  
+    Cortinas.forEach((cor) => {
+      // Deep copy of the original `cor` object to avoid modifying the original
+      const newCor = JSON.parse(JSON.stringify(cor));
+  
+      // Modify the properties of `newCor` instead of `cor`
+      const nameMotor = findNameMotor(newCor.MotorRoller.idMotor);
+      console.log("nameMotor",nameMotor)
+      newCor.MotorRoller.nombre = nameMotor;
+      console.log("newCor.MotorRoller.nombre",newCor.MotorRoller.nombre)
+      newCor.TipoCadena.tipoCadena = findNameTipoCadena(newCor.TipoCadena.idTipoCadena);
+      newCor.cano.tipo = findNameCano(newCor.cano.id);
+      newCor.posicion.posicion = findNamePos(newCor.posicion.posicionId);
+      newCor.ladoCadena.lado = findNameLadoCadena(newCor.ladoCadena.ladoId);
+      const telaArt = TiposTelas.find((tela)=>tela.id===newCor.IdTipoTela);
+      newCor.nombreTela=telaArt.nombre
+      newCor.colorTela=telaArt.color
+
+      console.log("ArticuloDesp", newCor);
+  
+      ven.listaArticulos.push(newCor);
+    });
+  
+    downloadPDF(ven);
+  };
+  
+
+  const downloadPDF = async (Ven) => {
     const blob = await pdf(
       <PDFTela
         Venta={Ven}
-        Cortinasroller={CortinasRoller}
-        Cortinastradicional={CortinasTradicional}
-        ComentarioVen={ComentarioVenta}
-        Rieles={Rieles}
       />
     ).toBlob();
 
-    // Crear un enlace de descarga
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `${Ven.NombreCliente} O.C.pdf`;
@@ -281,7 +310,6 @@ export const VentaView = () => {
 
     // Liberar la URL del objeto
     URL.revokeObjectURL(link.href);
-    setloadingpdf(false);
   };
 
   const renderEditableCell = (value, isEditable, onChange) => {
@@ -372,6 +400,7 @@ export const VentaView = () => {
               <Button variant="primary" onClick={() => EditCor()}>
                 Editar
               </Button>
+
             </div>
         </Box>
    
@@ -384,8 +413,9 @@ export const VentaView = () => {
         />
       ) : (
         <>
-          <h1>{Ven.NombreCliente}</h1>
+          <h1>{Ven.cliente.nombre}</h1>
           {Cortinas.length > 0 ? (
+            <>
             <Table responsive bordered>
               <thead
                 style={{
@@ -435,6 +465,10 @@ export const VentaView = () => {
                 ))}
               </tbody>
             </Table>
+                      <Button variant="primary" onClick={DescPdf}>
+                      PDF
+                    </Button>
+                    </>
           ) : (
             <p>No hay cortinas disponibles</p>
           )}

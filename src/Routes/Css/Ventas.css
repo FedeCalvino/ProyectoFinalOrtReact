@@ -108,6 +108,9 @@
     flex-direction: column;
 }
 
+.loadingDiv{
+    height: 100%;
+}
   
 .tamano {
     padding: 10px 15px;
@@ -124,3 +127,72 @@
     color: white; /* Color del texto al pasar el mouse */
     transform: scale(1.05); /* Aumenta ligeramente el tamaño */
 }
+
+.lote-container {
+    margin-bottom: 32px;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+  }
+  
+
+  .lote-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+  }
+  
+
+  .button-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    transition: background-color 0.3s ease;
+  }
+  
+  .volver-btn {
+    background-color: #007bff;
+  }
+  
+  .volver-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .pdf-btn {
+    background-color: #28a745;
+  }
+  
+  .pdf-btn:hover {
+    background-color: #1e7e34;
+  }
+  
+
+  .ordenes-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  
+  .orden-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  

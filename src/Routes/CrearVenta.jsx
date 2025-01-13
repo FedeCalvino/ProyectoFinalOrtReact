@@ -27,8 +27,9 @@ export const CrearVenta = () => {
   const Articulos = useSelector(selectArticulos);
   const [Obra, setObra] = useState("");
   const [FechaInstalacion, setFechaInstalacion] = useState("");
+
   const UrlVenta = "/VentasEP";
-  //const UrlVenta = "/VentasEP"
+  //const UrlVenta = "http://localhost:8083/Ventas"
 
   const ConfirmCrearVenta = async () => {
     setloading(true)
@@ -49,7 +50,6 @@ export const CrearVenta = () => {
       body: JSON.stringify(VentaModel),
     };
     console.log(Articulos)
-    /*
     try {
       const response = await fetch( UrlVenta,requestOptions);
 
@@ -77,7 +77,7 @@ export const CrearVenta = () => {
       setloading(false)
       toast.dismiss(loadingToast)
       AlertaError("Error al realizar la solicitud");
-    }*/
+    }
   };
 
   const AlertaError = ( Mensaje ) => {

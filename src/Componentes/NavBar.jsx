@@ -46,7 +46,16 @@ export const NavBar = ({ logged, onLogout }) => {
                   <div>Crear Venta</div>
                 </div>
               </Nav.Link>
-              
+              <Nav.Link as={Link} to="Lotes" className="nav-link-custom">
+                <div className="nav-item">
+                  <div>Lotes</div>
+                </div>
+              </Nav.Link>
+              <Nav.Link as={Link} to="Ordenes" className="nav-link-custom">
+                <div className="nav-item">
+                  <div>Ordenes</div>
+                </div>
+              </Nav.Link>
             </Nav>
             {logged ? (
               <Button variant='danger' onClick={handleLogout}>LogOut</Button>

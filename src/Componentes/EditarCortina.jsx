@@ -140,12 +140,15 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited, onConfirmEdit }) 
           </tr>
         </tbody>
       </Table>
+      <div>
       <button className="Butooneditable" onClick={handleConfirmEdit}>
         Confirmar
       </button>
       <button className="Butooneditable" onClick={callBackCancel}>
         Cancelar
       </button>
+              
+      </div>
     </>
   );
 };

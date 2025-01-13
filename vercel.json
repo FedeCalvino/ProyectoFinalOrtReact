@@ -21,6 +21,14 @@
       "destination": "http://18.223.172.225:8083/Ventas"
     },
     {
+      "source": "/LoteEp",
+      "destination": "http://localhost:8083/Lote"
+    },
+    {
+      "source": "/LoteFecha/:Fecha",
+      "destination": "http://localhost:8083/Lote/Fecha/:Fecha"
+    },
+    {
       "source": "/InstalacionEP",
       "destination": "http://18.223.172.225:8083/Instalacion"
     },
@@ -43,6 +51,10 @@
     {
       "source": "/TelasEP",
       "destination": "http://18.223.172.225:8083/Telas"
+    },
+    {
+      "source": "/LoginEp",
+      "destination": "http://localhost:8083/auth/login"
     }
   ]
 }
