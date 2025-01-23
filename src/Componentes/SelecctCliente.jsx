@@ -8,6 +8,8 @@ import Container from "react-bootstrap/Container";
 import { useDispatch, useSelector } from "react-redux";
 import { setClienteFeature } from "../Features/ClienteReducer";
 import { selectCliente } from "../Features/ClienteReducer";
+import Modal from "@mui/material/Modal";
+import { ShowClienteSelecc } from "./ShowClienteSelecc";
 
 export const SelecctCliente = React.memo(() => {
   const dispatch = useDispatch();
@@ -24,10 +26,16 @@ export const SelecctCliente = React.memo(() => {
   //SeleccCliente
   const [Tipo, setTipo] = useState("Cliente");
   const [TiposClientes, setTiposClientes] = useState([]);
-  const UrlCLientesLike = "/ClientesEP/";
+  const UrlCLientesLike = "/ClientesEP/Name/";
 
+  const [showModal, setShowModal] = useState(false);
+
+  const [Clienteselecc, setClienteselecc] = useState(null);
   const [SearchText, setSearchText] = useState("");
   const UrlTipoCLientes = "/ConfiguracionEP/TiposCli";
+
+  const handleClose = () => setShowModal(false);
+
   const FetchTipoClientes = async () => {
     try {
       const res = await fetch(UrlTipoCLientes);
@@ -94,23 +102,56 @@ export const SelecctCliente = React.memo(() => {
     setSearchText(e.target.value);
     console.log("entro");
   };
+  const ConfirmSelecc = () => {
+    dispatch(setClienteFeature(Clienteselecc));
+    setShowModal(false);
+  };
 
   const SelecctCliFromList = (Cli) => {
     const NewClienteData = {
       Id: Cli.id,
-      Name: Cli.nombre,
-      Direcc: Cli.direccion,
-      Tel: Cli.numeroTelefono,
-      Rut: Cli.rut,
+      Nombre: Cli.nombre,
+      direccion: Cli.direccion,
+      NumeroTelefono: Cli.numeroTelefono,
+      rut: Cli.rut,
       Tipo: Cli.tipo,
       set: true,
     };
-    dispatch(setClienteFeature(NewClienteData));
+    setClienteselecc(NewClienteData);
+    console.log(NewClienteData);
+    setShowModal(true);
+    //dispatch(setClienteFeature(NewClienteData));
   };
 
   return (
     <>
-    <h3 style={{marginTop:"90px"}} className="text-center mb-3">Crear Cliente</h3>
+      <Modal open={showModal} onClose={handleClose}>
+        <div
+          style={{
+            padding: "20px",
+            background: "white",
+            margin: "100px auto",
+            maxWidth: "400px",
+            borderRadius: "8px",
+          }}
+        >
+          <div>
+            <ShowClienteSelecc Cliente={Clienteselecc} />
+          </div>
+          <div style={{ marginTop: "20px", display:"flex",justifyContent:"space-between" }}>
+            <Button variant="secondary" onClick={handleClose}>
+              Volver
+            </Button>
+            <Button variant="primary" onClick={ConfirmSelecc}>
+              Seleccionar
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <h3 style={{ marginTop: "90px" }} className="text-center mb-3">
+        Crear Cliente
+      </h3>
       <Container
         style={{ display: "flex", justifyContent: "center", gap: "20px" }}
       >

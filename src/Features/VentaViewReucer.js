@@ -4,7 +4,9 @@ const initialState = {
     Venta: {
         Venta: [],
         Cliente: [],
-        Cortinas: []
+        Articulos: [
+
+        ]
     }
 };
 
@@ -21,19 +23,19 @@ export const VentaViewReducer = createSlice({
         setCliente: (state, action) => {
             state.Venta.Cliente = action.payload;
         },
-        setCortinas: (state, action) => {
-            state.Venta.Cortinas = action.payload;
+        setArticulos: (state, action) => {
+            state.Venta.Articulos = action.payload;
         },
     }
 });
 
 // Exporting actions
-export const { setVentaFeature, setVenta, setCliente, setCortinas } = VentaViewReducer.actions;
+export const { setVentaFeature, setVenta, setCliente, setArticulos } = VentaViewReducer.actions;
 
 // Selectors for each state
 export const selectVenta = (state) => state.Venta.Venta.Venta;
 export const selectCliente = (state) => state.Venta.Cliente;
-export const selectCortinas = (state) => state.Venta.Venta.Cortinas;
+export const selectArticulos= (state) => state.Venta.Venta.Articulos;
 
 // Export the reducer
 export default VentaViewReducer.reducer;

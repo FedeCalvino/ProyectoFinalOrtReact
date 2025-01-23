@@ -8,8 +8,8 @@ import { Ventas } from '../Routes/Ventas';
 import "../Routes/Css/App.css"
 import { Login } from '../Routes/Login';
 import { Instalaciones } from './Instalaciones';
-import {setRollerConfig} from "../Features/ConfigReducer"
-import {setTelasRollerFeature} from "../Features/TelasReducer"
+import {setRollerConfig,setRielConfig} from "../Features/ConfigReducer"
+import {setTelasRollerFeature,setTelasTradicionalFeature} from "../Features/TelasReducer"
 import { Ordenes } from '../Routes/Ordenes';
 import { Lotes } from '../Routes/Lotes';
 
@@ -51,11 +51,17 @@ const App = () => {
       const fetchData = async () => {
         const config = await fetchRollerConf();
         const telas = await fetchTelas();
+        console.log("telas",telas)
         const TelasRoller = telas.filter(tela=>tela.tipo===1)
+        console.log("TelasRoller",TelasRoller)
+        const TelasTradi = telas.filter(tela=>tela.tipo===2)
+        console.log("TelasTradi",TelasTradi)
         if (config) {
           console.log("config",config)
-          dispatch(setRollerConfig(config)); 
-          console.log(TelasRoller)
+
+          dispatch(setRollerConfig(config.configuracionRoller)); 
+          dispatch(setRielConfig(config.configuracionRiel)); 
+          dispatch(setTelasTradicionalFeature(TelasTradi));
           dispatch(setTelasRollerFeature(TelasRoller))
         }
       };

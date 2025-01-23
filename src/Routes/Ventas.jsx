@@ -3,13 +3,13 @@ import { Row, Col, Form, Button, Modal } from "react-bootstrap";
 import { VentaView } from "../Componentes/VentaView";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setCortinas,
+  setArticulos,
   setVenta,
   selectVenta,
 } from "../Features/VentaViewReucer.js";
 import "./Css/Ventas.css";
 import { pdf } from "@react-pdf/renderer";
-import { PDFTela } from "../Componentes/PDFTela";
+import { OrdenProduccion } from "../Componentes/OrdenProduccion.jsx";
 
 export const Ventas = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +37,7 @@ export const Ventas = () => {
         const data = await res.json();
         console.log("articulos", data.body.listaArticulos);
         console.log(data.body)
-        dispatch(setCortinas(data.body.listaArticulos));
+        dispatch(setArticulos(data.body.listaArticulos));
         dispatch(setVenta(data.body));
       } catch (error) {
         console.log(error);
@@ -45,23 +45,6 @@ export const Ventas = () => {
         setIsLoading(false);
       }
     }
-  };
-
-  const downloadPDF = async () => {
-    // Generar el documento PDF utilizando la función `pdf`
-    setloadingpdf(true);
-    console.log(ComentarioVenta);
-    const blob = await pdf(<PDFTela Venta={Ven} />).toBlob();
-
-    // Crear un enlace de descarga
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `${Ven.NombreCliente} O.C.pdf`;
-
-    link.click();
-
-    URL.revokeObjectURL(link.href);
-    setloadingpdf(false);
   };
 
   const FetchVentas = async () => {

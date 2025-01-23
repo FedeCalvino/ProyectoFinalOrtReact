@@ -32,6 +32,7 @@ const ArticulosReducer = createSlice({
             });
             state.Indice--; // Reduce the index once
         },
+
         removeAllArticulos: (state) => {
             state.Articulos = []
             state.Indice=0; 

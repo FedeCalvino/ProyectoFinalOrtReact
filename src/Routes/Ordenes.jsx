@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { OrdenCard } from "../Componentes/OrdenCard";
 import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
-import { PDFTela } from "../Componentes/PDFTela";
+import { OrdenProduccion } from "../Componentes/OrdenProduccion";
 import { Button } from "react-bootstrap";
 import { pdf } from "@react-pdf/renderer";
-import { selectRollerConfig } from "../Features/ConfigReducer";
+import { selectRollerConfig ,selectConfigRiel} from "../Features/ConfigReducer";
 import { useSelector } from "react-redux";
 import { Loading } from "../Componentes/Loading";
 import { Row, Col, Modal } from "react-bootstrap";
@@ -31,6 +31,18 @@ export const Ordenes = () => {
   const TiposCadenas = ConfigRoller.tiposCadena;
   const [lote, setlote] = useState(null);
 
+  const ConfigRiel = useSelector(selectConfigRiel);
+
+  const ladosAcumula = ConfigRiel.ladoAcumula || []; 
+  const tipos = ConfigRiel.tipos || [];
+
+  const findNameladoAcumula = (idLado) => {
+    return ladosAcumula.find((acc)=>acc.ladoAcumulaId===parseInt(idLado)).nombre;
+  };
+  const findNameTipoRiel = (id_tipo) => {
+    return tipos.find((tipo)=>tipo.tipoId===parseInt(id_tipo)).tipo;
+  };
+
 
   const findNameCano = (idCano) => {
     return CanosRoller.find((cano) => cano.id === idCano).tipo;
@@ -50,11 +62,12 @@ export const Ordenes = () => {
   };
   const TiposTelas = useSelector(selectTelasRoller);
 
+
   const fetchData = async () => {
     try {
       setLoding(true);
       console.log("se hace el fetch")
-      const data = await fetch("/LoteFecha/" + Fecha);
+      const data = await fetch("http://localhost:8083/Lote/Fecha/" + Fecha);
       const response = await data.json();
       setlotes(response.body);
       console.log("dataa", response.body);
@@ -66,7 +79,7 @@ export const Ordenes = () => {
   };
 
   const downloadPDF = async (Ventas) => {
-    const blob = await pdf(<PDFTela Venta={Ventas} />).toBlob();
+    const blob = await pdf(<OrdenProduccion Venta={Ventas} />).toBlob();
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `${Ventas.Datos.cliNomb || "Reporte"}_O.C.pdf`;
@@ -84,6 +97,7 @@ export const Ordenes = () => {
   
       const listaArticulos = vent.ordenes.map((ord) => {
         const Articulo = ord.articulo;
+        if(Articulo.nombre==="Roller"){
         Articulo.MotorRoller.nombre = findNameMotor(Articulo.MotorRoller.idMotor);
         Articulo.TipoCadena.tipoCadena = findNameTipoCadena(Articulo.TipoCadena.idTipoCadena);
         Articulo.cano.tipo = findNameCano(Articulo.cano.id);
@@ -92,6 +106,11 @@ export const Ordenes = () => {
         const telaArt = TiposTelas.find((tela)=>tela.id===Articulo.IdTipoTela);
         Articulo.nombreTela=telaArt.nombre
         Articulo.colorTela=telaArt.color
+        }
+        if(Articulo.nombre==="Riel"){
+          Articulo.ladoAcumula.nombre=findNameladoAcumula(Articulo.ladoAcumula.ladoAcumulaId)
+          Articulo.tipoRiel.tipo=findNameTipoRiel(Articulo.tipoRiel.tipoId)
+        }
         return Articulo;
       });
   

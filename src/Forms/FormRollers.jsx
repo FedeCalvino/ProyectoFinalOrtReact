@@ -5,24 +5,24 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
-import "../Routes/Css/CrearVenta.css";
+
 import { useDispatch, useSelector } from "react-redux";
 import { selectTelasRoller, selectTelas } from "../Features/TelasReducer";
 import { addArticulo } from "../Features/ArticulosReducer";
 import { TableRollers } from "../Tables/TableRollers";
 import { GoCheckCircle } from "react-icons/go";
 import { selectRollerConfig } from "../Features/ConfigReducer";
+import { TablaArticulos } from "../Tables/TablaArticulos";
 
 export const FormRollers = () => {
   const ConfigRoller = useSelector(selectRollerConfig);
-  console.log("ConfigRoller", ConfigRoller);
   //opciones de roller
   const CanosRoller = ConfigRoller.canos;
   const LadosCadenas = ConfigRoller.ladosCadena;
-  console.log("LadosCadenas",LadosCadenas)
   const Motores = ConfigRoller.motores;
   const Posicion = ConfigRoller.posiciones;
   const TiposCadena = ConfigRoller.tiposCadena;
+  const soportes = ConfigRoller.soportes;
 
   console.log("Posicion",Posicion)
   console.log("CanosRoller", CanosRoller);
@@ -37,6 +37,7 @@ export const FormRollers = () => {
   const [CanoRoller, setCanoRoller] = useState("");
   const [MotorRoller, setMotorRoller] = useState("1");
   const [TipoCadena, setTipoCadena] = useState("1");
+  const [TipoSoporte, setTipoSoporte] = useState("5");
   const [LadoCadenaRoller, setLadoCadenaRoller] = useState("");
   const [PosicionRoller, setPosicionRoller] = useState("");
   const [selectedColorRoler, setselectedColorRoler] = useState("");
@@ -56,7 +57,10 @@ export const FormRollers = () => {
       NombreTelas.push(tela);
     }
   });
-
+  const soporteObj={
+    idTipo:TipoSoporte,
+    cantidad:2
+  }  
   const nuevaCortinaRoler = {
     Ambiente: selectedAreaRoler,
     IdTipoTela: selectedTelaRoler.id,
@@ -73,6 +77,7 @@ export const FormRollers = () => {
     TelaNombre: selectedTelaRoler.nombre + " " + selectedTelaRoler.color,
     cadena:parseInt(TipoCadena),
     TipoCadenaStr:(TipoCadena && TiposCadena) && TiposCadena.find(tipos=>tipos.idTipoCadena===parseInt(TipoCadena))?.tipoCadena,
+    soporte:soporteObj,
     tipoArticulo: "roller",
     nombre: "Roller",
   };
@@ -115,339 +120,243 @@ export const FormRollers = () => {
     dispatch(addArticulo(nuevaCortinaRoler));
   }
 
+  const rowStyle = {
+    marginBottom: "15px",
+    height:"30px"
+  };
+
+  const inputStyle = {
+    textAlign: "center",
+    width: "300px"
+  };
+
+  const labelStyle = {
+    marginRight: "15px",
+    width: "100px",
+    marginTop:"10px",
+    textAlign: "right"
+  };
+
   return (
-    <>
-      <Row>
-        <Form.Group as={Col} md="1" style={{ width: "11%" }} noValidate>
-          <Form.Label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Ambiente
-          </Form.Label>
-          <Form.Control
-            type="text"
-            style={{ textAlign: "center" }}
-            value={selectedAreaRoler}
-            onChange={(e) => {
-              SetselectedAreaRoler(e.target.value);
-            }}
-            placeholder="Ambiente"
-          />
-        </Form.Group>
-        <Form.Group as={Col} md="1" style={{ width: "11%" }} noValidate>
-          <Form.Label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Tela
-          </Form.Label>
-          <Form.Select
-            as={Col}
-            md="1"
-            aria-label="Default select example"
-            onChange={handleSelectChange}
-            value={selectedTelaMostrarRoler}
-          >
-            <option style={{ textAlign: "center" }}></option>
-            {Array.isArray(NombreTelas) &&
-              NombreTelas.map((Tel) => (
-                <option
-                  style={{ textAlign: "center" }}
-                  value={Tel.id}
-                  key={Tel.id}
-                >
-                  {Tel.nombre}
-                </option>
-              ))}
-          </Form.Select>
-        </Form.Group>
-        <Form.Group as={Col} md="1" style={{ width: "11%" }} noValidate>
-          <Form.Label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Color
-          </Form.Label>
-          <Form.Select
-            as={Col}
-            md="1"
-            aria-label="Default select example"
-            onChange={handleSelectTela}
-            value={selectedColorRoler}
-          >
-            <option style={{ textAlign: "center" }}></option>
-            {TelasDelTipo.map((Tel) => (
-              <option
-                style={{ textAlign: "center" }}
-                value={Tel.id}
-                key={Tel.id}
-              >
-                {Tel.color}
+    <div className="p-4">
+
+    {/* Ambiente */}
+    <Row style={rowStyle}>
+      <div style={{display: "flex", alignItems: "center"}}>
+        <p style={labelStyle}>Ambiente</p>
+        <Form.Control
+          type="text"
+          style={inputStyle}
+          value={selectedAreaRoler}
+          onChange={(e) => SetselectedAreaRoler(e.target.value)}
+          placeholder="Ambiente"
+        />
+      </div>
+    </Row>
+
+    {/* Tela */}
+    <Row style={rowStyle}>
+      <div style={{display: "flex", alignItems: "center"}}>
+        <p style={labelStyle}>Tela</p>
+        <Form.Control
+          as="select"
+          style={inputStyle}
+          value={selectedTelaMostrarRoler}
+          onChange={handleSelectChange}
+        >
+          <option value=""></option>
+          {Array.isArray(NombreTelas) && NombreTelas.map((Tel) => (
+            <option key={Tel.id} value={Tel.id}>
+              {Tel.nombre}
+            </option>
+          ))}
+        </Form.Control>
+      </div>
+    </Row>
+
+    {/* Color */}
+    <Row style={rowStyle}>
+      <div style={{display: "flex", alignItems: "center"}}>
+        <p style={labelStyle}>Color</p>
+        <Form.Control
+          as="select"
+          style={inputStyle}
+          value={selectedColorRoler}
+          onChange={handleSelectTela}
+        >
+          <option value=""></option>
+          {TelasDelTipo.map((Tel) => (
+            <option key={Tel.id} value={Tel.id}>
+              {Tel.color}
+            </option>
+          ))}
+        </Form.Control>
+      </div>
+    </Row>
+
+    {/* Ancho */}
+    <Row style={rowStyle}>
+      <div style={{display: "flex", alignItems: "center"}}>
+        <p style={labelStyle}>Ancho</p>
+        <Form.Control
+          type="number"
+          style={inputStyle}
+          value={AnchoRoller}
+          onChange={(e) => setAnchoRoller(e.target.value)}
+          placeholder="Ancho"
+        />
+      </div>
+    </Row>
+
+    {/* Largo */}
+    <Row style={rowStyle}>
+      <div style={{display: "flex", alignItems: "center"}}>
+        <p style={labelStyle}>Largo</p>
+        <Form.Control
+          type="number"
+          style={inputStyle}
+          value={LargoRoller}
+          onChange={(e) => setLargoRoller(e.target.value)}
+          placeholder="Largo"
+        />
+      </div>
+    </Row>
+
+    {/* Posicion */}
+    <Row style={rowStyle}>
+      <div style={{display: "flex", alignItems: "center"}}>
+        <p style={labelStyle}>Posicion</p>
+        <Form.Control
+          as="select"
+          style={inputStyle}
+          value={PosicionRoller}
+          onChange={(e) => setPosicionRoller(e.target.value)}
+        >
+          <option value=""></option>
+          {Posicion?.map((pos) => (
+            <option key={pos.posicionId} value={pos.posicionId}>
+              {pos.posicion}
+            </option>
+          ))}
+        </Form.Control>
+      </div>
+    </Row>
+
+    {/* Lado Cadena */}
+    <Row style={rowStyle}>
+      <div style={{display: "flex", alignItems: "center"}}>
+        <p style={labelStyle}>Lado Cadena</p>
+        <Form.Control
+          as="select"
+          style={inputStyle}
+          value={LadoCadenaRoller}
+          onChange={(e) => setLadoCadenaRoller(e.target.value)}
+        >
+          <option value=""></option>
+          {LadosCadenas?.map((lado) => (
+            <option key={lado.ladoId} value={lado.ladoId}>
+              {lado.lado}
+            </option>
+          ))}
+        </Form.Control>
+      </div>
+    </Row>
+
+    {/* Caño */}
+    <Row style={rowStyle}>
+      <div style={{display: "flex", alignItems: "center"}}>
+        <p style={labelStyle}>Caño</p>
+        <Form.Control
+          as="select"
+          style={inputStyle}
+          value={CanoRoller}
+          onChange={(e) => setCanoRoller(e.target.value)}
+        >
+          <option value=""></option>
+          {CanosRoller?.map((cano) => (
+            <option key={cano.id} value={cano.id}>
+              {cano.tipo}
+            </option>
+          ))}
+        </Form.Control>
+      </div>
+    </Row>
+
+    {/* Motores */}
+    <Row style={rowStyle}>
+      <div style={{display: "flex", alignItems: "center"}}>
+        <p style={labelStyle}>Motores</p>
+        <Form.Control
+          as="select"
+          style={inputStyle}
+          value={MotorRoller}
+          onChange={(e) => setMotorRoller(e.target.value)}
+        >
+          <option value=""></option>
+          {Motores?.map((motor) => (
+            (motor.tipo === 1 || motor.tipo === 0) && (
+              <option key={motor.idMotor} value={motor.idMotor}>
+                {motor.nombre}
               </option>
-            ))}
-          </Form.Select>
-        </Form.Group>
-        <Form.Group as={Col} md="1" style={{ width: "10%" }} noValidate>
-          <Form.Label
-            style={{
-              alignItems: "center",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            Ancho
-          </Form.Label>
-          <Form.Control
-            type="number"
-            style={{ textAlign: "center" }}
-            value={AnchoRoller}
-            onChange={(e) => {
-              setAnchoRoller(e.target.value);
-            }}
-            placeholder="Ancho"
-          />
-        </Form.Group>
-        <Form.Group
-          style={{ width: "2%" }}
-          as={Col}
-          md="1"
-          controlId="validationCustom01"
+            )
+          ))}
+        </Form.Control>
+      </div>
+    </Row>
+
+    {/* Tipo Cadena */}
+    <Row style={rowStyle}>
+      <div style={{display: "flex", alignItems: "center"}}>
+        <p style={labelStyle}>Tipo Cadena</p>
+        <Form.Control
+          as="select"
+          style={inputStyle}
+          value={TipoCadena}
+          onChange={(e) => setTipoCadena(e.target.value)}
         >
-          <p style={{ marginTop: "38px", marginRight: "10px" }}>X</p>
-        </Form.Group>
-        <Form.Group
-          as={Col}
-          md="1"
-          controlId="validationCustom01"
-          style={{ width: "10%" }}
-          noValidate
+          <option value=""></option>
+          {TiposCadena?.map((tipoCadena) => (
+            <option key={tipoCadena.idTipoCadena} value={tipoCadena.idTipoCadena}>
+              {tipoCadena.tipoCadena}
+            </option>
+          ))}
+        </Form.Control>
+      </div>
+    </Row>
+
+    <Row style={rowStyle}>
+      <div style={{display: "flex", alignItems: "center"}}>
+        <p style={labelStyle}>Soportes</p>
+        <Form.Control
+          as="select"
+          style={inputStyle}
+          value={TipoSoporte}
+          onChange={(e) => setTipoSoporte(e.target.value)}
         >
-          <Form.Label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Largo
-          </Form.Label>
-          <Form.Control
-            type="number"
-            value={LargoRoller}
-            style={{ textAlign: "center" }}
-            onChange={(e) => {
-              setLargoRoller(e.target.value);
-            }}
-            placeholder="Largo"
-          />
-        </Form.Group>
-        <Form.Group
-          as={Col}
-          md="1"
-          style={{ width: "11%" }}
-          controlId="validationCustom01"
-          noValidate
+          {soportes?.map((soporte) => (
+            <option key={soporte.idTipoSoporte} value={soporte.idTipoSoporte}>
+              {soporte.nombre}
+            </option>
+          ))}
+        </Form.Control>
+      </div>
+    </Row>
+
+    {/* Button */}
+    <Row className="mt-4">
+      <div style={{display: "flex", justifyContent: "center"}}>
+        <Button
+          style={{
+            width: "200px",
+            height: "45px"
+          }}
+          onClick={AgregarRoller}
         >
-          <Form.Label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Posicion
-          </Form.Label>
-          <Form.Select
-            as={Col}
-            md="2"
-            aria-label="Default select example"
-            onChange={(e) => {
-              setPosicionRoller(e.target.value);
-            }}
-            value={PosicionRoller}
-          >
-            <option style={{ textAlign: "center" }} value=""></option>
-            {
-             Posicion!=null && Posicion.map(
-                (pos)=>(
-                  (
-                    <option id={pos.posicionId} style={{ textAlign: "center" }} value={pos.posicionId}>
-                      {pos.posicion}
-                    </option>
-                  )
-                )
-              )
-            }
-          </Form.Select>
-        </Form.Group>
-        <Form.Group as={Col} md="1" controlId="validationCustom01" noValidate>
-          <Form.Label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Lado Cadena
-          </Form.Label>
-          <Form.Select
-            as={Col}
-            md="1"
-            aria-label="Default select example"
-            onChange={(e) => {
-              setLadoCadenaRoller(e.target.value);
-            }}
-            value={LadoCadenaRoller}
-          >
-            <option style={{ textAlign: "center" }} value=""></option>
-            {LadosCadenas != null &&
-              LadosCadenas.map((lado) => (
-                <option
-                  key={lado.ladoId}
-                  style={{ textAlign: "center" }}
-                  id={lado.ladoId}
-                  value={lado.ladoId}
-                >
-                  {lado.lado}
-                </option>
-              ))}
-          </Form.Select>
-        </Form.Group>
-        <Form.Group as={Col} md="1" controlId="validationCustom01" noValidate>
-          <Form.Label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Caño
-          </Form.Label>
-          <Form.Select
-            as={Col}
-            md="1"
-            aria-label="Default select example"
-            onChange={(e) => {
-              setCanoRoller(e.target.value);
-            }}
-            value={CanoRoller}
-          >
-            <option value=""></option>
-            {
-              CanosRoller!=null && CanosRoller.map(
-                (cano)=>(
-                  <option id={cano.id} style={{ textAlign: "center" }} value={cano.id}>
-                    {cano.tipo}
-                  </option>
-                )
-              )
-            }
-          </Form.Select>
-        </Form.Group>
-        <Form.Group as={Col} md="2" controlId="validationCustom01" noValidate>
-          <Form.Label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Motores
-          </Form.Label>
-          <Form.Select
-            as={Col}
-            md="1"
-            aria-label="Default select example"
-            onChange={(e) => {
-              setMotorRoller(e.target.value);
-            }}
-            value={MotorRoller}
-          >
-            {
-              Motores!=null && Motores.map(
-                (motor)=>(
-                  (motor.tipo===1 || motor.tipo===0) &&
-                  <option id={motor.idMotor} style={{ textAlign: "center" }} value={motor.idMotor}>
-                    {motor.nombre}
-                  </option>
-                )
-              )
-            }
-          </Form.Select>
-        </Form.Group>
-      </Row>
-      <Row style={{ marginTop: "1em" }}>
-      <Form.Group as={Col} md="2" controlId="validationCustom01" noValidate>
-          <Form.Label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Tipo Cadena
-          </Form.Label>
-          <Form.Select
-            as={Col}
-            md="2"
-            aria-label="Default select example"
-            onChange={(e) => {
-              setTipoCadena(e.target.value);
-            }}
-            style={{marginBottom:"20px"}}
-            value={TipoCadena}
-          >
-            {
-              TiposCadena!=null && TiposCadena.map(
-                (tipoCadena)=>(
-                  <option id={tipoCadena.tipoCadena} style={{ textAlign: "center" }} value={tipoCadena.idTipoCadena}>
-                    {tipoCadena.tipoCadena}
-                  </option>
-                )
-              )
-            }
-          </Form.Select>
-        </Form.Group>
-        <Form.Group controlId="validationCustom01">
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center", // Align items vertically in the center
-            }}
-          >
-            <Button
-              style={{
-                justifyContent: "center",
-                textAlign: "center",
-                marginRight: "1em",
-                height: "45px",
-                marginLeft: "20px",
-                width: "200px",
-              }}
-              type="submit"
-              as={Col}
-              md="auto"
-              onClick={AgregarRoller}
-            >
-              Agregar Roller
-            </Button>
-            {AlertaCorAdd && <AlertaCorA />}
-          </div>
-        </Form.Group>
-      </Row>
-      <Row>
-        <TableRollers />
-      </Row>
-    </>
+          Agregar Roller
+        </Button>
+        {AlertaCorAdd && <AlertaCorA />}
+      </div>
+    </Row>
+  </div>
   );
 };

@@ -18,43 +18,47 @@
     },
     {
       "source": "/VentasEP",
-      "destination": "http://18.223.172.225:8083/Ventas"
+      "destination": "http://200.40.89.254:8086/Ventas"
     },
     {
       "source": "/LoteEp",
-      "destination": "http://localhost:8083/Lote"
+      "destination": "http://200.40.89.254:8086/Lote"
     },
     {
       "source": "/LoteFecha/:Fecha",
-      "destination": "http://localhost:8083/Lote/Fecha/:Fecha"
+      "destination": "http://200.40.89.254:8086/Lote/Fecha/:Fecha"
     },
     {
       "source": "/InstalacionEP",
-      "destination": "http://18.223.172.225:8083/Instalacion"
+      "destination": "http://200.40.89.254:8086/Instalacion"
     },
     {
       "source": "/ClientesEP",
-      "destination": "http://18.223.172.225:8083/Cliente"
+      "destination": "http://200.40.89.254:8086/Cliente"
     },
     {
       "source": "/ClientesEP/:Name",
-      "destination": "http://18.223.172.225:8083/Cliente/Name/:Name"
+      "destination": "http://200.40.89.254:8086/Cliente/Name/:Name"
     },
     {
       "source": "/ConfiguracionEP/TiposCli",
-      "destination": "http://18.223.172.225:8083/Conf/TiposCli"
+      "destination": "http://200.40.89.254:8086/Conf/TiposCli"
     },
     {
       "source": "/ConfiguracionEP",
-      "destination": "http://18.223.172.225:8083/Conf"
+      "destination": "http://200.40.89.254:8086/Conf"
     },
     {
       "source": "/TelasEP",
-      "destination": "http://18.223.172.225:8083/Telas"
+      "destination": "http://200.40.89.254:8086/Telas"
     },
     {
       "source": "/LoginEp",
-      "destination": "http://localhost:8083/auth/login"
+      "destination": "http://200.40.89.254:8086/auth/login"
+    },
+    {
+      "source": "/OrdenEp",
+      "destination": "http://localhost:8086/Orden"
     }
   ]
 }

@@ -73,8 +73,9 @@ export const Lotes = () => {
 
     const fetchDataLotes = async () => {
       try {
-        const data = await fetch("http://localhost:8083/Lote");
+        const data = await fetch("/LoteEp");
         const response = await data.json();
+        console.log("response",response)
         setLotes(response.body);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -159,7 +160,7 @@ export const Lotes = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8083/Lote/" + LoteClick,
+        "/LoteEp" + LoteClick,
         requestOptions
       );
 
@@ -178,7 +179,7 @@ export const Lotes = () => {
         setLotes(newLotes);
         setLoteClick(null);
         toast.success("Eliminado");
-        const response = await fetch("http://localhost:8083/Ventas/Mensaje");
+        const response = await fetch("/VentasEP/Mensaje");
         toast.dismiss(loadingToast);
       } else {
         console.log("error");
@@ -205,7 +206,7 @@ export const Lotes = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8083/Lote",
+        "/LoteEp",
         requestOptions
       );
       const result = await response.json();
@@ -214,7 +215,7 @@ export const Lotes = () => {
         throw new Error(result.message);
       } else {
         console.log("mensaje");
-        const response = await fetch("http://localhost:8083/Ventas/Mensaje");
+        const response = await fetch("/VentasEP/Mensaje");
         toast.success("Lote agregado");
       }
       const newLotes = Lotes
