@@ -23,8 +23,8 @@ export const Ventas = () => {
   const idVenta = useSelector(selectVenta).IdVenata;
   let lastDay = "";
   const [ConfirmDelete, setConfirmDelete] = useState(false);
-  const UrlVentas = "/VentasEp";
-  const UrlVenta = "/VentasEp/";
+  const UrlVentas = "/VentasEP";
+  const UrlVenta = "/VentasEP/";
   const UrlDelete = "/Ventas/Del/";
 
   const setVentaView = async (Venta) => {
