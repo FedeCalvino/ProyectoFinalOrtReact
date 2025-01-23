@@ -33,7 +33,7 @@ export const Ventas = () => {
       setIsLoading(true);
 
       try {
-        const res = await fetch(UrlVenta + Venta.id);
+        const res = await fetch("/VentasEP/" + Venta.id);
         const data = await res.json();
         console.log("articulos", data.body.listaArticulos);
         console.log(data.body)

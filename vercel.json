@@ -17,8 +17,8 @@
       "destination": "/index.html"
     },
     {
-      "source": "/VentasEP",
-      "destination": "http://200.40.89.254:8086/Ventas"
+      "source": "/VentasEP/:path*",
+      "destination": "http://200.40.89.254:8086/Ventas/:path*"
     },
     {
       "source": "/LoteEp",
