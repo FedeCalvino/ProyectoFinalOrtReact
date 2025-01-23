@@ -21,6 +21,16 @@ export const FormularioInstalacion = ({ Venta, callBackVolver }) => {
     setFechaInstalacion(DateOk);
   };
 
+  const disabledHours = () => {
+    const hours = [];
+    for (let i = 0; i < 24; i++) {
+      if (i < 8 || i > 19) {
+        hours.push(i);
+      }
+    }
+    return hours;
+  };
+
   const CrearInstalacion = () => {
     try {
       const fecha = fechaInstalacion;
@@ -37,7 +47,6 @@ export const FormularioInstalacion = ({ Venta, callBackVolver }) => {
 
       const comienzoHora = segundosAHora(ComienzoHoras);
       const finHora = segundosAHora(FinHoras);
-
 
       const startDatetime = `${fecha}T${comienzoHora}`;
       const endDatetime = `${fecha}T${finHora}`;
@@ -117,6 +126,7 @@ export const FormularioInstalacion = ({ Venta, callBackVolver }) => {
               marginBottom: "10px",
               color: "#555",
             }}
+            disabledHours={disabledHours}
           >
             Fecha
           </Form.Label>
@@ -131,6 +141,7 @@ export const FormularioInstalacion = ({ Venta, callBackVolver }) => {
               width: "200px",
               border: "1px solid #ddd",
             }}
+            disabledHours={disabledHours}
           />
         </Form.Group>
       </Row>

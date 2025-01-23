@@ -24,8 +24,8 @@
       "destination": "http://200.40.89.254:8086/Ventas/:path*"
     },
     {
-      "source": "/LoteEp",
-      "destination": "http://200.40.89.254:8086/Lote"
+      "source": "/LoteEp/:path*",
+      "destination": "http://200.40.89.254:8086/Lote/:path*"
     },
     {
       "source": "/LoteFecha/:Fecha",

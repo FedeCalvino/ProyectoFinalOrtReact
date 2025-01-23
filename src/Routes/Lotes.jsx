@@ -19,7 +19,7 @@ export const Lotes = () => {
   const [Ordenes, setOrdenes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [Modal, setModal] = useState(false);
-  const UrlVenta = "/VentasEP/Wordenes";
+  const UrlVenta = "/VentasEp/Wordenes";
 
   const AlertaError = (Mensaje) => {
     console.log(Mensaje);
@@ -105,9 +105,13 @@ export const Lotes = () => {
   };
 
   const formatDate = (dateString) => {
+    console.log("dateString",dateString)
     const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
+    console.log("date",date)
+    const day = String(date.getDate()+1).padStart(2, "0");
+    console.log("day",day)
     const month = String(date.getMonth() + 1).padStart(2, "0");
+    console.log("month",month)
     return `${day}/${month}`;
   };
 
@@ -160,7 +164,7 @@ export const Lotes = () => {
 
     try {
       const response = await fetch(
-        "/LoteEp" + LoteClick,
+        "LoteEp/" + LoteClick,
         requestOptions
       );
 
@@ -179,7 +183,7 @@ export const Lotes = () => {
         setLotes(newLotes);
         setLoteClick(null);
         toast.success("Eliminado");
-        const response = await fetch("/VentasEP/Mensaje");
+        const response = await fetch("/VentasEp/Mensaje");
         toast.dismiss(loadingToast);
       } else {
         console.log("error");
@@ -197,7 +201,6 @@ export const Lotes = () => {
     const loadingToast = toast.loading("Cargando...");
 
     console.log("ObjLote", ObjLote);
-
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -215,7 +218,7 @@ export const Lotes = () => {
         throw new Error(result.message);
       } else {
         console.log("mensaje");
-        const response = await fetch("/VentasEP/Mensaje");
+        const response = await fetch("/VentasEp/Mensaje");
         toast.success("Lote agregado");
       }
       const newLotes = Lotes
@@ -257,6 +260,7 @@ export const Lotes = () => {
         Pasos = Pasos.concat(ord.pasos);
       }
     });
+    console.log("destination.droppableId",destination.droppableId)
     let newFechaComienzo = null;
     if (destination.droppableId === "hoy") {
       newFechaComienzo = new Date();
@@ -267,9 +271,9 @@ export const Lotes = () => {
 
     const offset = localDate.getTimezoneOffset();
     localDate.setMinutes(localDate.getMinutes() - offset);
-
+    console.log("newFechaComienzo",newFechaComienzo)
     let newDate = new Date(newFechaComienzo);
-
+    console.log("newDate",newDate)
     let newFechaComienzoSuma = newDate.toISOString().split("T")[0];
 
     const ObjLote = {
