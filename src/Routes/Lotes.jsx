@@ -273,7 +273,7 @@ export const Lotes = () => {
 
     newDate.setDate(date.getDate() - 1);
     
-    let newFechaComienzoRestada = date.toISOString().split("T")[0];
+    let newFechaComienzoRestada = newDate.toISOString().split("T")[0];
     
 
     const ObjLote = {
