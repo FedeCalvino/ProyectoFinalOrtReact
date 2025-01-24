@@ -271,7 +271,7 @@ export const Lotes = () => {
     localDate.setMinutes(localDate.getMinutes() - offset);
     let newDate = new Date(newFechaComienzo);
 
-    newDate.setDate(date.getDate() - 1);
+    newDate.setDate(newDate.getDate() - 1);
     
     let newFechaComienzoRestada = newDate.toISOString().split("T")[0];
     
