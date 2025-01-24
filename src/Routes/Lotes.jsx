@@ -270,16 +270,20 @@ export const Lotes = () => {
     const offset = localDate.getTimezoneOffset();
     localDate.setMinutes(localDate.getMinutes() - offset);
     let newDate = new Date(newFechaComienzo);
-    let newFechaComienzoSuma = newDate.toISOString().split("T")[0];
+
+    newDate.setDate(date.getDate() - 1);
+    
+    let newFechaComienzoRestada = date.toISOString().split("T")[0];
+    
 
     const ObjLote = {
       PasosOrdenes: Pasos,
       Nombre: Venta.cliente.nombre,
-      fecha: newFechaComienzoSuma,
+      fecha: newFechaComienzoRestada,
     };
 
     if (destination.droppableId !== "sin-fecha") {
-      Venta.fechaComienzo = newFechaComienzoSuma;
+      Venta.fechaComienzo = newFechaComienzoRestada;
       CrearLote(ObjLote);
     }
 
