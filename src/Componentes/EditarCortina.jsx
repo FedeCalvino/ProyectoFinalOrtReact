@@ -5,7 +5,7 @@ import "../Routes/Css/EditarCortina.css";
 import { selectRollerConfig } from "../Features/ConfigReducer";
 import { selectTelasRoller } from "../Features/TelasReducer";
 
-export const EditarCortina = ({ callBackCancel, cortinaEdited, onConfirmEdit }) => {
+export const EditarCortina = ({ callBackCancel, cortinaEdited,callBacktoast,CortinaEditedFnct}) => {
   const ConfigRoller = useSelector(selectRollerConfig);
   const CanosRoller = ConfigRoller.canos;
   const LadosCadenas = ConfigRoller.ladosCadena;
@@ -29,8 +29,54 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited, onConfirmEdit }) 
     }));
   };
 
+  const transformarCortina = (cortina) => {
+    console.log(cortina)
+
+    const soporteObj={
+      idTipo:cortina.soporte.idTipo,
+      cantidad:cortina.soporte.cantidad
+    }  
+    return {
+      Ambiente: cortina.Ambiente,
+      IdTipoTela: cortina.IdTipoTela,
+      Ancho: cortina.ancho,
+      Alto: cortina.alto,
+      Posicion: parseInt(cortina.posicion.posicionId, 10),
+      LadoCadena: parseInt(cortina.ladoCadena.ladoId, 10),
+      cano: parseInt(cortina.cano.id, 10),
+      motor: parseInt(cortina.motorRoller.idMotor, 10),
+      cadena: parseInt(cortina.tipoCadena.idTipoCadena, 10),
+      soporte: soporteObj,
+      tipoArticulo: cortina.tipoArticulo,
+      nombre: cortina.nombre,
+    };
+  };
+
   const handleConfirmEdit = () => {
-    onConfirmEdit(Cortina);
+    Editar();
+  };
+
+  const Editar = async () => {
+    try {
+      const cor = transformarCortina(Cortina)
+      
+      const requestOptions = {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cor)
+      };
+
+      const response = await fetch("http://localhost:8083/Cortina/"+Cortina.IdCortina, requestOptions);
+      const result = await response.json();
+      console.log(result);
+      callBacktoast("cortina actualizada","success")
+      CortinaEditedFnct()
+
+  } catch (error) {
+    console.log(error)
+    callBacktoast("error al actualizar","error")
+  }
+
   };
 
   const findTela = (IdTela) => TiposTelas.find((Tela) => Tela.id === IdTela) || {};
@@ -52,7 +98,6 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited, onConfirmEdit }) 
             <th>Alto</th>
             <th>Alto Tela</th>
             <th>Cantidad</th>
-            <th>Largo Cadena</th>
             <th>Lado Cadena</th>
             <th>Posición</th>
             <th>Exterior</th>
@@ -64,9 +109,9 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited, onConfirmEdit }) 
             <td>
               <input
                 type="text"
-                value={Cortina.ambiente}
+                value={Cortina.Ambiente}
                 size={15}
-                onChange={(e) => handleInputChange(e, "ambiente")}
+                onChange={(e) => handleInputChange(e, "Ambiente")}
               />
             </td>
             <td>{tela.nombre}</td>
@@ -105,14 +150,6 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited, onConfirmEdit }) 
             <td>{Cortina.AltoTela}</td>
             <td>1</td>
             <td>
-              <input
-                type="text"
-                size={10}
-                value={Cortina.LargoCadena}
-                onChange={(e) => handleInputChange(e, "LargoCadena")}
-              />
-            </td>
-            <td>
               <Form.Select
                 value={JSON.stringify(Cortina.ladoCadena)}
                 onChange={(e) => handleInputChange(e, "ladoCadena")}
@@ -141,7 +178,7 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited, onConfirmEdit }) 
         </tbody>
       </Table>
       <div>
-      <button className="Butooneditable" onClick={handleConfirmEdit}>
+      <button className="Butooneditable" onClick={Editar}>
         Confirmar
       </button>
       <button className="Butooneditable" onClick={callBackCancel}>
@@ -152,3 +189,6 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited, onConfirmEdit }) 
     </>
   );
 };
+/*
+
+*/

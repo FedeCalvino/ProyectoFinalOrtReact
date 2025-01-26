@@ -146,6 +146,20 @@ export const Clientes = () => {
                   Cli.rut
                 )}
                 <br />
+                <strong>Mail:</strong>
+                {EditCliId === Cli.id && BoolEditCli ? (
+                  <>
+                    <input
+                      className="custom-input"
+                      type="text"
+                      value={Cli.mail}
+                      onChange={(e) => handleInputChange(e, Cli.id, "mail")}
+                    />
+                  </>
+                ) : (
+                  Cli.mail
+                )}
+                <br />
                 <strong>Dirección:</strong>
                 {EditCliId === Cli.id && BoolEditCli ? (
                   <>

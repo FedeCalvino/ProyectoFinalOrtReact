@@ -6,7 +6,13 @@ import { OrdenProduccion } from "./OrdenProduccion";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { useSelector } from "react-redux";
-import { selectArticulos, selectVenta } from "../Features/VentaViewReucer";
+import Form from "react-bootstrap/Form";
+import {
+  selectArticulos,
+  selectVenta,
+  setArticulos,
+  setVenta,
+} from "../Features/VentaViewReucer";
 import { FormRollers } from "../Forms/FormRollers";
 import { EditarCortina } from "./EditarCortina";
 import {
@@ -14,8 +20,12 @@ import {
   selectConfigRiel,
 } from "../Features/ConfigReducer";
 import { selectTelasRoller, selectTelas } from "../Features/TelasReducer";
+import { useDispatch } from "react-redux";
+import { Loading } from "./Loading";
 
-export const VentaView = () => {
+export const VentaView = ({ callBackToast }) => {
+  const dispatch = useDispatch();
+
   const ConfigRoller = useSelector(selectRollerConfig);
   console.log("ConfigRoller", ConfigRoller);
   //opciones de roller
@@ -29,14 +39,8 @@ export const VentaView = () => {
   const TiposTelas = useSelector(selectTelasRoller);
 
   const tableRef = useRef(null);
-  const input = tableRef.current;
-  const [loading, setloading] = useState(true);
-  const [loadingAct, setloadingAct] = useState(false);
-  const [IdVenta, setIdVenta] = useState(null);
-  const [SearchText, setSearchText] = useState("");
-  const [Ventas, setVentas] = useState([]);
-  const [NumeroCor, setNumeroCor] = useState(false);
-  const [ComentarioVenta, setComentarioVenta] = useState("");
+
+  const [showModEditVenal, setEditVen] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   const Articulos = useSelector(selectArticulos);
@@ -58,19 +62,19 @@ export const VentaView = () => {
     return tipos.find((tipo) => tipo.tipoId === parseInt(id_tipo)).tipo;
   };
 
-  const [loadingTable, setloadingTable] = useState(true);
-  const [FilteredVentas, setFilteredVentas] = useState([]);
-  const [open, setopen] = useState(false);
   const [openEdit, setopenEdit] = useState(false);
   const [IdCorEdit, setIdCorEdit] = useState(null);
   const [CortinaEdited, setCortrtinaEdited] = useState([]);
 
+  const [loadingAct, setloadingAct] = useState(false);
+  
   const [CortrtinaTrtyEdited, setCortrtinaTrtyEdited] = useState(null);
 
   const [Telas, setTelas] = useState([]);
 
   const Ven = useSelector(selectVenta);
   console.log("Ven", Ven);
+
   //datos de cortina a agregar
   const [motorizada, setMotorizada] = useState(false);
   const [selectedTelaRoler, SetselectedTelaRoler] = useState([]);
@@ -83,7 +87,10 @@ export const VentaView = () => {
   const [IzqDer, setIzqDer] = useState("");
   const [AdlAtr, setAdlAtr] = useState("");
 
-  const UrlAddCor = "/Cortinas/Roller/Add";
+  //Edit Venta
+  const [ObraEdit, setObraEdit] = useState(Ven.obra);
+  const [FechaInstEdit, setFechaInstEdit] = useState(Ven.fechaInstalacion);
+
   const UrlEditCor = "/Cortinas/Edit";
 
   const handleShow = (Cor) => {
@@ -93,7 +100,12 @@ export const VentaView = () => {
 
   const ShowModalCallB = () => {
     setCortrtinaEdited([]);
-    setShowModal(true);
+    setShowModal(false);
+  };
+  const CortinaEditedFnct = () => {
+    setCortrtinaEdited([]);
+    setShowModal(false);
+    FetchVentaCortinas();
   };
 
   const handleClose = () => setShowModal(false);
@@ -113,7 +125,7 @@ export const VentaView = () => {
   const SetInstalada = async () => {
     setloadingTable(true);
     try {
-      const res = await fetch(UrlInstalada + IdVenta, {
+      const res = await fetch(UrlInstalada + Ven.id, {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Specify the content type
@@ -132,34 +144,26 @@ export const VentaView = () => {
     }
   };
 
-  const FetchVentaCortinas = () => {};
+  const FetchVentaCortinas = async () => {
+    const UrlVenta = "http://localhost:8083/Ventas/";
 
-  const ConfirmEdit = async () => {
-    const requestOptions = {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(CortinaEdited),
-    };
+    if (Ven.id != null) {
+      try {
+        const res = await fetch(UrlVenta + Ven.id);
+        const data = await res.json();
 
-    const url = `${UrlEditCor}/${IdCorEdit}`;
+        console.log("articulos", data.body.listaArticulos);
 
-    console.log("URL de solicitud:", url);
-    console.log("Datos a actualizar:", CortinaEdited);
-
-    try {
-      const response = await fetch(url, requestOptions);
-
-      if (response.ok) {
-        await FetchVentaCortinas();
-        setIdCorEdit(null);
-        return;
+        console.log(data.body);
+        dispatch(setArticulos(data.body.listaArticulos));
+        dispatch(setVenta(data.body));
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.error("Error en cortinas roller:", error);
     }
   };
 
-  const CancelarAddCor = () => {
+  const CancelarAddCor=()=>{
     SetAgregarRollerBool(false);
     SetselectedTelaRoler("");
     SetselectedTelaMostrarRoler("");
@@ -171,6 +175,7 @@ export const VentaView = () => {
     setIzqDer("");
     setAdlAtr("");
   };
+
   const findNameCano = (idCano) => {
     return CanosRoller.find((cano) => cano.id === idCano).tipo;
   };
@@ -192,31 +197,9 @@ export const VentaView = () => {
     return TiposTelas.find((Tela) => Tela.id === IdTela);
   };
 
-  const Editar = (Cor) => {
-    const Telafind = Telas.find(
-      (tela) =>
-        tela.Nombre === Cor.nombreTela && tela.Descripcion === Cor.colorTela
-    );
-    console.log("Telafind", Telafind);
-    console.log(Cor);
-    setIdCorEdit(Cor.id);
-    const EditedCortina = {
-      Ambiente: Cor.ambiente,
-      ancho: Cor.anchoAfuerAfuera,
-      alto: Cor.altoCortina,
-      Posicion: Cor.posicion,
-      LadoCadena: Cor.ladoCadena,
-      cadena: Cor.Cadena,
-      IdTipoTela: Telafind.id,
-      Tubo: Cor.cano,
-      motorizada: Cor.motorizada,
-    };
-    console.log(EditedCortina);
-    setCortrtinaEdited(EditedCortina);
-  };
   const [Cadena, setCadena] = useState("");
 
-  const AddCor = async (IdVenta) => {
+ /* const AddCor = async () => {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -237,7 +220,7 @@ export const VentaView = () => {
     requestOptions.body = JSON.stringify(nuevaCortinaRoler);
 
     console.log(nuevaCortinaRoler);
-    const url = UrlAddCor + "/" + IdVenta;
+    const url = UrlAddCor + "/" + Ven.Id;
     console.log(url);
     try {
       const response = await fetch(url, requestOptions);
@@ -253,7 +236,7 @@ export const VentaView = () => {
     } catch (error) {
       console.error("Error en cortinas roller:", error);
     }
-  };
+  };*/
 
   const EditCor = () => {
     setopenEdit(true);
@@ -261,10 +244,6 @@ export const VentaView = () => {
     setCortrtinaEdited(CortrtinaTrtyEdited);
     handleClose();
   };
-
-  useEffect(() => {
-    FetchVentaCortinas();
-  }, [IdVenta]);
 
   const blobToBase64 = (blob) => {
     return new Promise((resolve, reject) => {
@@ -275,6 +254,9 @@ export const VentaView = () => {
     });
   };
 
+  const callBacktoast = (mensaje, tipo) => {
+    callBackToast(mensaje, tipo);
+  };
   const DescPdf = () => {
     const datos = {
       fechaInst: Ven.fechaInstalacion,
@@ -337,18 +319,29 @@ export const VentaView = () => {
     URL.revokeObjectURL(link.href);
   };
 
-  const renderEditableCell = (value, isEditable, onChange) => {
-    return isEditable ? (
-      <input
-        style={{ width: "100px", textAlign: "center" }}
-        type="text"
-        value={value}
-        onChange={onChange}
-      />
-    ) : (
-      value
-    );
-  };
+  const confirmEditVen = async ()=>{
+    try {
+
+      const requestOptions = {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' }
+      };
+
+      const response = await fetch("http://localhost:8083/Ventas/UpdateFO/"+FechaInstEdit+"/"+ObraEdit+"/"+Ven.id, requestOptions);
+      const result = await response.json();
+      console.log("result",result)
+      if (result.status === "OK") {
+        setloadingAct(true)
+        await FetchVentaCortinas();
+        setloadingAct(false)
+        callBackToast("Se actualizó", "success");
+        setEditVen(false);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
 
   return (
     <>
@@ -438,10 +431,13 @@ export const VentaView = () => {
           </Box>
         </Modal>
       }
+
       {CortinaEdited.IdRoller ? (
         <EditarCortina
           callBackCancel={ShowModalCallB}
           cortinaEdited={CortinaEdited}
+          callBacktoast={callBacktoast}
+          CortinaEditedFnct={CortinaEditedFnct}
         />
       ) : (
         <>
@@ -449,42 +445,134 @@ export const VentaView = () => {
             className="align-items-center py-3"
             style={{ backgroundColor: "#f8f9fa", borderRadius: "8px" }}
           >
-            <Col className="text-center">
-              <h1
-                style={{
-                  fontSize: "2rem",
-                  fontWeight: "bold",
-                  color: "#343a40",
-                }}
-              >
-                {Ven.cliente.nombre}
-              </h1>
-            </Col>
-            <Col className="text-center">
-              <h3
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "500",
-                  color: "#495057",
-                }}
-              >
-                Instalación:{" "}
-                {Ven.fechaInstalacion ? Ven.fechaInstalacion : "A confirmar"}
-              </h3>
-            </Col>
-            <Col className="text-center">
-              {Ven.obra && (
-                <h3
-                  style={{
-                    fontSize: "1.5rem",
-                    fontWeight: "500",
-                    color: "#495057",
-                  }}
-                >
-                  Obra: {Ven.obra}
-                </h3>
-              )}
-            </Col>
+            {showModEditVenal ? (
+              <>
+                <Col xs={12} md={3} className="text-center">
+                  <h1
+                    style={{
+                      fontSize: "2rem",
+                      fontWeight: "bold",
+                      color: "#343a40",
+                    }}
+                  >
+                    {Ven.cliente.nombre}
+                  </h1>
+                </Col>
+                <Col xs={12} md={3} className="text-center">
+                  <div className="d-flex align-items-center justify-content-center">
+                    <span
+                      style={{
+                        fontSize: "1.5rem",
+                        fontWeight: "500",
+                        color: "#495057",
+                      }}
+                    >
+                      Instalación:
+                    </span>
+                    <Form.Control
+                      type="date"
+                      value={FechaInstEdit}
+                      style={{
+                        marginLeft: "10px",
+                        textAlign: "center",
+                        borderRadius: "10px",
+                        maxWidth: "150px",
+                      }}
+                      onChange={(e) => setFechaInstEdit(e.target.value)}
+                    />
+                  </div>
+                </Col>
+                <Col xs={12} md={3} className="text-center">
+                  <div className="d-flex align-items-center justify-content-center">
+                    <h3
+                      style={{
+                        fontSize: "1.5rem",
+                        fontWeight: "500",
+                        color: "#495057",
+                        marginRight: "10px",
+                      }}
+                    >
+                      Obra:
+                    </h3>
+                    <input
+                      type="text"
+                      value={ObraEdit}
+                      size={30}
+                      onChange={(e) => setObraEdit(e.target.value)}
+                      style={{
+                        borderRadius: "5px",
+                        textAlign: "center",
+                        maxWidth: "150px",
+                      }}
+                    />
+                  </div>
+                </Col>
+                <Col xs={12} md={3} className="text-center">
+                  { loadingAct ? 
+                  <Loading tipo="small"/> 
+                  :
+                  <div className="d-flex justify-content-center">
+                    <Button
+                      variant="primary"
+                      onClick={() => setEditVen(false)}
+                      style={{ marginRight: "10px", backgroundColor: "red" }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button variant="primary" onClick={confirmEditVen}>
+                      Confirmar
+                    </Button>
+                  </div>
+                  }
+                </Col>
+              </>
+            ) : (
+              <>
+                <Col className="text-center">
+                  <h1
+                    style={{
+                      fontSize: "2rem",
+                      fontWeight: "bold",
+                      color: "#343a40",
+                    }}
+                  >
+                    {Ven.cliente.nombre}
+                  </h1>
+                </Col>
+                <Col className="text-center">
+                  <h3
+                    style={{
+                      fontSize: "1.5rem",
+                      fontWeight: "500",
+                      color: "#495057",
+                    }}
+                  >
+                    Instalación:{" "}
+                    {Ven.fechaInstalacion
+                      ? Ven.fechaInstalacion
+                      : "A confirmar"}
+                  </h3>
+                </Col>
+                <Col className="text-center">
+                  {Ven.obra && (
+                    <h3
+                      style={{
+                        fontSize: "1.5rem",
+                        fontWeight: "500",
+                        color: "#495057",
+                      }}
+                    >
+                      Obra: {Ven.obra}
+                    </h3>
+                  )}
+                </Col>
+                <Col className="text-center">
+                  <Button variant="primary" onClick={() => setEditVen(true)}>
+                    Editar
+                  </Button>
+                </Col>
+              </>
+            )}
           </Row>
 
           {Rollers.length > 0 && (

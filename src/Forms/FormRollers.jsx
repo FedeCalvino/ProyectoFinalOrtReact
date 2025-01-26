@@ -14,7 +14,7 @@ import { GoCheckCircle } from "react-icons/go";
 import { selectRollerConfig } from "../Features/ConfigReducer";
 import { TablaArticulos } from "../Tables/TablaArticulos";
 
-export const FormRollers = () => {
+export const FormRollers = ({toastCallBack}) => {
   const ConfigRoller = useSelector(selectRollerConfig);
   //opciones de roller
   const CanosRoller = ConfigRoller.canos;
@@ -96,6 +96,26 @@ export const FormRollers = () => {
     setselectedColorRoler(e.target.value);
   };
 
+  const validarCampos = () => {
+    // Verificar si todos los campos obligatorios tienen valores
+    if (
+      !selectedAreaRoler ||
+      !selectedTelaRoler.id ||
+      !AnchoRoller ||
+      !LargoRoller ||
+      !PosicionRoller ||
+      !LadoCadenaRoller ||
+      !CanoRoller ||
+      !MotorRoller ||
+      !TipoCadena ||
+      !TipoSoporte
+    ) {
+      toastCallBack("completar los campos","error")
+      return false; // Si alguno de los campos no está lleno, retorna false
+    }
+    return true; // Si todos los campos están completos, retorna true
+  };
+
   const AlertaCorA = () => {
     return <GoCheckCircle style={{ color: "green" }} size={30} />;
   };
@@ -115,10 +135,13 @@ export const FormRollers = () => {
     setTelasDelTipo(SetTelas);
   };
 
-  function AgregarRoller() {
-    console.log(nuevaCortinaRoler)
-    dispatch(addArticulo(nuevaCortinaRoler));
-  }
+  const AgregarRoller = () => {
+    // Verificar que los campos estén completos
+    if (validarCampos()) {
+      console.log(nuevaCortinaRoler);
+      dispatch(addArticulo(nuevaCortinaRoler));
+    }
+  };
 
   const rowStyle = {
     marginBottom: "15px",
@@ -204,6 +227,7 @@ export const FormRollers = () => {
           value={AnchoRoller}
           onChange={(e) => setAnchoRoller(e.target.value)}
           placeholder="Ancho"
+          required
         />
       </div>
     </Row>
@@ -218,6 +242,7 @@ export const FormRollers = () => {
           value={LargoRoller}
           onChange={(e) => setLargoRoller(e.target.value)}
           placeholder="Largo"
+          required
         />
       </div>
     </Row>

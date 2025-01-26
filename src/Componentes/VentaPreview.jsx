@@ -55,6 +55,47 @@ export const VentaPreview = ({Venta}) => {
   return (
     <>
       <>
+      <Row
+            className="align-items-center py-3"
+            style={{ backgroundColor: "#f8f9fa", borderRadius: "8px" }}
+          >
+            <Col className="text-center">
+              <h1
+                style={{
+                  fontSize: "2rem",
+                  fontWeight: "bold",
+                  color: "#343a40",
+                }}
+              >
+                {Venta.CliNombre}
+              </h1>
+            </Col>
+            <Col className="text-center">
+              <h3
+                style={{
+                  fontSize: "1.5rem",
+                  fontWeight: "500",
+                  color: "#495057",
+                }}
+              >
+                Instalación:{" "}
+                {Venta.FechaInstalacion ? Venta.FechaInstalacion : "A confirmar"}
+              </h3>
+            </Col>
+            <Col className="text-center">
+              {Venta.Obra && (
+                <h3
+                  style={{
+                    fontSize: "1.5rem",
+                    fontWeight: "500",
+                    color: "#495057",
+                  }}
+                >
+                  Obra: {Venta.Obra}
+                </h3>
+              )}
+            </Col>
+          </Row>
         {CortinasRollers.length !== 0 ? (
           <>
             <Table responsive>

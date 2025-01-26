@@ -138,9 +138,13 @@ const FormatearFecha = ({ fecha }) => {
 
 const Header = ({Datos}) => (
   <>
-    { Datos.fechaInst &&
+    { Datos.fechaInst ?
     <Text style={styles.title1}>
       Fecha Instalación: <FormatearFecha fecha={Datos.fechaInst} />
+    </Text>
+    :
+    <Text style={styles.title1}>
+      Fecha Instalación: A confirmar
     </Text>
     }
     <View style={styles.logoContainer}>
@@ -247,7 +251,33 @@ export const OrdenProduccion = ({ Venta }) => {
               </View>
             ))}
           </Page>
+
         ))}      
+          {groupedRieles.map((group, pageIndex) => (
+    <Page
+      key={pageIndex}
+      size="A4"
+      style={styles.page}
+      orientation="portrait"
+    >
+      <Header Datos={Venta.Datos} />
+      {group.map((riel, rielIndex) => (
+        <View style={styles.itemContainer} key={rielIndex}>
+          <ItemDetail label="Numero" value={riel.IdArticulo} />
+          <ItemDetail label="Ambiente" value={riel.ambiente} />
+          <ItemDetail label="Ancho" value={riel.ancho} />
+          <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
+          <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
+          <ItemDetail label="Bastones" value={riel.bastones.nombre} />
+          <ItemDetail label="Cantidad de Bastones" value={riel.bastones.cantidad} />
+          <ItemDetail label="Soportes" value={riel.soportes.nombre} />
+          <ItemDetail label="Cantidad de Soportes" value={riel.soportes.cantidad} />
+          <ItemDetail label="Detalle" value={riel.detalle} />
+        </View>
+      ))}
+    </Page>
+  ))
+  }
       </Document>
     );
   } else {

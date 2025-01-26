@@ -101,7 +101,7 @@ export const ClienteSeleccted = () => {
                 marginBottom: "10px",
               }}
             >
-              <strong>Mail:</strong> {ClienteData.mail}
+              <strong>Mail:</strong> {ClienteData.Mail}
             </Card.Text>
           </>
         )}

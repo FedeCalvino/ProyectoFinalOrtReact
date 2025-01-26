@@ -109,7 +109,7 @@ const App = () => {
 
 
     return (
-        <>
+        <div className='AppContainer'>
             <Routes>
                 <Route path='/Clientes' element={
                     <ProtectedRoute user={User} login={login}>
@@ -165,7 +165,7 @@ const App = () => {
                     
                 </Route>
             </Routes>
-        </>
+            </div>
     );
 }
 

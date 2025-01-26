@@ -21,5 +21,14 @@ export const Loading = ({tipo}) => {
                 </div>
                 </>
             );
-        }  
+        } 
+        if(tipo=="small"){
+            return (
+                <>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <ClipLoader color={"#123abc"} loading={true} size={40} />
+                </div>
+                </>
+            );
+        } 
 }

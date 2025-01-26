@@ -10,6 +10,7 @@ import {
 import "./Css/Ventas.css";
 import { pdf } from "@react-pdf/renderer";
 import { OrdenProduccion } from "../Componentes/OrdenProduccion.jsx";
+import { Toaster, toast } from "react-hot-toast";
 
 export const Ventas = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,17 +24,22 @@ export const Ventas = () => {
   const idVenta = useSelector(selectVenta).IdVenata;
   let lastDay = "";
   const [ConfirmDelete, setConfirmDelete] = useState(false);
+  
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/Ventas/Del/";
-
+/*
+  const UrlVentas = "http://localhost:8083/Ventas";
+  const UrlVenta = "http://localhost:8083/Ventas/";
+  const UrlDelete = "http://localhost:8083/Ventas/";
+*/
   const setVentaView = async (Venta) => {
     if (Venta.id != null) {
       setShowModal(true);
       setIsLoading(true);
 
       try {
-        const res = await fetch("/VentasEP/" + Venta.id);
+        const res = await fetch(UrlVenta + Venta.id);
         const data = await res.json();
         console.log("articulos", data.body.listaArticulos);
         console.log(data.body)
@@ -146,6 +152,18 @@ export const Ventas = () => {
     }
   };
 
+  const [toastloading, settoastloading] = useState(null);
+
+const callBackToast = (mensaje, tipo) => {
+  if (tipo === "error") {
+    toast.error(mensaje);
+  }
+  if (tipo === "success") {
+    toast.success(mensaje);
+  }
+};
+  
+
   return (
     <div className="container">
       <Row style={{ marginTop: "80px" }}>
@@ -219,7 +237,7 @@ export const Ventas = () => {
               </div>
             </div>
           ) : (
-            <VentaView />
+            <VentaView callBackToast={callBackToast} />
           )}
         </Modal.Body>
         <Modal.Footer className="d-flex justify-content-between">
@@ -243,6 +261,17 @@ export const Ventas = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <div>
+        <Toaster
+          position="bottom-center"
+          reverseOrder={false}
+          toastOptions={{
+            style: {
+              zIndex: 9999,
+            },
+          }}
+        />
+      </div>
     </div>
   );
 };

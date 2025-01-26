@@ -84,6 +84,7 @@ export const SelecctCliente = React.memo(() => {
         NumeroTelefono: TelefonoCliN,
         rut: RutCliN,
         Tipo: Tipo,
+        Mail:MailCli,
         set: true,
       };
       console.log("NewClienteData", NewClienteData);
@@ -115,6 +116,7 @@ export const SelecctCliente = React.memo(() => {
       NumeroTelefono: Cli.numeroTelefono,
       rut: Cli.rut,
       Tipo: Cli.tipo,
+      Mail:Cli.Mail,
       set: true,
     };
     setClienteselecc(NewClienteData);

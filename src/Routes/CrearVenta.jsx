@@ -35,11 +35,29 @@ export const CrearVenta = () => {
   const [Obra, setObra] = useState("");
   const [FechaInstalacion, setFechaInstalacion] = useState("");
 
-  const UrlVenta = "/VentasEP"
+
+  const [VentaInfo, setVentaInfo] = useState(null);
+  const UrlVenta = "http://localhost:8083/Ventas"
 
   const CrearVenta = async () => {
+    const VentaInfoObj={
+      CliNombre:cliente.Nombre,
+      Obra:Obra,
+      FechaInstalacion:FechaInstalacion
+    }
+    setVentaInfo(VentaInfoObj)
     setShowModal(true);
+
   };
+
+  const toastCallBack=(mensaje,tipo)=>{
+    if(tipo==="error"){
+      toast.error(mensaje);
+    }
+    if(tipo==="success"){
+      toast.success(mensaje);
+    }
+  }
 
   const ConfirmCrearVenta = async () => {
     if (Articulos.length >0) {
@@ -74,7 +92,7 @@ export const CrearVenta = () => {
 
         const result = await response.json();
         console.log("Response Venta", result);
-
+        toast.dismiss(loadingToast);
         if (result.status === "OK") {
           dispatch(Reset);
           dispatch(removeAllArticulos);
@@ -82,6 +100,7 @@ export const CrearVenta = () => {
         } else {
           console.log("error");
           AlertaError(result.message);
+          toast.dismiss(loadingToast);
         }
         toast.dismiss(loadingToast);
         setloading(false);
@@ -115,7 +134,7 @@ export const CrearVenta = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <VentaPreview />
+          <VentaPreview Venta={VentaInfo}/>
           <Row className="button-row">
             <Col className="d-flex justify-content-center">
               <Button
@@ -170,7 +189,6 @@ export const CrearVenta = () => {
                   left: 0,
                   width: "100%",
                   padding: "10px",
-                  marginTop: "20px",
                   backgroundColor: "white",
                   zIndex: 999, // Ensures it's on top
                   display: "flex",
@@ -225,7 +243,7 @@ export const CrearVenta = () => {
                 fill
               >
                 <Tab eventKey="Roller" title="Roller">
-                  <FormRollers />
+                  <FormRollers toastCallBack={toastCallBack} />
                 </Tab>
                 <Tab eventKey="Rieles" title="Rieles">
                   <FormRieles />
