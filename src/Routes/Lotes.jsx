@@ -118,7 +118,7 @@ export const Lotes = () => {
 
     generateDateRange();
     fetchDataLotes();
-    //fetchDataOrdenes();
+    fetchDataOrdenes();
     fetchDataVentas();
   }, []);
 
