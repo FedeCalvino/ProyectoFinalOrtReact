@@ -646,14 +646,14 @@ export const VentaView = ({ callBackToast }) => {
                       <td>{Cor.Ambiente}</td>
                       <td>{findTela(Cor.IdTipoTela).nombre}</td>
                       <td>{findTela(Cor.IdTipoTela).color}</td>
-                      <td>{Cor.ancho}</td>
-                      <td>{Cor.AnchoTela}</td>
-                      <td>{Cor.AnchoTubo}</td>
+                      <td>{Cor.ancho.toFixed(3)}</td>
+                      <td>{Cor.AnchoTela.toFixed(3)}</td>
+                      <td>{Cor.AnchoTubo.toFixed(3)}</td>
                       <td>{findNameCano(Cor.cano.id)}</td>
-                      <td>{Cor.alto}</td>
-                      <td>{Cor.AltoTela}</td>
+                      <td>{Cor.alto.toFixed(3)}</td>
+                      <td>{Cor.AltoTela.toFixed(3)}</td>
                       <td>1</td>
-                      <td>{Cor.LargoCadena}</td>
+                      <td>{Cor.LargoCadena.toFixed(3)}</td>
                       <td>{findNameLadoCadena(Cor.ladoCadena.ladoId)}</td>
                       <td>{findNamePos(Cor.posicion.posicionId)}</td>
                       <td>{findNameMotor(Cor.motorRoller.idMotor)}</td>

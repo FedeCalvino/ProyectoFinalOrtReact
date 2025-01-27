@@ -29,7 +29,7 @@ export const Ventas = () => {
   let lastDay = "";
   const [ConfirmDelete, setConfirmDelete] = useState(false);
   const ConfigRoller = useSelector(selectRollerConfig);
-  
+ 
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/Ventas/Del/";
