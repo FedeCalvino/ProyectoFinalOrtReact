@@ -22,6 +22,7 @@ import {
 import { selectTelasRoller, selectTelas } from "../Features/TelasReducer";
 import { useDispatch } from "react-redux";
 import { Loading } from "./Loading";
+import { TicketCortina } from "./TicketCortina";
 
 export const VentaView = ({ callBackToast }) => {
   const dispatch = useDispatch();
@@ -67,7 +68,7 @@ export const VentaView = ({ callBackToast }) => {
   const [CortinaEdited, setCortrtinaEdited] = useState([]);
 
   const [loadingAct, setloadingAct] = useState(false);
-  
+
   const [CortrtinaTrtyEdited, setCortrtinaTrtyEdited] = useState(null);
 
   const [Telas, setTelas] = useState([]);
@@ -145,7 +146,7 @@ export const VentaView = ({ callBackToast }) => {
   };
 
   const FetchVentaCortinas = async () => {
-    const UrlVenta = "http://localhost:8083/Ventas/";
+    const UrlVenta = "/VentasEP/";
 
     if (Ven.id != null) {
       try {
@@ -163,7 +164,7 @@ export const VentaView = ({ callBackToast }) => {
     }
   };
 
-  const CancelarAddCor=()=>{
+  const CancelarAddCor = () => {
     SetAgregarRollerBool(false);
     SetselectedTelaRoler("");
     SetselectedTelaMostrarRoler("");
@@ -199,7 +200,7 @@ export const VentaView = ({ callBackToast }) => {
 
   const [Cadena, setCadena] = useState("");
 
- /* const AddCor = async () => {
+  /* const AddCor = async () => {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -238,37 +239,8 @@ export const VentaView = ({ callBackToast }) => {
     }
   };*/
 
-  const EditCor = () => {
-    setopenEdit(true);
-    console.log(CortrtinaTrtyEdited);
-    setCortrtinaEdited(CortrtinaTrtyEdited);
-    handleClose();
-  };
-
-  const blobToBase64 = (blob) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result.split(",")[1]); // Retorna solo la parte Base64
-      reader.onerror = (error) => reject(error);
-      reader.readAsDataURL(blob); // Lee el blob como Data URL
-    });
-  };
-
-  const callBacktoast = (mensaje, tipo) => {
-    callBackToast(mensaje, tipo);
-  };
-  const DescPdf = () => {
-    const datos = {
-      fechaInst: Ven.fechaInstalacion,
-      obra: Ven.obra,
-      cliNomb: Ven.cliente.nombre,
-    };
-
-    const ven = {
-      listaArticulos: [],
-      Datos: datos,
-    };
-
+  const GetConfiguracionArticulos=()=>{
+    const listaArticulos = []
     Articulos.forEach((cor) => {
       // Deep copy of the original `cor` object to avoid modifying the original
       const newCor = JSON.parse(JSON.stringify(cor));
@@ -299,8 +271,42 @@ export const VentaView = ({ callBackToast }) => {
 
       console.log("ArticuloDesp", newCor);
 
-      ven.listaArticulos.push(newCor);
+      listaArticulos.push(newCor);
     });
+    return listaArticulos
+  }
+
+  const EditCor = () => {
+    setopenEdit(true);
+    console.log(CortrtinaTrtyEdited);
+    setCortrtinaEdited(CortrtinaTrtyEdited);
+    handleClose();
+  };
+
+  const blobToBase64 = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result.split(",")[1]); // Retorna solo la parte Base64
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(blob); // Lee el blob como Data URL
+    });
+  };
+
+  const callBacktoast = (mensaje, tipo) => {
+    callBackToast(mensaje, tipo);
+  };
+
+  const DescPdf = () => {
+    const datos = {
+      fechaInst: Ven.fechaInstalacion,
+      obra: Ven.obra,
+      cliNomb: Ven.cliente.nombre,
+    };
+
+    const ven = {
+      listaArticulos: GetConfiguracionArticulos(),
+      Datos: datos,
+    };
 
     downloadPDF(ven);
   };
@@ -319,29 +325,59 @@ export const VentaView = ({ callBackToast }) => {
     URL.revokeObjectURL(link.href);
   };
 
-  const confirmEditVen = async ()=>{
-    try {
+  const downloadTicket = async () => {
+    console.log("Ven", Ven);
+    console.log("CortinasRoller", Rollers);
+    // Generar el documento PDF utilizando la función `pdf`
+    //setloadingTicket(true);
 
+    const blob = await pdf(
+      <TicketCortina
+      NombreCli={Ven.cliente.nombre}
+      Articulos={GetConfiguracionArticulos()}
+      />
+    ).toBlob();
+    const base64PDF = await blobToBase64(blob);
+    // Crear un enlace de descarga
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${Ven.cliente.nombre} ETQ.pdf`;
+
+    // Simular el clic en el enlace de descarga
+    link.click();
+
+    // Liberar la URL del objeto
+    URL.revokeObjectURL(link.href);
+    //setloadingTicket(false);
+  };
+
+  const confirmEditVen = async () => {
+    try {
       const requestOptions = {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' }
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
       };
 
-      const response = await fetch("http://localhost:8083/Ventas/UpdateFO/"+FechaInstEdit+"/"+ObraEdit+"/"+Ven.id, requestOptions);
+      const response = await fetch(
+        "http://localhost:8083/Ventas/UpdateFO/" + FechaInstEdit + "/" + ObraEdit + "/" + Ven.id,
+        requestOptions
+      );
       const result = await response.json();
-      console.log("result",result)
+      console.log("result", result);
       if (result.status === "OK") {
-        setloadingAct(true)
+        setloadingAct(true);
         await FetchVentaCortinas();
-        setloadingAct(false)
+        setloadingAct(false);
         callBackToast("Se actualizó", "success");
         setEditVen(false);
+      }else{
+        callBackToast("error al actualizar","error")
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      callBackToast("error al actualizar","error")
     }
-
-  }
+  };
 
   return (
     <>
@@ -508,22 +544,22 @@ export const VentaView = ({ callBackToast }) => {
                   </div>
                 </Col>
                 <Col xs={12} md={3} className="text-center">
-                  { loadingAct ? 
-                  <Loading tipo="small"/> 
-                  :
-                  <div className="d-flex justify-content-center">
-                    <Button
-                      variant="primary"
-                      onClick={() => setEditVen(false)}
-                      style={{ marginRight: "10px", backgroundColor: "red" }}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button variant="primary" onClick={confirmEditVen}>
-                      Confirmar
-                    </Button>
-                  </div>
-                  }
+                  {loadingAct ? (
+                    <Loading tipo="small" />
+                  ) : (
+                    <div className="d-flex justify-content-center">
+                      <Button
+                        variant="primary"
+                        onClick={() => setEditVen(false)}
+                        style={{ marginRight: "10px", backgroundColor: "red" }}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button variant="primary" onClick={confirmEditVen}>
+                        Confirmar
+                      </Button>
+                    </div>
+                  )}
                 </Col>
               </>
             ) : (
@@ -671,6 +707,15 @@ export const VentaView = ({ callBackToast }) => {
           ) : null}
           <Button variant="primary" onClick={DescPdf}>
             PDF
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              downloadTicket();
+            }}
+            className="w-auto"
+          >
+            Tickets
           </Button>
         </>
       )}

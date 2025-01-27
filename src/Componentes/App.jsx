@@ -26,7 +26,11 @@ const App = () => {
 
     const UrlTipoConfig = "/ConfiguracionEP"
     const UrlTelas = "/TelasEP"
-
+    
+    /*
+    const UrlTipoConfig = "http://200.40.89.254:8086/Conf"
+    const UrlTelas = "http://200.40.89.254:8086/Telas"
+    */
     const fetchRollerConf = async () => {
       try {
         const res = await fetch(UrlTipoConfig);

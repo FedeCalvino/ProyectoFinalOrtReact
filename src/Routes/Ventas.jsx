@@ -11,6 +11,10 @@ import "./Css/Ventas.css";
 import { pdf } from "@react-pdf/renderer";
 import { OrdenProduccion } from "../Componentes/OrdenProduccion.jsx";
 import { Toaster, toast } from "react-hot-toast";
+import {
+  selectRollerConfig,
+  selectConfigRiel,
+} from "../Features/ConfigReducer";
 
 export const Ventas = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +28,7 @@ export const Ventas = () => {
   const idVenta = useSelector(selectVenta).IdVenata;
   let lastDay = "";
   const [ConfirmDelete, setConfirmDelete] = useState(false);
+  const ConfigRoller = useSelector(selectRollerConfig);
   
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
@@ -34,22 +39,27 @@ export const Ventas = () => {
   const UrlDelete = "http://localhost:8083/Ventas/";
 */
   const setVentaView = async (Venta) => {
-    if (Venta.id != null) {
-      setShowModal(true);
-      setIsLoading(true);
-
-      try {
-        const res = await fetch(UrlVenta + Venta.id);
-        const data = await res.json();
-        console.log("articulos", data.body.listaArticulos);
-        console.log(data.body)
-        dispatch(setArticulos(data.body.listaArticulos));
-        dispatch(setVenta(data.body));
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
+    console.log(ConfigRoller)
+    if(ConfigRoller.length!=0){
+      if (Venta.id != null) {
+        setShowModal(true);
+        setIsLoading(true);
+  
+        try {
+          const res = await fetch(UrlVenta + Venta.id);
+          const data = await res.json();
+          console.log("articulos", data.body.listaArticulos);
+          console.log(data.body)
+          dispatch(setArticulos(data.body.listaArticulos));
+          dispatch(setVenta(data.body));
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false);
+        }
       }
+    }else{
+      toast.error("Las configuraciones de rollers no estan cargadas")
     }
   };
 

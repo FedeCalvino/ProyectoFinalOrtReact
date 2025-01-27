@@ -4,7 +4,6 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Toaster, toast } from "react-hot-toast";
 import "./Css/Lote.css";
 export const Lotes = () => {
-
   const [Lotes, setLotes] = useState([]);
 
   const [dateRange, setDateRange] = useState([]);
@@ -16,10 +15,12 @@ export const Lotes = () => {
   const [LoteClick, setLoteClick] = useState(null);
 
   const [Ventas, setVentas] = useState([]);
+  const [VentasDesorder, setVentasDesorder] = useState([]);
   const [Ordenes, setOrdenes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [Modal, setModal] = useState(false);
   const UrlVenta = "/VentasEP/Wordenes";
+  //const UrlVenta = "http://localhost:8083/Ventas/Wordenes";
 
   const AlertaError = (Mensaje) => {
     console.log(Mensaje);
@@ -41,7 +42,7 @@ export const Lotes = () => {
         const currentDate = new Date(today);
         currentDate.setDate(today.getDate() + i);
 
-          range.push(currentDate.toISOString().split("T")[0]);
+        range.push(currentDate.toISOString().split("T")[0]);
       }
       setDateRange(range);
     };
@@ -65,17 +66,50 @@ export const Lotes = () => {
       try {
         const data = await fetch(UrlVenta);
         const response = await data.json();
-        setVentas(response.body.reverse());
+        console.log(response.body);
+        setVentasDesorder(response.body)
+        const ventasOrden = response.body.sort(
+          (a, b) => a.fechaInstalacion - b.fechaInstalacion
+        );
+
+        setVentas(AgruparVentasDiaInstalacion(ventasOrden));
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
     };
 
+    const AgruparVentasDiaInstalacion = (AllVentas) => {
+      // Grouping ventas by fechaInstalacion
+      const groupedVentas = AllVentas.reduce((acc, venta) => {
+        const dateKey = venta.fechaInstalacion
+          ? venta.fechaInstalacion.split("T")[0]
+          : "Sin fecha instalacion";
+        if (!acc[dateKey]) {
+          acc[dateKey] = [];
+        }
+        acc[dateKey].push(venta);
+        return acc;
+      }, {});
+    
+      // Converting object to an array of entries for sorting
+      const sortedGroupedVentas = Object.entries(groupedVentas)
+        .sort(([dateA], [dateB]) => {
+          if (dateA === "Sin fecha instalacion") return 1; // Move "Sin fecha instalacion" to the end
+          if (dateB === "Sin fecha instalacion") return -1;
+          return new Date(dateA) - new Date(dateB); // Sort by date
+        })
+        .map(([key, value]) => ({ fecha: key, ventas: value })); // Format result as an array of objects
+    
+      console.log("sortedGroupedVentas", sortedGroupedVentas);
+      return sortedGroupedVentas;
+    };
+    
+
     const fetchDataLotes = async () => {
       try {
         const data = await fetch("/LoteEp");
         const response = await data.json();
-        console.log("response",response)
+        console.log("response", response);
         setLotes(response.body);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -84,7 +118,7 @@ export const Lotes = () => {
 
     generateDateRange();
     fetchDataLotes();
-    fetchDataOrdenes();
+    //fetchDataOrdenes();
     fetchDataVentas();
   }, []);
 
@@ -105,13 +139,9 @@ export const Lotes = () => {
   };
 
   const formatDate = (dateString) => {
-    console.log("dateString",dateString)
     const date = new Date(dateString);
-    console.log("date",date)
-    const day = String(date.getDate()+1).padStart(2, "0");
-    console.log("day",day)
+    const day = String(date.getDate() + 1).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
-    console.log("month",month)
     return `${day}/${month}`;
   };
 
@@ -126,7 +156,7 @@ export const Lotes = () => {
       return "No hay pasos disponibles";
     }
 
-    return orden.pasos.map((paso) => paso.paso.replace("_", " ")).join("-");
+    return orden.pasos.map((paso) => paso.paso.replace("_", " ")).join(" | ");
   };
 
   const GetPasosLote = (lote) => {
@@ -155,7 +185,6 @@ export const Lotes = () => {
   };
 
   const DeleteLote = async () => {
-
     const loadingToast = toast.loading("Eliminando");
     const requestOptions = {
       method: "DELETE",
@@ -163,10 +192,7 @@ export const Lotes = () => {
     };
 
     try {
-      const response = await fetch(
-        "LoteEp/" + LoteClick,
-        requestOptions
-      );
+      const response = await fetch("LoteEp/" + LoteClick, requestOptions);
 
       if (!response.ok) {
         console.error("Error en la solicitud:", response.statusText);
@@ -194,7 +220,6 @@ export const Lotes = () => {
       toast.dismiss(loadingToast);
       AlertaError("Error al realizar la solicitud");
     }
-
   };
 
   const CrearLote = async (ObjLote) => {
@@ -208,10 +233,7 @@ export const Lotes = () => {
     };
 
     try {
-      const response = await fetch(
-        "/LoteEp",
-        requestOptions
-      );
+      const response = await fetch("/LoteEp", requestOptions);
       const result = await response.json();
       console.log("result", result);
       if (result.status !== "OK") {
@@ -221,9 +243,9 @@ export const Lotes = () => {
         const response = await fetch("/VentasEP/Mensaje");
         toast.success("Lote agregado");
       }
-      const newLotes = Lotes
-      newLotes.push(result.body)
-      setLotes(newLotes)
+      const newLotes = Lotes;
+      newLotes.push(result.body);
+      setLotes(newLotes);
 
       toast.dismiss(loadingToast);
     } catch (error) {
@@ -232,6 +254,41 @@ export const Lotes = () => {
     }
 
     setLotes([...Lotes]);
+  };
+  let lastDay = "";
+  const MostrarDia = ({ Day }) => {
+    if(Day==="Sin fecha instalacion"){
+      return (
+        <>
+        <div className="day-header">
+              <h3>Sin fecha</h3>
+              </div>
+        </>
+      )
+    }else{
+      const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate() + 1).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        return `${day}/${month}`;
+      };
+  
+      let Ok = false;
+      if (lastDay !== Day) {
+        Ok = true;
+        lastDay = Day;
+      }
+      return (
+        <>
+          {Ok && (
+            <div className="day-header">
+              <h3>{formatDate(Day)}</h3>
+            </div>
+          )}
+        </>
+      );
+      
+    }
   };
 
   const todayN = new Date().toISOString().split("T")[0];
@@ -247,11 +304,11 @@ export const Lotes = () => {
     if (!destination) return;
 
     if (source.droppableId === destination.droppableId) return;
-
-    const Venta = await Ventas.find(
+    console.log(result.draggableId)
+    const Venta = await VentasDesorder.find(
       (ven) => ven.id === parseInt(result.draggableId)
     );
-
+    console.log("Venta",Venta)
     let Pasos = [];
 
     Ordenes.forEach((ord) => {
@@ -272,9 +329,8 @@ export const Lotes = () => {
     let newDate = new Date(newFechaComienzo);
 
     newDate.setDate(newDate.getDate() - 1);
-    
+
     let newFechaComienzoRestada = newDate.toISOString().split("T")[0];
-    
 
     const ObjLote = {
       PasosOrdenes: Pasos,
@@ -383,32 +439,37 @@ export const Lotes = () => {
                           </div>
                           {(groupedLotes[date] || []).map((lote, index) => (
                             <div>
-                            <div
-                              className="venta-card shadow-sm p-3 mb-4 bg-white rounded"
-                              onClick={() => setLoteClickFunct(lote.idlote)}
-                            >
-                              <Row className="align-items-center">
-                                <Col>
-                                  <div
-                                    style={{ fontSize: "24px" }}
-                                    className="fw-bold"
+                              <div
+                                className="venta-card shadow-sm p-3 mb-4 bg-white rounded"
+                                onClick={() => setLoteClickFunct(lote.idlote)}
+                              >
+                                <Row className="align-items-center">
+                                  <Col>
+                                    <div
+                                      style={{ fontSize: "24px" }}
+                                      className="fw-bold"
+                                    >
+                                      {lote.nombre}
+                                    </div>
+                                    <div style={{ fontSize: "15px" }}></div>
+                                  </Col>
+                                </Row>
+                              </div>
+                              <Row>
+                                {LoteClick === lote.idlote && (
+                                  <Col
+                                    className="venta-card"
+                                    style={{
+                                      marginBottom: "25px",
+                                      width: "30px",
+                                    }}
                                   >
-                                    {lote.nombre}
-                                  </div>
-                                  <div style={{ fontSize: "15px" }}></div>
-                                </Col>
+                                    <Button onClick={DeleteLote}>
+                                      Eliminar
+                                    </Button>
+                                  </Col>
+                                )}
                               </Row>
-                            </div>
-                            <Row>
-                          {LoteClick === lote.idlote && (
-                            <Col
-                              className="venta-card"
-                              style={{ marginBottom: "25px", width: "30px" }}
-                            >
-                              <Button onClick={DeleteLote}>Eliminar</Button>
-                            </Col>
-                          )}
-                        </Row>
                             </div>
                           ))}
                           {provided.placeholder}
@@ -424,7 +485,7 @@ export const Lotes = () => {
                 <DragDropContext onDragEnd={handleDragEndPaso}>
                   <Droppable droppableId="sin-fecha">
                     {(provided) => (
-                       <div ref={provided.innerRef} {...provided.droppableProps}>
+                      <div ref={provided.innerRef} {...provided.droppableProps}>
                         <Button
                           className="butt"
                           onClick={() => setModal(false)}
@@ -473,37 +534,43 @@ export const Lotes = () => {
                       <div className="day-header">
                         <h3>Ventas</h3>
                       </div>
-                      {Ventas.map((Venta, index) => (
-                        <Draggable
-                          draggableId={String(Venta.id)}
-                          index={index}
-                          key={Venta.id}
-                        >
-                          {(provided) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className="venta-card3 shadow-sm p-3 mb-4 bg-white rounded"
-                              onClick={() => setPasosVenta(Venta.id)}
+                      {Object.entries(Ventas).map(([date, ventasDelDia]) => (
+                        <React.Fragment key={ventasDelDia.fecha}>
+                          <MostrarDia Day={ventasDelDia.fecha} />
+                          {ventasDelDia.ventas.map((ven, index) => (
+                            <Draggable
+                              draggableId={String(ven.id)}
+                              index={index}
+                              key={ven.id}
                             >
-                              <Row className="align-items-center">
-                                <Col>
-                                  <div
-                                    style={{ fontSize: "18px" }}
-                                    className="fw-bold"
-                                  >
-                                    {Venta.cliente.nombre}
-                                  </div>
-                                  <div style={{ fontSize: "15px" }}>
-                                    {GetPasos(Venta.id)}
-                                  </div>
-                                </Col>
-                              </Row>
-                            </div>
-                          )}
-                        </Draggable>
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className="venta-card3 shadow-sm p-3 mb-4 bg-white rounded"
+                                  onClick={() => setPasosVenta(ven.id)}
+                                >
+                                  <Row className="align-items-center">
+                                    <Col>
+                                      <div
+                                        style={{ fontSize: "18px" }}
+                                        className="fw-bold"
+                                      >
+                                        {ven.cliente?.nombre || "Sin nombre"}
+                                      </div>
+                                      <div style={{ fontSize: "15px" }}>
+                                        {GetPasos(ven.id)}
+                                      </div>
+                                    </Col>
+                                  </Row>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                        </React.Fragment>
                       ))}
+
                       {provided.placeholder}
                     </div>
                   )}

@@ -11,7 +11,7 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited,callBacktoast,Cort
   const LadosCadenas = ConfigRoller.ladosCadena;
   const Posiciones = ConfigRoller.posiciones;
   const TiposTelas = useSelector(selectTelasRoller);
-
+  const EditarCortinaUrl= "/CortinaEp"
   const [Cortina, setCortina] = useState(cortinaEdited);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited,callBacktoast,Cort
           body: JSON.stringify(cor)
       };
 
-      const response = await fetch("http://localhost:8083/Cortina/"+Cortina.IdCortina, requestOptions);
+      const response = await fetch(EditarCortinaUrl+Cortina.IdCortina, requestOptions);
       const result = await response.json();
       console.log(result);
       callBacktoast("cortina actualizada","success")

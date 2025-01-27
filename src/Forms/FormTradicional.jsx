@@ -212,8 +212,8 @@ export const FormTradicional = () => {
             </>
           ) : (
             <>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <p style={labelStyle}>Ancho Izquierda</p>
+              <div style={{ display: "flex", alignItems: "center",marginLeft:"10px" }}>
+                <p style={labelStyle}>Ancho Izquierdo</p>
                 <Form.Control
                   type="number"
                   style={{ width: "100px" }}
