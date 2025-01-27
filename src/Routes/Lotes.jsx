@@ -559,9 +559,6 @@ export const Lotes = () => {
                                       >
                                         {ven.cliente?.nombre || "Sin nombre"}
                                       </div>
-                                      <div style={{ fontSize: "15px" }}>
-                                        {GetPasos(ven.id)}
-                                      </div>
                                     </Col>
                                   </Row>
                                 </div>
