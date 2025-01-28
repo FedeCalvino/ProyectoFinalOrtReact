@@ -94,8 +94,8 @@ export const CrearVenta = () => {
         console.log("Response Venta", result);
         toast.dismiss(loadingToast);
         if (result.status === "OK") {
-          dispatch(Reset);
-          dispatch(removeAllArticulos);
+          dispatch(Reset());
+          dispatch(removeAllArticulos());
           navigate("/Ventas");
         } else {
           console.log("error");
