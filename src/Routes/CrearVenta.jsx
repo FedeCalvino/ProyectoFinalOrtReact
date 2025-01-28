@@ -37,7 +37,7 @@ export const CrearVenta = () => {
 
 
   const [VentaInfo, setVentaInfo] = useState(null);
-  const UrlVenta = "http://localhost:8083/Ventas"
+  const UrlVenta = "/VentasEP"
 
   const CrearVenta = async () => {
     const VentaInfoObj={
