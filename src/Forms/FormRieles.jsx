@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addArticulo } from "../Features/ArticulosReducer";
 import { selectConfigRiel } from "../Features/ConfigReducer";
 
-export const FormRieles = () => {
+export const FormRieles = ({toastCallBack}) => {
   const ConfigRiel = useSelector(selectConfigRiel);
   //opciones de roller
   const ladosAcumula = ConfigRiel.ladoAcumula || []; 
@@ -17,7 +17,7 @@ export const FormRieles = () => {
   const soportes = ConfigRiel.tiposSoportes|| [];
 
   const dispatch = useDispatch();
-  const [Tipo, setTipo] = useState("1");
+  const [Tipo, setTipo] = useState(null);
   const [selectedAreaRoler, SetselectedAreaRoler] = useState("");
   const [Accionamiento, setAccionamiento] = useState("Manual");
   const [Acumula, setAcumula] = useState("1");
@@ -27,11 +27,27 @@ export const FormRieles = () => {
   const [Armado, setArmado] = useState("");
   const [Soporte, setSoporte] = useState("1");
   const [Comentario, setComentario] = useState("");
+  const [ComentarioIns, setComentarioIns] = useState("");
   const [Rieles, setRieles] = useState([]);
   const [Baston, setBaston] = useState("5");
 
-  const AgregarRiel = () => {
 
+  const validarCampos = () => {
+    // Verificar si todos los campos obligatorios tienen valores
+    if (
+      !selectedAreaRoler ||
+      !Tipo ||
+      !Acumula ||
+      !Ancho
+    ) {
+      toastCallBack("completar los campos","error")
+      return false; // Si alguno de los campos no está lleno, retorna false
+    }
+    return true; // Si todos los campos están completos, retorna true
+  };
+
+  const AgregarRiel = () => {
+  if(validarCampos()){
     const ObjBastones={
       Idtipo:Baston,
       cantidad:CantBast
@@ -53,6 +69,7 @@ export const FormRieles = () => {
       bastones: ObjBastones,
       BastonesStr: bastones.find((bast)=>bast.idTipoBaton===parseInt(Baston)).nombre,
       detalle: Comentario,
+      detalleInstalacion:ComentarioIns,
       tipoArticulo: "riel",
       nombre: "Riel",
     };
@@ -61,6 +78,7 @@ export const FormRieles = () => {
     console.log("nuevoRiel",nuevoRiel)
     // Despachamos el nuevo estado de Rieles
     dispatch(addArticulo(nuevoRiel));
+  }
   };
 
   const rowStyle = {
@@ -72,12 +90,15 @@ export const FormRieles = () => {
     marginTop: "25px",
     height: "100px",
     marginLeft: "100px",
-    marginRight: "100px",
   };
 
   const inputStyle = {
     textAlign: "center",
     width: "300px",
+  };
+  const inputStyle2 = {
+    textAlign: "center",
+    width: "150px",
   };
 
   const labelStyle = {
@@ -95,6 +116,8 @@ export const FormRieles = () => {
 
   return (
     <>
+    <Row>
+    <Col>
       <Row style={rowStyle}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <p style={labelStyle}>Ambiente</p>
@@ -131,6 +154,7 @@ export const FormRieles = () => {
             value={Tipo}
             style={inputStyle}
           >
+            <option value=""></option>
             {tipos.length > 0 &&
               tipos.map((tipo) => (
                 <option
@@ -154,8 +178,10 @@ export const FormRieles = () => {
             }}
             value={Acumula}
           >
+            <option value=""></option>
             {ladosAcumula.map((lado) => {
               return (
+
                 <option
                   key={lado.ladoAcumulaId}
                   value={lado.ladoAcumulaId}
@@ -172,12 +198,13 @@ export const FormRieles = () => {
       <div style={{ display: "flex", alignItems: "center" }}>
           <p style={labelStyle}>Bastones</p>
           <Form.Select
-            style={inputStyle}
+            style={inputStyle2}
             onChange={(e) => {
               setBaston(e.target.value);
             }}
             value={Baston}
           >
+            <option value=""></option>
             {bastones.map((baston) => {
               return (
                 <option
@@ -212,7 +239,7 @@ export const FormRieles = () => {
       <div style={{ display: "flex", alignItems: "center" }}>
           <p style={labelStyle}>Soportes</p>
           <Form.Select
-            style={inputStyle}
+            style={inputStyle2}
             onChange={(e) => {
               setSoporte(e.target.value);
             }}
@@ -248,11 +275,12 @@ export const FormRieles = () => {
       </Row>
       <Row style={rowStyle2}>
         <Form.Group controlId="armado">
-          <FloatingLabel controlId="floatingTextarea2" label="Detalles">
+          <FloatingLabel controlId="floatingTextarea2" label="Detalles armado">
             <Form.Control
               as="textarea"
               placeholder="Leave a comment here"
               style={{
+                width:"100%",
                 height: "100px",
                 border: "1px solid black",
                 borderRadius: "5px",
@@ -263,6 +291,23 @@ export const FormRieles = () => {
           </FloatingLabel>
         </Form.Group>
       </Row>
+      </Col>
+      <Col>
+    <FloatingLabel controlId="floatingTextarea2" label="Detalles instalacion">
+            <Form.Control
+              as="textarea"
+              placeholder="Leave a comment here"
+              style={{
+                height: "200px",
+                border: "1px solid black",
+                borderRadius: "5px",
+              }}
+              value={ComentarioIns}
+              onChange={(e) => setComentarioIns(e.target.value)}
+            />
+          </FloatingLabel>
+    </Col>
+    </Row>
       <Row className="mt-4">
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Button

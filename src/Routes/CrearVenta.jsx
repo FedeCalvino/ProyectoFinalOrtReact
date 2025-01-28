@@ -246,7 +246,7 @@ export const CrearVenta = () => {
                   <FormRollers toastCallBack={toastCallBack} />
                 </Tab>
                 <Tab eventKey="Rieles" title="Rieles">
-                  <FormRieles />
+                  <FormRieles toastCallBack={toastCallBack} />
                 </Tab>
                 <Tab eventKey="Tradicional" title="Tradicional">
                   <FormTradicional />

@@ -31,7 +31,7 @@ export const FormRollers = ({toastCallBack}) => {
   const [selectedTelaRoler, SetselectedTelaRoler] = useState([]);
   const [selectedTelaMostrarRoler, SetselectedTelaMostrarRoler] = useState([]);
   const [selectedAreaRoler, SetselectedAreaRoler] = useState("");
-  const [ComentarioCor, SetComentarioCor] = useState("");
+  const [ComentarioIns, setComentarioIns] = useState("");
   const [AnchoRoller, setAnchoRoller] = useState("");
   const [LargoRoller, setLargoRoller] = useState("");
   const [CanoRoller, setCanoRoller] = useState("");
@@ -78,6 +78,7 @@ export const FormRollers = ({toastCallBack}) => {
     cadena:parseInt(TipoCadena),
     TipoCadenaStr:(TipoCadena && TiposCadena) && TiposCadena.find(tipos=>tipos.idTipoCadena===parseInt(TipoCadena))?.tipoCadena,
     soporte:soporteObj,
+    detalleInstalacion:ComentarioIns,
     tipoArticulo: "roller",
     nombre: "Roller",
   };
@@ -163,7 +164,8 @@ export const FormRollers = ({toastCallBack}) => {
   return (
     <div className="p-4">
 
-    {/* Ambiente */}
+    <Row>
+      <Col>
     <Row style={rowStyle}>
       <div style={{display: "flex", alignItems: "center"}}>
         <p style={labelStyle}>Ambiente</p>
@@ -230,6 +232,7 @@ export const FormRollers = ({toastCallBack}) => {
           required
         />
       </div>
+
     </Row>
 
     {/* Largo */}
@@ -366,7 +369,23 @@ export const FormRollers = ({toastCallBack}) => {
         </Form.Control>
       </div>
     </Row>
-
+    </Col>
+    <Col>
+    <FloatingLabel controlId="floatingTextarea2" label="Detalles instalacion">
+            <Form.Control
+              as="textarea"
+              placeholder="Leave a comment here"
+              style={{
+                height: "200px",
+                border: "1px solid black",
+                borderRadius: "5px",
+              }}
+              value={ComentarioIns}
+              onChange={(e) => setComentarioIns(e.target.value)}
+            />
+          </FloatingLabel>
+    </Col>
+    </Row>
     {/* Button */}
     <Row className="mt-4">
       <div style={{display: "flex", justifyContent: "center"}}>

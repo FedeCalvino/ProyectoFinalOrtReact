@@ -238,13 +238,13 @@ export const OrdenProduccion = ({ Venta }) => {
               <View style={styles.tableRow} key={cortinaIndex}>
                 <Text style={[styles.tableCell2, styles.text]}>{Roll.IdArticulo}</Text>
                 <Text style={[styles.tableCell1, styles.text]}>{Roll.Ambiente}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.ancho}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTela}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTubo}</Text>
+                <Text style={[styles.tableCell, styles.text]}>{Roll.ancho.toFixed(3)}</Text>
+                <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTela.toFixed(3)}</Text>
+                <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTubo.toFixed(3)}</Text>
                 <Text style={[styles.tableCell, styles.text]}>{Roll.cano.tipo}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.alto}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.AltoTela}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.LargoCadena}</Text>
+                <Text style={[styles.tableCell, styles.text]}>{Roll.alto.toFixed(3)}</Text>
+                <Text style={[styles.tableCell, styles.text]}>{Roll.AltoTela.toFixed(3)}</Text>
+                <Text style={[styles.tableCell, styles.text]}>{Roll.LargoCadena.toFixed(3)}</Text>
                 <Text style={[styles.tableCellPosicion, styles.text]}>{Roll.posicion.posicion}</Text>
                 <Text style={[styles.tableCellLado, styles.text]}>{Roll.ladoCadena.lado}</Text>
                 <Text style={[styles.tableCellMotor, styles.text]}>{Roll.MotorRoller.nombre}</Text>
@@ -304,13 +304,13 @@ export const OrdenProduccion = ({ Venta }) => {
                       <View style={styles.tableRow} key={cortinaIndex}>
                         <Text style={[styles.tableCell2, styles.text]}>{Roll.IdArticulo}</Text>
                         <Text style={[styles.tableCell1, styles.text]}>{Roll.Ambiente}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.ancho}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTela}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTubo}</Text>
+                        <Text style={[styles.tableCell, styles.text]}>{Roll.ancho.toFixed(3)}</Text>
+                        <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTela.toFixed(3)}</Text>
+                        <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTubo.toFixed(3)}</Text>
                         <Text style={[styles.tableCell, styles.text]}>{Roll.cano.tipo}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.alto}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.AltoTela}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.LargoCadena}</Text>
+                        <Text style={[styles.tableCell, styles.text]}>{Roll.alto.toFixed(3)}</Text>
+                        <Text style={[styles.tableCell, styles.text]}>{Roll.AltoTela.toFixed(3)}</Text>
+                        <Text style={[styles.tableCell, styles.text]}>{Roll.LargoCadena.toFixed(3)}</Text>
                         <Text style={[styles.tableCellPosicion, styles.text]}>{Roll.posicion.posicion}</Text>
                         <Text style={[styles.tableCellLado, styles.text]}>{Roll.ladoCadena.lado}</Text>
                         <Text style={[styles.tableCellMotor, styles.text]}>{Roll.MotorRoller.nombre}</Text>
@@ -335,7 +335,7 @@ export const OrdenProduccion = ({ Venta }) => {
         <View style={styles.itemContainer} key={rielIndex}>
           <ItemDetail label="Numero" value={riel.IdArticulo} />
           <ItemDetail label="Ambiente" value={riel.ambiente} />
-          <ItemDetail label="Ancho" value={riel.ancho} />
+          <ItemDetail label="Ancho" value={riel.ancho.toFixed(3)} />
           <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
           <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
           <ItemDetail label="Bastones" value={riel.bastones.nombre} />

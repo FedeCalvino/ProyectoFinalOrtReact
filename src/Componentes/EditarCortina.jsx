@@ -11,7 +11,7 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited,callBacktoast,Cort
   const LadosCadenas = ConfigRoller.ladosCadena;
   const Posiciones = ConfigRoller.posiciones;
   const TiposTelas = useSelector(selectTelasRoller);
-  const EditarCortinaUrl= "/CortinaEp"
+  const EditarCortinaUrl= "/CortinaEp/"
   const [Cortina, setCortina] = useState(cortinaEdited);
 
   useEffect(() => {
