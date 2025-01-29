@@ -23,6 +23,7 @@ import { selectTelasRoller, selectTelas } from "../Features/TelasReducer";
 import { useDispatch } from "react-redux";
 import { Loading } from "./Loading";
 import { TicketCortina } from "./TicketCortina";
+import { OrdenInstalacion } from "./OrdenInstalacion";
 
 export const VentaView = ({ callBackToast }) => {
   const dispatch = useDispatch();
@@ -89,10 +90,12 @@ export const VentaView = ({ callBackToast }) => {
   const [AdlAtr, setAdlAtr] = useState("");
 
   //Edit Venta
-  const [ObraEdit, setObraEdit] = useState(Ven.obra);
+  const [ObraEdit, setObraEdit] = useState(Ven.obra || " ");
   const [FechaInstEdit, setFechaInstEdit] = useState(Ven.fechaInstalacion);
 
   const UrlEditCor = "/Cortinas/Edit";
+  //const VentasEp = "/VentasEP/UpdateFO/"
+  const VentasEp = "http://localhost:8083/Ventas/UpdateFO/"
 
   const handleShow = (Cor) => {
     setCortrtinaTrtyEdited(Cor);
@@ -310,6 +313,30 @@ export const VentaView = ({ callBackToast }) => {
 
     downloadPDF(ven);
   };
+  const DescPdfInstalacion = () => {
+
+    const ven = {
+      Cliente:Ven.cliente,
+      listaArticulos: GetConfiguracionArticulos(),
+    };
+
+    downloadPDFInstalacion(ven);
+  };
+
+  const downloadPDFInstalacion = async (Ven) => {
+    const blob = await pdf(<OrdenInstalacion Venta={Ven} />).toBlob();
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${Ven.Cliente.nombre} O.I.pdf`;
+
+    // Simular el clic en el enlace de descarga
+    link.click();
+
+    // Liberar la URL del objeto
+    URL.revokeObjectURL(link.href);
+  };
+
 
   const downloadPDF = async (Ven) => {
     const blob = await pdf(<OrdenProduccion Venta={Ven} />).toBlob();
@@ -357,9 +384,10 @@ export const VentaView = ({ callBackToast }) => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
       };
-
+      console.log("ObraEdit",ObraEdit)
+      console.log("url",VentasEp + FechaInstEdit + "/" + ObraEdit + "/" + Ven.id)
       const response = await fetch(
-        "http://localhost:8083/Ventas/UpdateFO/" + FechaInstEdit + "/" + ObraEdit + "/" + Ven.id,
+        VentasEp + FechaInstEdit + "/" + ObraEdit + "/" + Ven.id,
         requestOptions
       );
       const result = await response.json();
@@ -705,18 +733,24 @@ export const VentaView = ({ callBackToast }) => {
               </Table>
             </>
           ) : null}
-          <Button variant="primary" onClick={DescPdf}>
-            PDF
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              downloadTicket();
-            }}
-            className="w-auto"
-          >
-            Tickets
-          </Button>
+          <Row>
+  <Col className="d-flex justify-content-center">
+    <Button variant="primary" onClick={DescPdf}>
+      PDF
+    </Button>
+  </Col>
+  <Col className="d-flex justify-content-center">
+    <Button variant="primary" onClick={downloadTicket} className="w-auto">
+      Tickets
+    </Button>
+  </Col>
+  <Col className="d-flex justify-content-center">
+    <Button variant="primary" onClick={DescPdfInstalacion}>
+      Orden Instalacion
+    </Button>
+  </Col>
+</Row>
+
         </>
       )}
     </>

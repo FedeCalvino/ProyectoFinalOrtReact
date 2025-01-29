@@ -24,6 +24,7 @@ import { FormRieles } from "../Forms/FormRieles";
 import { TablaArticulos } from "../Tables/TablaArticulos";
 import { VentaPreview } from "../Componentes/VentaPreview";
 import { Modal } from "react-bootstrap";
+import { Loading } from "../Componentes/Loading";
 
 export const CrearVenta = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export const CrearVenta = () => {
   const Articulos = useSelector(selectArticulos);
   const [Obra, setObra] = useState("");
   const [FechaInstalacion, setFechaInstalacion] = useState("");
-
+  const [Creando, setCreando] = useState("");
 
   const [VentaInfo, setVentaInfo] = useState(null);
   const UrlVenta = "/VentasEP"
@@ -61,6 +62,7 @@ export const CrearVenta = () => {
 
   const ConfirmCrearVenta = async () => {
     if (Articulos.length >0) {
+      setCreando(true);
       setloading(true);
       const loadingToast = toast.loading("Cargando...");
       const VentaModel = {
@@ -103,14 +105,16 @@ export const CrearVenta = () => {
           toast.dismiss(loadingToast);
         }
         toast.dismiss(loadingToast);
+        setCreando(false);
         setloading(false);
       } catch (error) {
+        setCreando(false);
         setloading(false);
         toast.dismiss(loadingToast);
         AlertaError("Error al realizar la solicitud");
       }
-
     }else{
+      setCreando(false);
       setShowModal(false)
       toast.error("No hay articulos");
     }
@@ -137,6 +141,9 @@ export const CrearVenta = () => {
           <VentaPreview Venta={VentaInfo}/>
           <Row className="button-row">
             <Col className="d-flex justify-content-center">
+              {Creando ?
+              <Loading tipo="small"/>
+              :
               <Button
                 className="custom-button"
                 variant="primary"
@@ -146,6 +153,7 @@ export const CrearVenta = () => {
               >
                 Crear
               </Button>
+              }
             </Col>
             <Col className="d-flex justify-content-center">
               <Button

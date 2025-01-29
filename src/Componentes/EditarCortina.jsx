@@ -1,27 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { Table, Form } from "react-bootstrap";
+import { Table, Form, FloatingLabel, Row, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import "../Routes/Css/EditarCortina.css";
 import { selectRollerConfig } from "../Features/ConfigReducer";
 import { selectTelasRoller } from "../Features/TelasReducer";
 
-export const EditarCortina = ({ callBackCancel, cortinaEdited,callBacktoast,CortinaEditedFnct}) => {
+export const EditarCortina = ({
+  callBackCancel,
+  cortinaEdited,
+  callBacktoast,
+  CortinaEditedFnct,
+}) => {
   const ConfigRoller = useSelector(selectRollerConfig);
   const CanosRoller = ConfigRoller.canos;
   const LadosCadenas = ConfigRoller.ladosCadena;
   const Posiciones = ConfigRoller.posiciones;
   const TiposTelas = useSelector(selectTelasRoller);
-  const EditarCortinaUrl= "/CortinaEp/"
+  const EditarCortinaUrl = "/CortinaEp/";
   const [Cortina, setCortina] = useState(cortinaEdited);
+  const [ComentarioIns, setComentarioIns] = useState(
+    Cortina.detalleInstalacion
+  );
 
   useEffect(() => {
     setCortina(cortinaEdited);
   }, [cortinaEdited]);
 
   const handleInputChange = (e, field) => {
-    const value = field === "cano" || field === "ladoCadena" || field === "posicion" 
-      ? JSON.parse(e.target.value) 
-      : e.target.value;
+    const value =
+      field === "cano" || field === "ladoCadena" || field === "posicion"
+        ? JSON.parse(e.target.value)
+        : e.target.value;
 
     setCortina((prevState) => ({
       ...prevState,
@@ -30,17 +39,18 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited,callBacktoast,Cort
   };
 
   const transformarCortina = (cortina) => {
-    console.log(cortina)
+    console.log(cortina);
 
-    const soporteObj={
-      idTipo:cortina.soporte.idTipo,
-      cantidad:cortina.soporte.cantidad
-    }  
+    const soporteObj = {
+      idTipo: cortina.soporte.idTipo,
+      cantidad: cortina.soporte.cantidad,
+    };
     return {
       Ambiente: cortina.Ambiente,
       IdTipoTela: cortina.IdTipoTela,
       Ancho: cortina.ancho,
       Alto: cortina.alto,
+      IdArticulo:cortina.IdArticulo,
       Posicion: parseInt(cortina.posicion.posicionId, 10),
       LadoCadena: parseInt(cortina.ladoCadena.ladoId, 10),
       cano: parseInt(cortina.cano.id, 10),
@@ -49,6 +59,7 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited,callBacktoast,Cort
       soporte: soporteObj,
       tipoArticulo: cortina.tipoArticulo,
       nombre: cortina.nombre,
+      detalleInstalacion: ComentarioIns,
     };
   };
 
@@ -58,28 +69,30 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited,callBacktoast,Cort
 
   const Editar = async () => {
     try {
-      const cor = transformarCortina(Cortina)
-      
+      const cor = transformarCortina(Cortina);
+
       const requestOptions = {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(cor)
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cor),
       };
 
-      const response = await fetch(EditarCortinaUrl+Cortina.IdCortina, requestOptions);
+      const response = await fetch(
+        EditarCortinaUrl + Cortina.IdCortina,
+        requestOptions
+      );
       const result = await response.json();
       console.log(result);
-      callBacktoast("cortina actualizada","success")
-      CortinaEditedFnct()
-
-  } catch (error) {
-    console.log(error)
-    callBacktoast("error al actualizar","error")
-  }
-
+      callBacktoast("cortina actualizada", "success");
+      CortinaEditedFnct();
+    } catch (error) {
+      console.log(error);
+      callBacktoast("error al actualizar", "error");
+    }
   };
 
-  const findTela = (IdTela) => TiposTelas.find((Tela) => Tela.id === IdTela) || {};
+  const findTela = (IdTela) =>
+    TiposTelas.find((Tela) => Tela.id === IdTela) || {};
   const tela = findTela(Cortina.IdTipoTela);
 
   return (
@@ -130,7 +143,7 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited,callBacktoast,Cort
               <Form.Select
                 value={JSON.stringify(Cortina.cano)}
                 onChange={(e) => handleInputChange(e, "cano")}
-                style={{ width: "80px" }} 
+                style={{ width: "80px" }}
               >
                 {CanosRoller.map((cano) => (
                   <option key={cano.id} value={JSON.stringify(cano)}>
@@ -178,13 +191,39 @@ export const EditarCortina = ({ callBackCancel, cortinaEdited,callBacktoast,Cort
         </tbody>
       </Table>
       <div>
-      <button className="Butooneditable" onClick={Editar}>
-        Confirmar
-      </button>
-      <button className="Butooneditable" onClick={callBackCancel}>
-        Cancelar
-      </button>
-              
+        <Row >
+          <Col className="d-flex justify-content-center" >
+            <FloatingLabel
+              controlId="floatingTextarea2"
+              label="Detalles instalacion"
+            >
+              <Form.Control
+                as="textarea"
+                placeholder="Leave a comment here"
+                style={{
+                  height: "150px",
+                  width: "500px",
+                  border: "1px solid black",
+                  borderRadius: "5px",
+                }}
+                value={ComentarioIns}
+                onChange={(e) => setComentarioIns(e.target.value)}
+              />
+            </FloatingLabel>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <button className="Butooneditable" onClick={Editar}>
+              Confirmar
+            </button>
+          </Col>
+          <Col>
+            <button className="Butooneditable" onClick={callBackCancel}>
+              Cancelar
+            </button>
+          </Col>
+        </Row>
       </div>
     </>
   );

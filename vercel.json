@@ -36,12 +36,8 @@
       "destination": "http://200.40.89.254:8086/Instalacion"
     },
     {
-      "source": "/ClientesEP",
-      "destination": "http://200.40.89.254:8086/Cliente"
-    },
-    {
-      "source": "/ClientesEP/:Name",
-      "destination": "http://200.40.89.254:8086/Cliente/Name/:Name"
+      "source": "/ClientesEP/:path*",
+      "destination": "http://200.40.89.254:8086/Cliente/:path*"
     },
     {
       "source": "/ConfiguracionEP/TiposCli",
