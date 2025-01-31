@@ -37,7 +37,7 @@ export const TablaArticulos = () => {
           <tr key={index} style={{ marginBottom: "1em" }} onClick={()=>showArticulo()}>
             <td>{Art.numeroArticulo}</td>
             <td>{Art.tipoArticulo.toUpperCase()}</td>
-            <td>{Art.Ambiente}</td>
+            <td>{Art.Ambiente || Art.ambiente}</td>
             <td>
               <Button onClick={() => handleDelete(Art.numeroArticulo)}>
                 Borrar

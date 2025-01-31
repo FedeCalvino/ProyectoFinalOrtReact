@@ -56,6 +56,7 @@ export const Instalaciones = () => {
     try {
       const response = await fetch("/InstalacionEP");
       const result = await response.json();
+      console.log(result)
       result.body.forEach(res => {
         const startDayjs = dayjs(res.start);
         const endDayjs = dayjs(res.end);

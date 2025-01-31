@@ -18,18 +18,20 @@ import { EditarCortina } from "./EditarCortina";
 import {
   selectRollerConfig,
   selectConfigRiel,
+  selectConfigTradicional,
 } from "../Features/ConfigReducer";
-import { selectTelasRoller, selectTelas } from "../Features/TelasReducer";
+import { selectTelasRoller, selectTelas, selectTelasTradicional } from "../Features/TelasReducer";
 import { useDispatch } from "react-redux";
 import { Loading } from "./Loading";
 import { TicketCortina } from "./TicketCortina";
 import { OrdenInstalacion } from "./OrdenInstalacion";
+import { EditarRiel } from "./EditarRiel";
 
 export const VentaView = ({ callBackToast }) => {
   const dispatch = useDispatch();
 
   const ConfigRoller = useSelector(selectRollerConfig);
-  console.log("ConfigRoller", ConfigRoller);
+
   //opciones de roller
   const CanosRoller = ConfigRoller.canos;
   const LadosCadenas = ConfigRoller.ladosCadena;
@@ -38,19 +40,35 @@ export const VentaView = ({ callBackToast }) => {
   const Posiciones = ConfigRoller.posiciones;
   const TiposCadenas = ConfigRoller.tiposCadena;
 
-  const TiposTelas = useSelector(selectTelasRoller);
 
+  const ConfigTadicional = useSelector(selectConfigTradicional);
+  console.log("ConfigTadicional", ConfigTadicional);
+  //opciones de roller
+  const Pinzas = ConfigTadicional.pinzas;
+  const Ganchos = ConfigTadicional.ganchos;
+
+  const findNameTipoPinza = (id_tipo) => {
+    return Pinzas.find((tipo) => tipo.idPinza === parseInt(id_tipo)).nombre;
+  };
+
+  const findNameTipoGancho = (id_tipo) => {
+    return Ganchos.find((tipo) => tipo.idGanchos === parseInt(id_tipo)).nombre;
+  };
+
+  const TiposTelas = useSelector(selectTelasRoller);
+  const TiposTelasTradi = useSelector(selectTelasTradicional);
   const tableRef = useRef(null);
 
   const [showModEditVenal, setEditVen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showModalRiel, setshowModalRiel] = useState(false);
 
   const Articulos = useSelector(selectArticulos);
   const Rollers = Articulos.filter((art) => art.nombre === "Roller");
   console.log("Rollers", Rollers);
 
   const Rieles = Articulos.filter((art) => art.tipoArticulo === "riel");
-
+  const Tradicionales = Articulos.filter((art) => art.tipoArticulo === "tradicional");
   const ConfigRiel = useSelector(selectConfigRiel);
 
   const ladosAcumula = ConfigRiel.ladoAcumula || [];
@@ -67,10 +85,12 @@ export const VentaView = ({ callBackToast }) => {
   const [openEdit, setopenEdit] = useState(false);
   const [IdCorEdit, setIdCorEdit] = useState(null);
   const [CortinaEdited, setCortrtinaEdited] = useState([]);
+  const [RielEdited, setRielEdited] = useState([]);
 
   const [loadingAct, setloadingAct] = useState(false);
 
   const [CortrtinaTrtyEdited, setCortrtinaTrtyEdited] = useState(null);
+  const [RielTryEdited, setRielTryEdited] = useState(null);
 
   const [Telas, setTelas] = useState([]);
 
@@ -90,20 +110,29 @@ export const VentaView = ({ callBackToast }) => {
   const [AdlAtr, setAdlAtr] = useState("");
 
   //Edit Venta
-  const [ObraEdit, setObraEdit] = useState(Ven.obra || " ");
+  const [ObraEdit, setObraEdit] = useState(Ven.obra);
   const [FechaInstEdit, setFechaInstEdit] = useState(Ven.fechaInstalacion);
 
   const UrlEditCor = "/Cortinas/Edit";
-  //const VentasEp = "/VentasEP/UpdateFO/"
-  const VentasEp = "http://localhost:8083/Ventas/UpdateFO/"
+  const VentasEp = "/VentasEP/UpdateFO/"
+  //const VentasEp = "http://localhost:8083/Ventas/UpdateFO/";
 
-  const handleShow = (Cor) => {
-    setCortrtinaTrtyEdited(Cor);
+  const handleShow = (Art) => {
+    if(Art.nombre==="Roller"){
+    setCortrtinaTrtyEdited(Art);
+    setRielTryEdited(null)
+    }
+    if(Art.nombre==="Riel"){
+      setCortrtinaTrtyEdited(null)
+      setRielTryEdited(Art)
+    }
     setShowModal(true);
   };
 
   const ShowModalCallB = () => {
-    setCortrtinaEdited([]);
+    setopenEdit(false)
+    setCortrtinaEdited(null);
+    setRielEdited(null)
     setShowModal(false);
   };
   const CortinaEditedFnct = () => {
@@ -113,6 +142,7 @@ export const VentaView = ({ callBackToast }) => {
   };
 
   const handleClose = () => setShowModal(false);
+  const handleCloseRiel = () => setshowModalRiel(false);
 
   const style = {
     position: "absolute",
@@ -200,7 +230,9 @@ export const VentaView = ({ callBackToast }) => {
   const findTela = (IdTela) => {
     return TiposTelas.find((Tela) => Tela.id === IdTela);
   };
-
+  const findTelaTradi = (IdTela) => {
+    return TiposTelasTradi.find((Tela) => Tela.id === IdTela);
+  };
   const [Cadena, setCadena] = useState("");
 
   /* const AddCor = async () => {
@@ -242,8 +274,8 @@ export const VentaView = ({ callBackToast }) => {
     }
   };*/
 
-  const GetConfiguracionArticulos=()=>{
-    const listaArticulos = []
+  const GetConfiguracionArticulos = () => {
+    const listaArticulos = [];
     Articulos.forEach((cor) => {
       // Deep copy of the original `cor` object to avoid modifying the original
       const newCor = JSON.parse(JSON.stringify(cor));
@@ -276,13 +308,26 @@ export const VentaView = ({ callBackToast }) => {
 
       listaArticulos.push(newCor);
     });
-    return listaArticulos
-  }
+    return listaArticulos;
+  };
+
+  const EditRiel = () => {
+    setopenEdit(true);
+    setRielEdited(RielTryEdited);
+    handleClose();
+  };
 
   const EditCor = () => {
     setopenEdit(true);
-    console.log(CortrtinaTrtyEdited);
-    setCortrtinaEdited(CortrtinaTrtyEdited);
+    if(CortrtinaTrtyEdited){
+      console.log(CortrtinaTrtyEdited);
+      setRielEdited(null)
+      setCortrtinaEdited(CortrtinaTrtyEdited);
+    }
+    if(RielTryEdited){
+      setCortrtinaEdited(null)
+      setRielEdited(RielTryEdited)
+    }
     handleClose();
   };
 
@@ -314,9 +359,8 @@ export const VentaView = ({ callBackToast }) => {
     downloadPDF(ven);
   };
   const DescPdfInstalacion = () => {
-
     const ven = {
-      Cliente:Ven.cliente,
+      Cliente: Ven.cliente,
       listaArticulos: GetConfiguracionArticulos(),
     };
 
@@ -336,7 +380,6 @@ export const VentaView = ({ callBackToast }) => {
     // Liberar la URL del objeto
     URL.revokeObjectURL(link.href);
   };
-
 
   const downloadPDF = async (Ven) => {
     const blob = await pdf(<OrdenProduccion Venta={Ven} />).toBlob();
@@ -360,8 +403,8 @@ export const VentaView = ({ callBackToast }) => {
 
     const blob = await pdf(
       <TicketCortina
-      NombreCli={Ven.cliente.nombre}
-      Articulos={GetConfiguracionArticulos()}
+        NombreCli={Ven.cliente.nombre}
+        Articulos={GetConfiguracionArticulos()}
       />
     ).toBlob();
     const base64PDF = await blobToBase64(blob);
@@ -384,28 +427,50 @@ export const VentaView = ({ callBackToast }) => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
       };
-      console.log("ObraEdit",ObraEdit)
-      console.log("url",VentasEp + FechaInstEdit + "/" + ObraEdit + "/" + Ven.id)
-      const response = await fetch(
-        VentasEp + FechaInstEdit + "/" + ObraEdit + "/" + Ven.id,
-        requestOptions
-      );
+      let url = "";
+      
+      if (ObraEdit === "") {
+        console.log("EntroObraEdit");
+        url = VentasEp + FechaInstEdit + "/" + "null" + "/" + Ven.id;
+        console.log("ObraEdit", ObraEdit);
+      } else {
+        url = VentasEp + FechaInstEdit + "/" + ObraEdit + "/" + Ven.id;
+      }
+  
+      const response = await fetch(url, requestOptions);
       const result = await response.json();
       console.log("result", result);
+  
       if (result.status === "OK") {
         setloadingAct(true);
-        await FetchVentaCortinas();
+        
+        // Crear una copia de Ven antes de modificarlo
+        const NewVenta = { ...Ven };
+  
+        if (ObraEdit !== "") {
+          NewVenta.obra = ObraEdit;
+        }
+        if (FechaInstEdit !== "null") {
+          NewVenta.fechaInstalacion = FechaInstEdit;
+        }
+  
+        setVenta(NewVenta);
         setloadingAct(false);
         callBackToast("Se actualizó", "success");
         setEditVen(false);
-      }else{
-        callBackToast("error al actualizar","error")
+      } else {
+        setEditVen(false);
+        setloadingAct(false);
+        callBackToast("error al actualizar", "error");
       }
     } catch (error) {
       console.log(error);
-      callBackToast("error al actualizar","error")
+      setEditVen(false);
+      setloadingAct(false);
+      callBackToast("error al actualizar", "error");
     }
   };
+  
 
   return (
     <>
@@ -418,66 +483,107 @@ export const VentaView = ({ callBackToast }) => {
         >
           <Box sx={style}>
             <div>
-              <h2>Cortina</h2>
+              <h2>
+                {CortrtinaTrtyEdited && CortrtinaTrtyEdited.nombre} {RielTryEdited && RielTryEdited.nombre}
+              </h2>
             </div>
-
-            <Table responsive>
-              <thead
-                style={{
-                  justifyContent: "center",
-                  fontFamily: "Arial, sans-serif",
-                }}
-              >
-                <tr>
-                  <th>Tipo</th>
-                  <th>Num</th>
-                  <th>Ambiente</th>
-                  <th>Tela</th>
-                  <th>Color</th>
-                  <th>Ancho AF-AF</th>
-                  <th>Ancho tela</th>
-                  <th>Ancho Caño</th>
-                  <th>Caño</th>
-                  <th>Alto Cortina</th>
-                  <th>Alto Tela</th>
-                  <th>Cant</th>
-                  <th>Cadena</th>
-                  <th>Lado Cadena</th>
-                  <th>Posición</th>
-                </tr>
-              </thead>
-              <tbody>
-                {CortrtinaTrtyEdited && (
-                  <tr key={CortrtinaTrtyEdited.idRoller}>
-                    <td>{CortrtinaTrtyEdited.nombre}</td>
-                    <td>{CortrtinaTrtyEdited.Ambiente}</td>
-                    <td>{findTela(CortrtinaTrtyEdited.IdTipoTela).nombre}</td>
-                    <td>{findTela(CortrtinaTrtyEdited.IdTipoTela).color}</td>
-                    <td>{CortrtinaTrtyEdited.Ancho}</td>
-                    <td>{CortrtinaTrtyEdited.AnchoTela}</td>
-                    <td>{CortrtinaTrtyEdited.AnchoTubo}</td>
-                    <td>{findNameCano(CortrtinaTrtyEdited.cano.id)}</td>
-                    <td>{CortrtinaTrtyEdited.alto}</td>
-                    <td>{CortrtinaTrtyEdited.AltoTela}</td>
-                    <td>1</td>
-                    <td>{CortrtinaTrtyEdited.LargoCadena}</td>
+            {CortrtinaTrtyEdited && (
+              <Table responsive>
+                <thead
+                  style={{
+                    justifyContent: "center",
+                    fontFamily: "Arial, sans-serif",
+                  }}
+                >
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Num</th>
+                    <th>Ambiente</th>
+                    <th>Tela</th>
+                    <th>Color</th>
+                    <th>Ancho AF-AF</th>
+                    <th>Ancho tela</th>
+                    <th>Ancho Caño</th>
+                    <th>Caño</th>
+                    <th>Alto Cortina</th>
+                    <th>Alto Tela</th>
+                    <th>Cant</th>
+                    <th>Cadena</th>
+                    <th>Lado Cadena</th>
+                    <th>Posición</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {CortrtinaTrtyEdited && (
+                    <tr key={CortrtinaTrtyEdited.idRoller}>
+                      <td>{CortrtinaTrtyEdited.nombre}</td>
+                      <td>{CortrtinaTrtyEdited.Ambiente}</td>
+                      <td>{findTela(CortrtinaTrtyEdited.IdTipoTela).nombre}</td>
+                      <td>{findTela(CortrtinaTrtyEdited.IdTipoTela).color}</td>
+                      <td>{CortrtinaTrtyEdited.Ancho}</td>
+                      <td>{CortrtinaTrtyEdited.AnchoTela}</td>
+                      <td>{CortrtinaTrtyEdited.AnchoTubo}</td>
+                      <td>{findNameCano(CortrtinaTrtyEdited.cano.id)}</td>
+                      <td>{CortrtinaTrtyEdited.alto}</td>
+                      <td>{CortrtinaTrtyEdited.AltoTela}</td>
+                      <td>1</td>
+                      <td>{CortrtinaTrtyEdited.LargoCadena}</td>
+                      <td>
+                        {findNameLadoCadena(
+                          CortrtinaTrtyEdited.ladoCadena.ladoId
+                        )}
+                      </td>
+                      <td>
+                        {findNamePos(CortrtinaTrtyEdited.posicion.posicionId)}
+                      </td>
+                      <td>
+                        {findNameMotor(CortrtinaTrtyEdited.motorRoller.idMotor)}
+                      </td>
+                      <td>{CortrtinaTrtyEdited.Exterior ? "Sí" : "No"}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            )}
+            {RielTryEdited && (
+              <Table responsive bordered>
+                <thead
+                  style={{
+                    justifyContent: "center",
+                    fontFamily: "Arial, sans-serif",
+                  }}
+                >
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Num</th>
+                    <th>Ambiente</th>
+                    <th>Ancho</th>
+                    <th>Tipo de Riel</th>
+                    <th>Soporte</th>
+                    <th>Bastones</th>
+                    <th>Acumula</th>
+                    <th>Detalle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr key={RielTryEdited.idCortina}>
+                    <td>{RielTryEdited.nombre}</td>
+                    <td>{RielTryEdited.IdArticulo}</td>
+                    <td>{RielTryEdited.ambiente}</td>
+                    <td>{RielTryEdited.ancho}</td>
+                    <td>{findNameTipoRiel(RielTryEdited.tipoRiel.tipoId)}</td>
+                    <td>{RielTryEdited.soportes.nombre}</td>
+                    <td>{RielTryEdited.bastones.nombre}</td>
                     <td>
-                      {findNameLadoCadena(
-                        CortrtinaTrtyEdited.ladoCadena.ladoId
+                      {findNameladoAcumula(
+                        RielTryEdited.ladoAcumula.ladoAcumulaId
                       )}
                     </td>
-                    <td>
-                      {findNamePos(CortrtinaTrtyEdited.posicion.posicionId)}
-                    </td>
-                    <td>
-                      {findNameMotor(CortrtinaTrtyEdited.motorRoller.idMotor)}
-                    </td>
-                    <td>{CortrtinaTrtyEdited.Exterior ? "Sí" : "No"}</td>
+                    <td>{RielTryEdited.detalle}</td>
                   </tr>
-                )}
-              </tbody>
-            </Table>
-
+                </tbody>
+              </Table>
+            )}
             <div
               style={{
                 display: "flex",
@@ -496,13 +602,25 @@ export const VentaView = ({ callBackToast }) => {
         </Modal>
       }
 
-      {CortinaEdited.IdRoller ? (
-        <EditarCortina
-          callBackCancel={ShowModalCallB}
-          cortinaEdited={CortinaEdited}
-          callBacktoast={callBacktoast}
-          CortinaEditedFnct={CortinaEditedFnct}
-        />
+      {openEdit ? (
+        <>
+          {CortinaEdited && (
+            <EditarCortina
+              callBackCancel={ShowModalCallB}
+              cortinaEdited={CortinaEdited}
+              callBacktoast={callBacktoast}
+              CortinaEditedFnct={CortinaEditedFnct}
+            />
+          )}
+          {RielEdited && (
+            <EditarRiel
+              callBackCancel={ShowModalCallB}
+              rielEdited={RielEdited}
+              callBacktoast={callBacktoast}
+              CortinaEditedFnct={CortinaEditedFnct}
+            />
+          )}
+        </>
       ) : (
         <>
           <Row
@@ -519,7 +637,7 @@ export const VentaView = ({ callBackToast }) => {
                       color: "#343a40",
                     }}
                   >
-                    {Ven.cliente.nombre}
+                    {Ven.cliente ? Ven.cliente.nombre : null}
                   </h1>
                 </Col>
                 <Col xs={12} md={3} className="text-center">
@@ -600,7 +718,7 @@ export const VentaView = ({ callBackToast }) => {
                       color: "#343a40",
                     }}
                   >
-                    {Ven.cliente.nombre}
+                    {Ven.cliente ? Ven.cliente.nombre : null}
                   </h1>
                 </Col>
                 <Col className="text-center">
@@ -715,7 +833,7 @@ export const VentaView = ({ callBackToast }) => {
                 </thead>
                 <tbody>
                   {Rieles.map((Cor) => (
-                    <tr key={Cor.idCortina}>
+                    <tr key={Cor.idCortina} onClick={() =>handleShow(Cor)}>
                       <td>{Cor.nombre}</td>
                       <td>{Cor.IdArticulo}</td>
                       <td>{Cor.ambiente}</td>
@@ -733,24 +851,75 @@ export const VentaView = ({ callBackToast }) => {
               </Table>
             </>
           ) : null}
+          { Tradicionales.length>0 && (
+            <Table responsive bordered>
+            <thead
+              style={{
+                justifyContent: "center",
+                fontFamily: "Arial, sans-serif",
+              }}
+            >
+              <tr>
+              <th>Tipo</th>
+                <th>Num</th>
+                <th>Ambiente</th>
+                <th>Tela</th>
+                <th>Color</th>
+                <th>Pinza</th>
+                <th>Gancho</th>
+                <th>Paños</th>
+                <th>Ancho</th>
+                <th>Ancho Izquierdo</th>
+                <th>Ancho Derecho</th>
+                <th>Alto</th>
+                <th>Alto Izquierdo</th>
+                <th>Alto Derecho</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Tradicionales.map((tradi) => (
+                <tr key={tradi.numeroArticulo}>
+                  <td>{tradi.nombre}</td>
+                  <td>{tradi.numeroArticulo}</td>
+                  <td>{tradi.Ambiente}</td>
+                  <td>{findTelaTradi(tradi.IdTipoTela).nombre}</td>
+                  <td>{findTelaTradi(tradi.IdTipoTela).color}</td>
+                  <td>{findNameTipoPinza(tradi.Pinza.idPinza)}</td>
+                  <td>{findNameTipoGancho(tradi.ganchos.idGanchos)}</td>
+                  <td>{tradi.cantidadPanos}</td>
+                  <td>{tradi.cantidadPanos===1 ? tradi.ancho : "N/A"}</td>
+                  <td>{tradi.cantidadPanos!==1 ? tradi.ancho : "N/A"}</td>
+                  <td>{tradi.cantidadPanos!==1 ? tradi.AnchoDerecho : "N/A"}</td>
+                  <td>{tradi.CantidadAltos==1 ? tradi.alto : "N/A"}</td>
+                  <td>{tradi.CantidadAltos!==1 ? tradi.alto : "N/A"}</td>
+                  <td>{tradi.CantidadAltos!==1 ? tradi.AltoDerecho : "N/A"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          )
+          }
           <Row>
-  <Col className="d-flex justify-content-center">
-    <Button variant="primary" onClick={DescPdf}>
-      PDF
-    </Button>
-  </Col>
-  <Col className="d-flex justify-content-center">
-    <Button variant="primary" onClick={downloadTicket} className="w-auto">
-      Tickets
-    </Button>
-  </Col>
-  <Col className="d-flex justify-content-center">
-    <Button variant="primary" onClick={DescPdfInstalacion}>
-      Orden Instalacion
-    </Button>
-  </Col>
-</Row>
-
+            <Col className="d-flex justify-content-center">
+              <Button variant="primary" onClick={DescPdf}>
+                PDF
+              </Button>
+            </Col>
+            <Col className="d-flex justify-content-center">
+              <Button
+                variant="primary"
+                onClick={downloadTicket}
+                className="w-auto"
+              >
+                Tickets
+              </Button>
+            </Col>
+            <Col className="d-flex justify-content-center">
+              <Button variant="primary" onClick={DescPdfInstalacion}>
+                Orden Instalacion
+              </Button>
+            </Col>
+          </Row>
         </>
       )}
     </>

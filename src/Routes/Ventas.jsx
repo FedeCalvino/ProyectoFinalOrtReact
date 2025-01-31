@@ -15,6 +15,7 @@ import {
   selectRollerConfig,
   selectConfigRiel,
 } from "../Features/ConfigReducer";
+import { Loading } from "../Componentes/Loading";
 
 export const Ventas = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,18 +26,20 @@ export const Ventas = () => {
   const [Ventas, setVentas] = useState([]);
   const [VentasTotales, setVentasTotales] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const idVenta = useSelector(selectVenta).IdVenata;
+  const idVenta = useSelector(selectVenta).id;
   let lastDay = "";
   const [ConfirmDelete, setConfirmDelete] = useState(false);
+  const [loadingDelete, setloadingDelete] = useState(false);
+  
   const ConfigRoller = useSelector(selectRollerConfig);
- 
+
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
-  const UrlDelete = "/Ventas/Del/";
+  const UrlDelete = "/VentasEP/";
 /*
   const UrlVentas = "http://localhost:8083/Ventas";
   const UrlVenta = "http://localhost:8083/Ventas/";
-  const UrlDelete = "http://localhost:8083/Ventas/";
+  const UrlDelete = "http://localhost:8083/VentasEP/";
 */
   const setVentaView = async (Venta) => {
     console.log(ConfigRoller)
@@ -141,22 +144,29 @@ export const Ventas = () => {
   const handleDelete = async () => {
     console.log(idVenta);
     if (idVenta != null) {
-      const requestOptionsCliente = {
+      setloadingDelete(true)
+      const requestOptionsventa = {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       };
       try {
         const response = await fetch(
           UrlDelete + idVenta,
-          requestOptionsCliente
+          requestOptionsventa
         );
         if (response.ok) {
+          setloadingDelete(false)
           handleClose();
           FetchVentas();
+          toast.success("venta eliminada")
         } else {
+          toast.error("error al eliminar")
           console.error("Error al eliminar la venta", response.status);
+          setloadingDelete(false)
         }
       } catch (error) {
+        toast.error("error al eliminar",error)
+        setloadingDelete(false)
         console.error("Error al realizar la solicitud", error);
       }
     }
@@ -251,13 +261,20 @@ const callBackToast = (mensaje, tipo) => {
           )}
         </Modal.Body>
         <Modal.Footer className="d-flex justify-content-between">
-          {ConfirmDelete ? (
+        {loadingDelete ? 
+            <div style={{marginLeft:"10px"}}>
+            <Loading tipo="small"/>
+            </div>
+            : 
+
+          ConfirmDelete ? (
             <Button
               style={{ background: "red", borderColor: "red" }}
               onClick={() => handleDelete()}
             >
               Seguro que desea eliminar la orden?
             </Button>
+            
           ) : (
             <Button
               style={{ background: "red", borderColor: "red" }}
@@ -266,6 +283,7 @@ const callBackToast = (mensaje, tipo) => {
               Eliminar
             </Button>
           )}
+          
           <Button variant="secondary" onClick={handleClose}>
             Volver
           </Button>

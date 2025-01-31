@@ -8,7 +8,7 @@ import { Ventas } from '../Routes/Ventas';
 import "../Routes/Css/App.css"
 import { Login } from '../Routes/Login';
 import { Instalaciones } from './Instalaciones';
-import {setRollerConfig,setRielConfig} from "../Features/ConfigReducer"
+import {setRollerConfig,setRielConfig,setTradicionalConfig} from "../Features/ConfigReducer"
 import {setTelasRollerFeature,setTelasTradicionalFeature} from "../Features/TelasReducer"
 import { Ordenes } from '../Routes/Ordenes';
 import { Lotes } from '../Routes/Lotes';
@@ -28,7 +28,7 @@ const App = () => {
     const UrlTelas = "/TelasEP"
     
     /*
-    const UrlTipoConfig = "http://200.40.89.254:8086/Conf"
+    const UrlTipoConfig = "http://localhost:8083/Conf"
     const UrlTelas = "http://200.40.89.254:8086/Telas"
     */
     const fetchRollerConf = async () => {
@@ -64,6 +64,7 @@ const App = () => {
           console.log("config",config)
 
           dispatch(setRollerConfig(config.configuracionRoller)); 
+          dispatch(setTradicionalConfig(config.configuracionTradicional))
           dispatch(setRielConfig(config.configuracionRiel)); 
           dispatch(setTelasTradicionalFeature(TelasTradi));
           dispatch(setTelasRollerFeature(TelasRoller))

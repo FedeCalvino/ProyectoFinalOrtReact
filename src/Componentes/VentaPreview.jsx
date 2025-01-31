@@ -14,15 +14,12 @@ export const VentaPreview = ({Venta}) => {
     const dispatch = useDispatch()
 
   const CortinasRollers = Articulos.filter((art) => art.tipoArticulo === "roller");
-
-
+  const Tradicionales = Articulos.filter((art) => art.tipoArticulo === "tradicional");
+  const Rieles = Articulos.filter((art) => art.tipoArticulo === "riel");
 
   const handleDelete = (num) => {
     dispatch(removeArticulo({ numeroArticulo: num }));
   };
-
-
-  const Rieles = Articulos.filter((art) => art.tipoArticulo === "riel");
 
   const [CortrtinaTrtyEdited, setCortrtinaTrtyEdited] = useState([]);
 
@@ -98,7 +95,7 @@ export const VentaPreview = ({Venta}) => {
           </Row>
         {CortinasRollers.length !== 0 ? (
           <>
-            <Table responsive>
+            <Table responsive bordered>
               <thead
                 style={{
                   justifyContent: "center",
@@ -149,7 +146,7 @@ export const VentaPreview = ({Venta}) => {
         ) : null}
         {Rieles.length !== 0 ? (
           <>
-            <Table responsive>
+            <Table responsive bordered>
               <thead
                 style={{
                   justifyContent: "center",
@@ -170,7 +167,7 @@ export const VentaPreview = ({Venta}) => {
               </thead>
               <tbody>
                 {Rieles.map((Cor) => (
-                  <tr key={Cor.idCortina}>
+                  <tr key={Cor.numeroArticulo}>
                     <td>{Cor.nombre}</td>
                     <td>{Cor.numeroArticulo}</td>
                     <td>{Cor.ambiente}</td>
@@ -180,6 +177,61 @@ export const VentaPreview = ({Venta}) => {
                     <td>{Cor.BastonesStr}</td>
                     <td>{Cor.AcumulaStr}</td>
                     <td>{Cor.detalle}</td>
+                    <td>
+                      <Button
+                        variant="danger"
+                        onClick={() => handleDelete(Cor.numeroArticulo)}
+                      >
+                        Borrar
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </>
+        ) : null}
+              {Tradicionales.length !== 0 ? (
+          <>
+            <Table responsive bordered>
+              <thead
+                style={{
+                  justifyContent: "center",
+                  fontFamily: "Arial, sans-serif",
+                }}
+              >
+                <tr>
+                <th>Tipo</th>
+                  <th>Num</th>
+                  <th>Ambiente</th>
+                  <th>Tela</th>
+                  <th>Pinza</th>
+                  <th>Gancho</th>
+                  <th>Paños</th>
+                  <th>Ancho</th>
+                  <th>Ancho Izquierdo</th>
+                  <th>Ancho Derecho</th>
+                  <th>Alto</th>
+                  <th>Alto Izquierdo</th>
+                  <th>Alto Derecho</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Tradicionales.map((tradi) => (
+                  <tr key={tradi.numeroArticulo}>
+                    <td>{tradi.nombre}</td>
+                    <td>{tradi.numeroArticulo}</td>
+                    <td>{tradi.Ambiente}</td>
+                    <td>{tradi.TelaNombre}</td>
+                    <td>{tradi.pinzaStr}</td>
+                    <td>{tradi.ganchosStr}</td>
+                    <td>{tradi.cantidadPanos}</td>
+                    <td>{tradi.cantidadPanos===1 ? tradi.Ancho : "N/A"}</td>
+                    <td>{tradi.cantidadPanos!==1 ? tradi.Ancho : "N/A"}</td>
+                    <td>{tradi.cantidadPanos!==1 ? tradi.AnchoDerecho : "N/A"}</td>
+                    <td>{tradi.CantidadAltos==1 ? tradi.Alto : "N/A"}</td>
+                    <td>{tradi.CantidadAltos!==1 ? tradi.Alto : "N/A"}</td>
+                    <td>{tradi.CantidadAltos!==1 ? tradi.AltoDerecho : "N/A"}</td>
                     <td>
                       <Button
                         variant="danger"

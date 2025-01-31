@@ -46,6 +46,16 @@ export const FormRollers = ({toastCallBack}) => {
   const TiposTelas = useSelector(selectTelasRoller);
   const NombreTelas = [];
 
+
+  useEffect(() => {
+    if (MotorRoller !== 1) {
+      setTipoCadena("3");
+    }
+    if (MotorRoller == 1) {
+      setTipoCadena("1");
+    }
+  }, [MotorRoller]); 
+
   TiposTelas.forEach((tela) => {
     let esta = false;
     NombreTelas.forEach((Nombre) => {

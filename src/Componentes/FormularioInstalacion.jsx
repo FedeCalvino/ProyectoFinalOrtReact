@@ -1,15 +1,14 @@
-import { React, useState } from "react";
+import React, { useState } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import dayjs from "dayjs";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import TimePicker from "react-bootstrap-time-picker"; // Time picker for selecting time.
 
 export const FormularioInstalacion = ({ Venta, callBackVolver }) => {
-  const [ComienzoHoras, setComienzoHoras] = useState([]);
-  const [FinHoras, setFinHoras] = useState([]);
+  const [ComienzoHoras, setComienzoHoras] = useState("08:00"); // Hora de comienzo
+  const [FinHoras, setFinHoras] = useState("18:00"); // Hora de fin
   const [Detalles, setDetalles] = useState("");
   const [fechaInstalacion, setFechaInstalacion] = useState(
     Venta.fechaInstalacion
@@ -21,16 +20,6 @@ export const FormularioInstalacion = ({ Venta, callBackVolver }) => {
     setFechaInstalacion(DateOk);
   };
 
-  const disabledHours = () => {
-    const hours = [];
-    for (let i = 0; i < 24; i++) {
-      if (i < 8 || i > 19) {
-        hours.push(i);
-      }
-    }
-    return hours;
-  };
-
   const CrearInstalacion = () => {
     try {
       const fecha = fechaInstalacion;
@@ -38,18 +27,16 @@ export const FormularioInstalacion = ({ Venta, callBackVolver }) => {
       const segundosAHora = (segundos) => {
         const horas = Math.floor(segundos / 3600);
         const minutos = Math.floor((segundos % 3600) / 60);
-        const segundosRestantes = segundos % 60;
         return `${horas.toString().padStart(2, "0")}:${minutos
           .toString()
-          .padStart(2, "0")}:${segundosRestantes.toString().padStart(2, "0")}`;
+          .padStart(2, "0")}`;
       };
-
 
       const comienzoHora = segundosAHora(ComienzoHoras);
       const finHora = segundosAHora(FinHoras);
 
-      const startDatetime = `${fecha}T${comienzoHora}`;
-      const endDatetime = `${fecha}T${finHora}`;
+      const startDatetime = `${fecha}T${comienzoHora}:00`;
+      const endDatetime = `${fecha}T${finHora}:00`;
       const body = {
         Idventa: Venta.id,
         start: startDatetime,
@@ -71,7 +58,6 @@ export const FormularioInstalacion = ({ Venta, callBackVolver }) => {
           window.location.reload();
         })
         .catch((error) => console.error("Error:", error));
-        
     } catch (error) {
       console.error("Error creando instalación:", error);
     }
@@ -126,7 +112,6 @@ export const FormularioInstalacion = ({ Venta, callBackVolver }) => {
               marginBottom: "10px",
               color: "#555",
             }}
-            disabledHours={disabledHours}
           >
             Fecha
           </Form.Label>
@@ -141,7 +126,6 @@ export const FormularioInstalacion = ({ Venta, callBackVolver }) => {
               width: "200px",
               border: "1px solid #ddd",
             }}
-            disabledHours={disabledHours}
           />
         </Form.Group>
       </Row>
@@ -162,32 +146,38 @@ export const FormularioInstalacion = ({ Venta, callBackVolver }) => {
       </Row>
 
       <Row className="justify-content-center mt-3">
-        <p>Comienzo</p>
-        <TimePicker
-          value={ComienzoHoras}
-          onChange={(newHoras) => setComienzoHoras(newHoras)}
-          format="HH:mm"
-          style={{
-            width: "100px",
-            borderRadius: "10px",
-            border: "1px solid #ddd",
-          }}
-        />
-      </Row>
-      <Row className="justify-content-center mt-3">
-        <p>Fin</p>
-        <TimePicker
-          value={FinHoras}
-          onChange={(newHoras) => setFinHoras(newHoras)}
-          format="HH:mm"
-          style={{
-            width: "100px",
-            borderRadius: "10px",
-            padding: "10px",
-            border: "1px solid #ddd",
-          }}
-        />
-      </Row>
+  <p>Comienzo</p>
+  <TimePicker
+    start="08:00" // Hora de inicio en formato 24h
+    end="18:00" // Hora de fin en formato 24h
+    value={ComienzoHoras}
+    onChange={(newHoras) => setComienzoHoras(newHoras)}
+    format="HH:mm" // Especifica el formato de 24 horas
+    step={1800} // Intervalos de 30 minutos
+    style={{
+      width: "100px",
+      borderRadius: "10px",
+      border: "1px solid #ddd",
+    }}
+  />
+</Row>
+<Row className="justify-content-center mt-3">
+  <p>Fin</p>
+  <TimePicker
+    start="08:00"
+    end="18:00"
+    value={FinHoras}
+    onChange={(newHoras) => setFinHoras(newHoras)}
+    format="HH:mm" // Especifica el formato de 24 horas
+    step={1800} // Intervalos de 30 minutos
+    style={{
+      width: "100px",
+      borderRadius: "10px",
+      padding: "10px",
+      border: "1px solid #ddd",
+    }}
+  />
+</Row>
 
       {/* Details Input */}
       <Row className="mt-3">
