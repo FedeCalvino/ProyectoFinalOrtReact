@@ -549,7 +549,6 @@ export const Lotes = () => {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   className="venta-card3 shadow-sm p-3 mb-4 bg-white rounded"
-                                  onClick={() => setPasosVenta(ven.id)}
                                 >
                                   <Row className="align-items-center">
                                     <Col>

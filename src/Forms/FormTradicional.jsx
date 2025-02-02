@@ -13,12 +13,12 @@ import { TablaArticulos } from "../Tables/TablaArticulos";
 import { GoCheckCircle } from "react-icons/go";
 import { selectConfigTradicional } from "../Features/ConfigReducer";
 
-export const FormTradicional = () => {
+export const FormTradicional = ({toastCallBack}) => {
   const ConfigTradi = useSelector(selectConfigTradicional);
   //opciones de tradicional
 
-  const Pinzas = ConfigTradi.pinzas;
-  const Ganchos = ConfigTradi.ganchos;
+  const Pinzas = ConfigTradi.pinzas || [];
+  const Ganchos = ConfigTradi.ganchos || [];
 
   const [selectedTradicional, SetselectedTradicional] = useState([]);
   const [AlertaCorAdd, setAlertaCorAdd] = useState(false);
@@ -29,11 +29,11 @@ export const FormTradicional = () => {
   const [LargoTradicionalIZQ, setLargoTradicionalIZQ] = useState("");
   const [Largos, setLargos] = useState("1");
   const [Paños, setPaños] = useState("1");
-  const [IzqDerTradicional, setIzqDerTradicional] = useState("");
+
   const [ganchos, setganchos] = useState("1");
 
   const [ComentarioIns, setComentarioIns] = useState("");
-  
+
   const [Motor, setMotor] = useState("");
   const [selectedAreaRoler, SetselectedAreaRoler] = useState("");
   const [BastonesTradicional, setBastonesTradicional] = useState(false);
@@ -62,7 +62,7 @@ export const FormTradicional = () => {
       NombreTelas.push(tela);
     }
   });
-  console.log("NombreTelas2",NombreTelas)
+  console.log("NombreTelas2", NombreTelas);
 
   const handleSelectTelaTradicional = (e) => {
     //console.log(e.target.value)
@@ -97,47 +97,75 @@ export const FormTradicional = () => {
     //SetTelasTradicional.sort((a, b) => a.Descripcion.localeCompare(b.Descripcion));
     SetTelasDelTipoTradicional(SetTelasTradicional);
   };
+  const validarCampos = () => {
+    // Verificar si todos los campos obligatorios tienen valores
+    if (
+      !selectedAreaRoler ||
+      !AnchoTradicional ||
+      !LargoTradicionalIZQ ||
+      !ganchos ||
+      !Pinza ||
+      !selectedColorRoler
+    ){
+      toastCallBack("completar los campos", "error");
+      return false; 
+    }
+    if(parseInt(Paños)===2 && !AnchoTradicionalDer){
+      toastCallBack("completar los campos", "error");
+      return false; 
+    }
+    if(parseInt(Largos)===2 && !LargoTradicionalDER){
+      toastCallBack("completar los campos", "error");
+      return false; 
+    }
+    return true; // Si todos los campos están completos, retorna true
+  };
 
   function AgregarTradicional() {
-    console.log("ganchos",ganchos)
-    const ObjGancho={
-      nombre: Ganchos.find((gancho)=>gancho.idGanchos===parseInt(ganchos))?.nombre,
-      idGanchos:ganchos
-    }
-    const ObjPinza={
-      nombre: Pinzas.find((pinza)=>pinza.idPinza===parseInt(Pinza))?.nombre,
-      idPinza:Pinza
-    }
-    const tela = TelaTradicional.find((tela)=>tela.id===parseInt(selectedColorRoler))
-    console.log(tela)
-    const nuevaCortinaTradicional = {
-      Ambiente: selectedAreaRoler,
-      Idtela: tela.id,
-      Ancho: AnchoTradicional,
-      AnchoDerecho: AnchoTradicionalDer,
-      Alto: LargoTradicionalIZQ,
-      AltoDerecho: LargoTradicionalDER,
-      ganchos:ObjGancho,
-      ganchosStr:ObjGancho.nombre,
-      cantidadPanos: parseInt(Paños),
-      CantidadAltos:parseInt(Largos),
-      pinza: ObjPinza,
-      pinzaStr:ObjPinza.nombre,
-      detalleInstalacion:ComentarioIns,
-      TelaNombre: tela.nombre + " " + tela.color,
-      detalle: ComentarioCor,
-      tipoArticulo: "tradicional",
-      nombre: "Tradicional",
-    };
+    if (validarCampos()) {
+      console.log("ganchos", ganchos);
+      const ObjGancho = {
+        nombre: Ganchos.find((gancho) => gancho.idGanchos === parseInt(ganchos))
+          ?.nombre,
+        idGanchos: ganchos,
+      };
+      const ObjPinza = {
+        nombre: Pinzas.find((pinza) => pinza.idPinza === parseInt(Pinza))
+          ?.nombre,
+        idPinza: Pinza,
+      };
+      const tela = TelaTradicional.find(
+        (tela) => tela.id === parseInt(selectedColorRoler)
+      );
+      console.log(tela);
+      const nuevaCortinaTradicional = {
+        Ambiente: selectedAreaRoler,
+        Idtela: tela.id,
+        Ancho: AnchoTradicional,
+        AnchoDerecho: AnchoTradicionalDer,
+        Alto: LargoTradicionalIZQ,
+        AltoDerecho: LargoTradicionalDER,
+        ganchos: ObjGancho,
+        ganchosStr: ObjGancho.nombre,
+        cantidadPanos: parseInt(Paños),
+        CantidadAltos: parseInt(Largos),
+        pinza: ObjPinza,
+        pinzaStr: ObjPinza.nombre,
+        detalleInstalacion: ComentarioIns,
+        TelaNombre: tela.nombre + " " + tela.color,
+        detalle: ComentarioCor,
+        tipoArticulo: "tradicional",
+        nombre: "Tradicional",
+      };
 
-    console.log(nuevaCortinaTradicional)
-    
-    dispatch(addArticulo(nuevaCortinaTradicional));
-    setAlertaCorAdd(true);
-    setTimeout(() => {
-      setAlertaCorAdd(false);
-    }, 2000);
-    
+      console.log(nuevaCortinaTradicional);
+
+      dispatch(addArticulo(nuevaCortinaTradicional));
+      setAlertaCorAdd(true);
+      setTimeout(() => {
+        setAlertaCorAdd(false);
+      }, 2000);
+    }
   }
 
   const rowStyle = {
@@ -160,68 +188,71 @@ export const FormTradicional = () => {
     <>
       <Row style={rowStyle}>
         <Col>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <p style={labelStyle}>Ambiente</p>
-          <Form.Control
-            type="text"
-            style={inputStyle}
-            value={selectedAreaRoler}
-            onChange={(e) => SetselectedAreaRoler(e.target.value)}
-            placeholder="Ambiente"
-          />
-        </div>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <p style={labelStyle}>Ambiente</p>
+            <Form.Control
+              type="text"
+              style={inputStyle}
+              value={selectedAreaRoler}
+              onChange={(e) => SetselectedAreaRoler(e.target.value)}
+              placeholder="Ambiente"
+            />
+          </div>
 
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <p style={labelStyle}>Tela</p>
-          <Form.Select
-            style={inputStyle}
-            aria-label="Default select example"
-            onChange={handleSelectChangeTradicional}
-            value={selectedTelaMostrarTradicional}
-          >
-            <option style={{ textAlign: "center" }}></option>
-            {NombreTelas.map((Tel) => (
-              <option value={Tel.id} key={Tel.id}>
-                {Tel.nombre}
-              </option>
-            ))}
-          </Form.Select>
-        </div>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <p style={labelStyle}>Tela</p>
+            <Form.Select
+              style={inputStyle}
+              aria-label="Default select example"
+              onChange={handleSelectChangeTradicional}
+              value={selectedTelaMostrarTradicional}
+            >
+              <option style={{ textAlign: "center" }}></option>
+              {NombreTelas.map((Tel) => (
+                <option value={Tel.id} key={Tel.id}>
+                  {Tel.nombre}
+                </option>
+              ))}
+            </Form.Select>
+          </div>
 
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <p style={labelStyle}>Color</p>
-          <Form.Select
-            style={inputStyle}
-            aria-label="Default select example"
-            onChange={handleSelectTelaTradicional}
-            value={selectedColorRoler}
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <p style={labelStyle}>Color</p>
+            <Form.Select
+              style={inputStyle}
+              aria-label="Default select example"
+              onChange={handleSelectTelaTradicional}
+              value={selectedColorRoler}
+            >
+              <option style={{ textAlign: "center" }}></option>
+              {TelasDelTipoTradicional.map((Tel) => (
+                <option value={Tel.id} key={Tel.id}>
+                  {Tel.color}
+                </option>
+              ))}
+            </Form.Select>
+          </div>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <p style={labelStyle}>Pinza</p>
+            <Form.Select
+              style={inputStyle}
+              value={Pinza}
+              onChange={(e) => setPinza(e.target.value)}
+            >
+              <option value=""></option>
+              {Pinzas.map((pinza) => (
+                <option value={pinza.idPinza} key={pinza.idPinza}>
+                  {pinza.nombre}
+                </option>
+              ))}
+            </Form.Select>
+          </div>
+        </Col>
+        <Col>
+          <FloatingLabel
+            controlId="floatingTextarea2"
+            label="Detalles instalacion"
           >
-            <option style={{ textAlign: "center" }}></option>
-            {TelasDelTipoTradicional.map((Tel) => (
-              <option value={Tel.id} key={Tel.id}>
-                {Tel.color}
-              </option>
-            ))}
-          </Form.Select>
-        </div>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <p style={labelStyle}>Pinza</p>
-          <Form.Select
-            style={inputStyle}
-            value={Pinza}
-            onChange={(e) => setPinza(e.target.value)}
-          >
-            <option value=""></option>
-            {Pinzas.map((pinza)=>(
-              <option value={pinza.idPinza} key={pinza.idPinza}>
-                {pinza.nombre}
-              </option>
-            ))}
-          </Form.Select>
-        </div>
-      </Col>
-      <Col>
-      <FloatingLabel controlId="floatingTextarea2" label="Detalles instalacion">
             <Form.Control
               as="textarea"
               placeholder="Leave a comment here"
@@ -234,7 +265,7 @@ export const FormTradicional = () => {
               onChange={(e) => setComentarioIns(e.target.value)}
             />
           </FloatingLabel>
-      </Col>
+        </Col>
       </Row>
       {/* Paños */}
       <Row style={rowStyle}>
@@ -261,7 +292,13 @@ export const FormTradicional = () => {
             </>
           ) : (
             <>
-              <div style={{ display: "flex", alignItems: "center",marginLeft:"10px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginLeft: "10px",
+                }}
+              >
                 <p style={labelStyle}>Ancho Izquierdo</p>
                 <Form.Control
                   type="number"
@@ -338,9 +375,9 @@ export const FormTradicional = () => {
           style={inputStyle}
           value={ganchos}
         >
-          {Ganchos.map((gancho)=>(
+          {Ganchos.map((gancho) => (
             <option value={gancho.idGanchos} key={gancho.idGanchos}>
-            {gancho.nombre}
+              {gancho.nombre}
             </option>
           ))}
         </Form.Select>

@@ -26,6 +26,7 @@ import { Loading } from "./Loading";
 import { TicketCortina } from "./TicketCortina";
 import { OrdenInstalacion } from "./OrdenInstalacion";
 import { EditarRiel } from "./EditarRiel";
+import { EditarTradicional } from "./EditarTradicional";
 
 export const VentaView = ({ callBackToast }) => {
   const dispatch = useDispatch();
@@ -86,18 +87,20 @@ export const VentaView = ({ callBackToast }) => {
   const [IdCorEdit, setIdCorEdit] = useState(null);
   const [CortinaEdited, setCortrtinaEdited] = useState([]);
   const [RielEdited, setRielEdited] = useState([]);
+  const [TradiEdited, setTradiEdited] = useState([]);
 
   const [loadingAct, setloadingAct] = useState(false);
 
   const [CortrtinaTrtyEdited, setCortrtinaTrtyEdited] = useState(null);
   const [RielTryEdited, setRielTryEdited] = useState(null);
+  const [TradicionalTryEdited, setTradicionalTryEdited] = useState(null);
 
   const [Telas, setTelas] = useState([]);
 
   const Ven = useSelector(selectVenta);
   console.log("Ven", Ven);
 
-  //datos de cortina a agregar
+  //datos de roller a agregar
   const [motorizada, setMotorizada] = useState(false);
   const [selectedTelaRoler, SetselectedTelaRoler] = useState([]);
   const [selectedTelaMostrarRoler, SetselectedTelaMostrarRoler] = useState([]);
@@ -113,18 +116,26 @@ export const VentaView = ({ callBackToast }) => {
   const [ObraEdit, setObraEdit] = useState(Ven.obra);
   const [FechaInstEdit, setFechaInstEdit] = useState(Ven.fechaInstalacion);
 
-  const UrlEditCor = "/Cortinas/Edit";
-  const VentasEp = "/VentasEP/UpdateFO/"
-  //const VentasEp = "http://localhost:8083/Ventas/UpdateFO/";
+  //const VentasEp = "/VentasEP/"
+  const VentasEp = "http://localhost:8083/Ventas/";
+
+  const VentasEpUpdate = VentasEp+"UpdateFO/"
 
   const handleShow = (Art) => {
     if(Art.nombre==="Roller"){
-    setCortrtinaTrtyEdited(Art);
-    setRielTryEdited(null)
+      setTradicionalTryEdited(null)
+      setRielTryEdited(null)
+      setCortrtinaTrtyEdited(Art);
     }
     if(Art.nombre==="Riel"){
       setCortrtinaTrtyEdited(null)
+      setTradicionalTryEdited(null)
       setRielTryEdited(Art)
+    }
+    if(Art.nombre==="Tradicional"){
+      setCortrtinaTrtyEdited(null);
+      setRielTryEdited(null)
+      setTradicionalTryEdited(Art)
     }
     setShowModal(true);
   };
@@ -136,9 +147,13 @@ export const VentaView = ({ callBackToast }) => {
     setShowModal(false);
   };
   const CortinaEditedFnct = () => {
-    setCortrtinaEdited([]);
+    setCortrtinaEdited(null)
+    setRielEdited(null)
+    setCortrtinaTrtyEdited(null);
+    setRielTryEdited(null);
     setShowModal(false);
-    FetchVentaCortinas();
+    setopenEdit(false)
+    FetchVentaCortinas()
   };
 
   const handleClose = () => setShowModal(false);
@@ -155,6 +170,32 @@ export const VentaView = ({ callBackToast }) => {
     boxShadow: 24,
     p: 4,
   };
+
+  /*tabla tradicional*/ 
+
+  function getAncho(tradi) {
+    return tradi.cantidadPanos === 1 ? tradi.ancho : "N/A";
+  }
+  
+  function getAnchoIzquierdo(tradi) {
+    return tradi.cantidadPanos !== 1 ? tradi.ancho : "N/A";
+  }
+  
+  function getAnchoDerecho(tradi) {
+    return tradi.cantidadPanos !== 1 ? tradi.AnchoDerecho : "N/A";
+  }
+  
+  function getAlto(tradi) {
+    return tradi.CantidadAltos === 1 ? tradi.alto : "N/A";
+  }
+  
+  function getAltoIzquierdo(tradi) {
+    return tradi.CantidadAltos !== 1 ? tradi.alto : "N/A";
+  }
+  
+  function getAltoDerecho(tradi) {
+    return tradi.CantidadAltos !== 1 ? tradi.AltoDerecho : "N/A";
+  }
 
   const SetInstalada = async () => {
     setloadingTable(true);
@@ -179,16 +220,16 @@ export const VentaView = ({ callBackToast }) => {
   };
 
   const FetchVentaCortinas = async () => {
-    const UrlVenta = "/VentasEP/";
-
+    console.log("ventas")
     if (Ven.id != null) {
       try {
-        const res = await fetch(UrlVenta + Ven.id);
+        const res = await fetch(VentasEp + Ven.id);
         const data = await res.json();
 
         console.log("articulos", data.body.listaArticulos);
 
         console.log(data.body);
+        console.log()
         dispatch(setArticulos(data.body.listaArticulos));
         dispatch(setVenta(data.body));
       } catch (error) {
@@ -211,16 +252,16 @@ export const VentaView = ({ callBackToast }) => {
   };
 
   const findNameCano = (idCano) => {
-    return CanosRoller.find((cano) => cano.id === idCano).tipo;
+    return CanosRoller.find((cano) => cano.id === idCano)?.tipo;
   };
   const findNameLadoCadena = (idlado) => {
-    return LadosCadenas.find((lado) => lado.ladoId === idlado).lado;
+    return LadosCadenas.find((lado) => lado.ladoId === idlado)?.lado;
   };
   const findNameMotor = (idMotor) => {
-    return Motores.find((motor) => motor.idMotor === idMotor).nombre;
+    return Motores.find((motor) => motor.idMotor === idMotor)?.nombre;
   };
   const findNamePos = (idPos) => {
-    return Posiciones.find((pos) => pos.posicionId === idPos).posicion;
+    return Posiciones.find((pos) => pos.posicionId === idPos)?.posicion;
   };
   const findNameTipoCadena = (idTipoCadena) => {
     return TiposCadenas.find((cad) => cad.idTipoCadena === idTipoCadena)
@@ -303,6 +344,12 @@ export const VentaView = ({ callBackToast }) => {
         );
         newCor.tipoRiel.tipo = findNameTipoRiel(newCor.tipoRiel.tipoId);
       }
+      if (newCor.nombre === "Tradicional") {
+        newCor.nombreTela=findTelaTradi(newCor.IdTipoTela).nombre
+        newCor.coloTela=findTelaTradi(newCor.IdTipoTela).color
+        newCor.Pinza.nombre = findNameTipoPinza(newCor.Pinza.idPinza);
+        newCor.ganchos.nombre = findNameTipoGancho(newCor.ganchos.idGanchos);
+      }
 
       console.log("ArticuloDesp", newCor);
 
@@ -322,9 +369,16 @@ export const VentaView = ({ callBackToast }) => {
     if(CortrtinaTrtyEdited){
       console.log(CortrtinaTrtyEdited);
       setRielEdited(null)
+      setTradiEdited(null)
       setCortrtinaEdited(CortrtinaTrtyEdited);
     }
+    if(TradicionalTryEdited){
+      setCortrtinaEdited(null);
+      setRielEdited(null)
+      setTradiEdited(TradicionalTryEdited)
+    }
     if(RielTryEdited){
+      setTradiEdited(null)
       setCortrtinaEdited(null)
       setRielEdited(RielTryEdited)
     }
@@ -422,6 +476,7 @@ export const VentaView = ({ callBackToast }) => {
   };
 
   const confirmEditVen = async () => {
+    setloadingAct(true);
     try {
       const requestOptions = {
         method: "PUT",
@@ -431,10 +486,10 @@ export const VentaView = ({ callBackToast }) => {
       
       if (ObraEdit === "") {
         console.log("EntroObraEdit");
-        url = VentasEp + FechaInstEdit + "/" + "null" + "/" + Ven.id;
+        url = VentasEpUpdate + FechaInstEdit + "/" + "null" + "/" + Ven.id;
         console.log("ObraEdit", ObraEdit);
       } else {
-        url = VentasEp + FechaInstEdit + "/" + ObraEdit + "/" + Ven.id;
+        url = VentasEpUpdate + FechaInstEdit + "/" + ObraEdit + "/" + Ven.id;
       }
   
       const response = await fetch(url, requestOptions);
@@ -442,7 +497,6 @@ export const VentaView = ({ callBackToast }) => {
       console.log("result", result);
   
       if (result.status === "OK") {
-        setloadingAct(true);
         
         // Crear una copia de Ven antes de modificarlo
         const NewVenta = { ...Ven };
@@ -454,10 +508,11 @@ export const VentaView = ({ callBackToast }) => {
           NewVenta.fechaInstalacion = FechaInstEdit;
         }
   
-        setVenta(NewVenta);
+        dispatch(setVenta(NewVenta));
         setloadingAct(false);
         callBackToast("Se actualizó", "success");
         setEditVen(false);
+
       } else {
         setEditVen(false);
         setloadingAct(false);
@@ -584,6 +639,48 @@ export const VentaView = ({ callBackToast }) => {
                 </tbody>
               </Table>
             )}
+{TradicionalTryEdited && (
+  <>
+    <Table responsive bordered>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Num</th>
+          <th>Ambiente</th>
+          <th>Tela</th>
+          <th>Color</th>
+          <th>Pinza</th>
+          <th>Gancho</th>
+          <th>Paños</th>
+          <th>Ancho</th>
+          <th>Ancho Izquierdo</th>
+          <th>Ancho Derecho</th>
+          <th>Alto</th>
+          <th>Alto Izquierdo</th>
+          <th>Alto Derecho</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr key={TradicionalTryEdited.numeroArticulo}>
+          <td>{TradicionalTryEdited.nombre}</td>
+          <td>{TradicionalTryEdited.numeroArticulo}</td>
+          <td>{TradicionalTryEdited.Ambiente}</td>
+          <td>{findTelaTradi(TradicionalTryEdited.IdTipoTela).nombre}</td>
+          <td>{findTelaTradi(TradicionalTryEdited.IdTipoTela).color}</td>
+          <td>{findNameTipoPinza(TradicionalTryEdited.Pinza.idPinza)}</td>
+          <td>{findNameTipoGancho(TradicionalTryEdited.ganchos.idGanchos)}</td>
+          <td>{TradicionalTryEdited.cantidadPanos}</td>
+          <td>{getAncho(TradicionalTryEdited)}</td>
+          <td>{getAnchoIzquierdo(TradicionalTryEdited)}</td>
+          <td>{getAnchoDerecho(TradicionalTryEdited)}</td>
+          <td>{getAlto(TradicionalTryEdited)}</td>
+          <td>{getAltoIzquierdo(TradicionalTryEdited)}</td>
+          <td>{getAltoDerecho(TradicionalTryEdited)}</td>
+        </tr>
+      </tbody>
+    </Table>
+  </>
+)}
             <div
               style={{
                 display: "flex",
@@ -600,6 +697,7 @@ export const VentaView = ({ callBackToast }) => {
             </div>
           </Box>
         </Modal>
+
       }
 
       {openEdit ? (
@@ -616,6 +714,14 @@ export const VentaView = ({ callBackToast }) => {
             <EditarRiel
               callBackCancel={ShowModalCallB}
               rielEdited={RielEdited}
+              callBacktoast={callBacktoast}
+              CortinaEditedFnct={CortinaEditedFnct}
+            />
+          )}
+          {TradiEdited && (
+            <EditarTradicional
+              callBackCancel={ShowModalCallB}
+              tradiEdited={TradiEdited}
               callBacktoast={callBacktoast}
               CortinaEditedFnct={CortinaEditedFnct}
             />
@@ -768,6 +874,7 @@ export const VentaView = ({ callBackToast }) => {
                 >
                   <tr>
                     <th>Tipo</th>
+                    <th>Num</th>
                     <th>Ambiente</th>
                     <th>Tela</th>
                     <th>Color</th>
@@ -782,28 +889,27 @@ export const VentaView = ({ callBackToast }) => {
                     <th>Lado Cadena</th>
                     <th>Posición</th>
                     <th>Motorizado</th>
-                    <th>Exterior</th>
                   </tr>
                 </thead>
                 <tbody>
                   {Rollers.map((Cor) => (
                     <tr key={Cor.idRoller} onClick={() => handleShow(Cor)}>
                       <td>{Cor.nombre}</td>
+                      <td>{Cor.numeroArticulo}</td>
                       <td>{Cor.Ambiente}</td>
-                      <td>{findTela(Cor.IdTipoTela).nombre}</td>
-                      <td>{findTela(Cor.IdTipoTela).color}</td>
-                      <td>{Cor.ancho.toFixed(3)}</td>
-                      <td>{Cor.AnchoTela.toFixed(3)}</td>
-                      <td>{Cor.AnchoTubo.toFixed(3)}</td>
-                      <td>{findNameCano(Cor.cano.id)}</td>
-                      <td>{Cor.alto.toFixed(3)}</td>
-                      <td>{Cor.AltoTela.toFixed(3)}</td>
+                      <td>{findTela(Cor.IdTipoTela)?.nombre || null}</td>
+                      <td>{findTela(Cor.IdTipoTela)?.color}</td>
+                      <td>{Cor.ancho?.toFixed(3)}</td>
+                      <td>{Cor.AnchoTela?.toFixed(3)}</td>
+                      <td>{Cor.AnchoTubo?.toFixed(3)}</td>
+                      <td>{findNameCano(Cor.cano?.id)}</td>
+                      <td>{Cor.alto?.toFixed(3)}</td>
+                      <td>{Cor.AltoTela?.toFixed(3)}</td>
                       <td>1</td>
-                      <td>{Cor.LargoCadena.toFixed(3)}</td>
-                      <td>{findNameLadoCadena(Cor.ladoCadena.ladoId)}</td>
-                      <td>{findNamePos(Cor.posicion.posicionId)}</td>
-                      <td>{findNameMotor(Cor.motorRoller.idMotor)}</td>
-                      <td>{Cor.Exterior ? "Sí" : "No"}</td>
+                      <td>{Cor.LargoCadena?.toFixed(3)}</td>
+                      <td>{findNameLadoCadena(Cor.ladoCadena?.ladoId)}</td>
+                      <td>{findNamePos(Cor.posicion?.posicionId)}</td>
+                      <td>{findNameMotor(Cor.motorRoller?.idMotor)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -835,7 +941,7 @@ export const VentaView = ({ callBackToast }) => {
                   {Rieles.map((Cor) => (
                     <tr key={Cor.idCortina} onClick={() =>handleShow(Cor)}>
                       <td>{Cor.nombre}</td>
-                      <td>{Cor.IdArticulo}</td>
+                      <td>{Cor.numeroArticulo}</td>
                       <td>{Cor.ambiente}</td>
                       <td>{Cor.ancho}</td>
                       <td>{findNameTipoRiel(Cor.tipoRiel.tipoId)}</td>
@@ -878,7 +984,7 @@ export const VentaView = ({ callBackToast }) => {
             </thead>
             <tbody>
               {Tradicionales.map((tradi) => (
-                <tr key={tradi.numeroArticulo}>
+                <tr key={tradi.numeroArticulo} onClick={() =>handleShow(tradi)}>
                   <td>{tradi.nombre}</td>
                   <td>{tradi.numeroArticulo}</td>
                   <td>{tradi.Ambiente}</td>

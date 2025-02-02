@@ -193,6 +193,7 @@ export const OrdenProduccion = ({ Venta }) => {
 
   const Cortinasroller = Venta.listaArticulos.filter((art) => art.nombre === "Roller");
   const Rieles = Venta.listaArticulos.filter((art) => art.nombre === "Riel");
+  const Tradicionales = Venta.listaArticulos.filter((art) => art.nombre === "Tradicional");
 
   const groupedCortinas = Object.entries(
     Cortinasroller.reduce((groups, cortina) => {
@@ -207,6 +208,12 @@ export const OrdenProduccion = ({ Venta }) => {
   for (let i = 0; i < Rieles.length; i += 2) {
     groupedRieles.push(Rieles.slice(i, i + 2));
   }
+
+  const groupedTradicionals = [];
+  for (let i = 0; i < Tradicionales.length; i += 2) {
+    groupedTradicionals.push(Tradicionales.slice(i, i + 2));
+  }
+
 
   if (Cortinasroller.length > 9) {
     const pages = [];
@@ -302,7 +309,7 @@ export const OrdenProduccion = ({ Venta }) => {
                     {/* Cortinas Data Rows */}
                     {cortinas.map((Roll, cortinaIndex) => (
                       <View style={styles.tableRow} key={cortinaIndex}>
-                        <Text style={[styles.tableCell2, styles.text]}>{Roll.IdArticulo}</Text>
+                        <Text style={[styles.tableCell2, styles.text]}>{Roll.numeroArticulo}</Text>
                         <Text style={[styles.tableCell1, styles.text]}>{Roll.Ambiente}</Text>
                         <Text style={[styles.tableCell, styles.text]}>{Roll.ancho.toFixed(3)}</Text>
                         <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTela.toFixed(3)}</Text>
@@ -333,7 +340,7 @@ export const OrdenProduccion = ({ Venta }) => {
       <Header Datos={Venta.Datos} />
       {group.map((riel, rielIndex) => (
         <View style={styles.itemContainer} key={rielIndex}>
-          <ItemDetail label="Numero" value={riel.IdArticulo} />
+          <ItemDetail label="Numero" value={riel.numeroArticulo} />
           <ItemDetail label="Ambiente" value={riel.ambiente} />
           <ItemDetail label="Ancho" value={riel.ancho.toFixed(3)} />
           <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
@@ -343,6 +350,50 @@ export const OrdenProduccion = ({ Venta }) => {
           <ItemDetail label="Soportes" value={riel.soportes.nombre} />
           <ItemDetail label="Cantidad de Soportes" value={riel.soportes.cantidad} />
           <ItemDetail label="Detalle" value={riel.detalle} />
+        </View>
+      ))}
+    </Page>
+  ))
+  }
+
+  {groupedTradicionals.map((group, pageIndex) => (
+    <Page
+      key={pageIndex}
+      size="A4"
+      style={styles.page}
+      orientation="portrait"
+    >
+      <Header Datos={Venta.Datos} />
+      {group.map((tradi, rielIndex) => (
+        <View style={styles.itemContainer} key={rielIndex}>
+          <ItemDetail label="Tela" value={tradi.nombreTela + " " + tradi.coloTela} />
+          <ItemDetail label="Numero" value={tradi.numeroArticulo} />
+          <ItemDetail label="Ambiente" value={tradi.Ambiente} />
+          <ItemDetail label="Pinza" value={tradi.Pinza.nombre} />
+          <ItemDetail label="Ganchos" value={tradi.ganchos.nombre} />
+          <ItemDetail label="Paños" value={tradi.cantidadPanos} />
+          {
+            tradi.cantidadPanos===1 ?
+            <>
+            <ItemDetail label="Ancho" value={tradi.ancho.toFixed(3)} />
+            </>
+            :
+            <>
+            <ItemDetail label="Ancho Izquierdo" value={tradi.ancho.toFixed(3)} />
+            <ItemDetail label="Ancho Derecho" value={tradi.anchoDerecho.toFixed(3)} />
+            </>
+          }
+          {
+            tradi.cantidadAltos===1 ?
+            <>
+              <ItemDetail label="Alto" value={tradi.alto.toFixed(3)} />
+            </>
+            :
+            <>
+             <ItemDetail label="Alto Izquierdo" value={tradi.alto.toFixed(3)} />
+             <ItemDetail label="Alto Derecho" value={tradi.altoDerecho.toFixed(3)} />
+            </>
+          }
         </View>
       ))}
     </Page>

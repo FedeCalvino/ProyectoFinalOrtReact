@@ -12,6 +12,7 @@ import {setRollerConfig,setRielConfig,setTradicionalConfig} from "../Features/Co
 import {setTelasRollerFeature,setTelasTradicionalFeature} from "../Features/TelasReducer"
 import { Ordenes } from '../Routes/Ordenes';
 import { Lotes } from '../Routes/Lotes';
+import { Toaster, toast } from "react-hot-toast";
 
 const App = () => {
     
@@ -26,11 +27,10 @@ const App = () => {
 
     const UrlTipoConfig = "/ConfiguracionEP"
     const UrlTelas = "/TelasEP"
-    
-    /*
-    const UrlTipoConfig = "http://localhost:8083/Conf"
+/*
+  const UrlTipoConfig = "http://localhost:8083/Conf"
     const UrlTelas = "http://200.40.89.254:8086/Telas"
-    */
+  */ 
     const fetchRollerConf = async () => {
       try {
         const res = await fetch(UrlTipoConfig);
@@ -53,6 +53,7 @@ const App = () => {
     }
     useEffect(() => {
       const fetchData = async () => {
+        try{
         const config = await fetchRollerConf();
         const telas = await fetchTelas();
         console.log("telas",telas)
@@ -68,6 +69,9 @@ const App = () => {
           dispatch(setRielConfig(config.configuracionRiel)); 
           dispatch(setTelasTradicionalFeature(TelasTradi));
           dispatch(setTelasRollerFeature(TelasRoller))
+        }
+        }catch{
+            toast.error("Error al cargar las configuraciones de los articulos")
         }
       };
     
@@ -170,6 +174,17 @@ const App = () => {
                     
                 </Route>
             </Routes>
+            <div>
+        <Toaster
+          position="bottom-center"
+          reverseOrder={false}
+          toastOptions={{
+            style: {
+              zIndex: 9999,
+            },
+          }}
+        />
+      </div>
             </div>
     );
 }

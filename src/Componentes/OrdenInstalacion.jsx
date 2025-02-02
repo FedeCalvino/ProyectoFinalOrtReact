@@ -15,19 +15,17 @@ export const OrdenInstalacion = ({ Venta }) => {
       backgroundColor: "#ffffff",
       padding: 20,
     },
-    // Header
     header: {
       marginBottom: 20,
+      textAlign: "center",
     },
     title1: {
       fontSize: 20,
       fontWeight: "bold",
-      textAlign: "center",
       marginBottom: 5,
     },
     subtitle: {
       fontSize: 12,
-      textAlign: "center",
       marginBottom: 2,
     },
     logoContainer: {
@@ -36,59 +34,36 @@ export const OrdenInstalacion = ({ Venta }) => {
       right: 20,
     },
     logo: {
-      width: 120,
-      height: 60,
+      width: 100,
+      height: 50,
     },
-    // Table
+    sectionTitle: {
+      fontSize: 18,
+      paddingBottom:"20px",
+      borderBottom:"1px solid black",
+      fontWeight: "bold",
+      marginVertical: 8,
+      textAlign: "center",
+    },
     tableHeader: {
       flexDirection: "row",
-      backgroundColor: "#f7f7f7",
-      borderBottomColor: "#cccccc",
-      borderBottomWidth: 1,
+      backgroundColor: "#f0f0f0",
       padding: 5,
       fontSize: 10,
       fontWeight: "bold",
-      alignItems: "center",
     },
     tableRow: {
       flexDirection: "row",
-      borderBottomColor: "#eeeeee",
-      borderBottomWidth: 1,
       padding: 5,
       alignItems: "center",
     },
     tableRowAlternate: {
-      backgroundColor: "#f9f9f9",
-    },
-    tableHeaderCell: {
-      textAlign: "center",
-      fontSize: 10,
-      fontWeight: "bold",
+      backgroundColor: "#f7f7f7",
     },
     tableCell: {
       textAlign: "center",
       fontSize: 15,
-    },
-    // Column widths
-    colNumber: { width: "8%" },
-    colAmbiente: { width: "20%" },
-    colDimension: { width: "12%" },
-    colDetail: { width: "50%" },
-    // Item container
-    itemContainer: {
-      marginBottom: 10,
-      padding: 10,
-      border: "1px solid #dddddd",
-      borderRadius: 5,
-      backgroundColor: "#fefefe",
-    },
-    itemLabel: {
-      fontSize: 20,
-      fontWeight: "bold",
-    },
-    itemText: {
-      fontSize: 20,
-      marginBottom: 5,
+      flex: 1,
     },
   });
 
@@ -104,81 +79,63 @@ export const OrdenInstalacion = ({ Venta }) => {
     </View>
   );
 
-  const TableHeader = () => (
+  const TableHeader = ({ headers }) => (
     <View style={styles.tableHeader}>
-      <Text style={[styles.tableHeaderCell, styles.colNumber]}>Número</Text>
-      <Text style={[styles.tableHeaderCell, styles.colAmbiente]}>Ambiente</Text>
-      <Text style={[styles.tableHeaderCell, styles.colDimension]}>Ancho</Text>
-      <Text style={[styles.tableHeaderCell, styles.colDimension]}>Alto</Text>
-      <Text style={[styles.tableHeaderCell, styles.colDetail]}>Detalle</Text>
+      {headers.map((header, index) => (
+        <Text key={index} style={styles.tableCell}>
+          {header}
+        </Text>
+      ))}
     </View>
   );
 
   const Cliente = Venta.Cliente;
-  const Cortinasroller = Venta.listaArticulos.filter(
-    (art) => art.nombre === "Roller"
-  );
+  const Cortinasroller = Venta.listaArticulos.filter((art) => art.nombre === "Roller");
   const Rieles = Venta.listaArticulos.filter((art) => art.nombre === "Riel");
-
-  const groupedRieles = [];
-  for (let i = 0; i < Rieles.length; i += 2) {
-    groupedRieles.push(Rieles.slice(i, i + 2));
-  }
 
   return (
     <Document>
-      {Cortinasroller.length > 0 && (
-        <Page size="A4" style={styles.page} orientation="landscape">
-          <Header Cliente={Cliente} />
-          <TableHeader />
-          {Cortinasroller.map((cortina, index) => (
-            <View
-              style={[
-                styles.tableRow,
-                index % 2 === 0 && styles.tableRowAlternate,
-              ]}
-              key={cortina.Id}
-            >
-              <Text style={[styles.tableCell, styles.colNumber]}>
-                {cortina.numeroArticulo}
-              </Text>
-              <Text style={[styles.tableCell, styles.colAmbiente]}>
-                {cortina.Ambiente}
-              </Text>
-              <Text style={[styles.tableCell, styles.colDimension]}>
-                {cortina.ancho.toFixed(3)}
-              </Text>
-              <Text style={[styles.tableCell, styles.colDimension]}>
-                {cortina.alto.toFixed(3)}
-              </Text>
-              <Text style={[styles.tableCell, styles.colDetail]}>
-                {cortina.detalleInstalacion}
-              </Text>
-            </View>
-          ))}
-        </Page>
-      )}
-      {groupedRieles.map((group, pageIndex) => (
-        <Page
-          key={pageIndex}
-          size="A4"
-          style={styles.page}
-          orientation="portrait"
-        >
-          <Header Cliente={Cliente} />
-          {group.map((riel, rielIndex) => (
-            <View style={styles.itemContainer} key={rielIndex}>
-              <Text style={styles.itemLabel}>Número: </Text>
-              <Text style={styles.itemText}>{riel.IdArticulo}</Text>
-              <Text style={styles.itemLabel}>Ambiente: </Text>
-              <Text style={styles.itemText}>{riel.ambiente}</Text>
-              <Text style={styles.itemLabel}>Ancho: </Text>
-              <Text style={styles.itemText}>{riel.ancho.toFixed(3)}</Text>
-              {/* Add additional fields as needed */}
-            </View>
-          ))}
-        </Page>
-      ))}
+      <Page size="A4" style={styles.page} orientation="landscape">
+        <Header Cliente={Cliente} />
+
+        {Cortinasroller.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Rollers</Text>
+            <TableHeader headers={["Número", "Ambiente", "Ancho", "Alto", "Detalle"]} />
+            {Cortinasroller.map((cortina, index) => (
+              <View
+                key={cortina.Id}
+                style={[styles.tableRow, index % 2 === 0 && styles.tableRowAlternate]}
+              >
+                <Text style={styles.tableCell}>{cortina.numeroArticulo}</Text>
+                <Text style={styles.tableCell}>{cortina.Ambiente}</Text>
+                <Text style={styles.tableCell}>{cortina.ancho.toFixed(3)}</Text>
+                <Text style={styles.tableCell}>{cortina.alto.toFixed(3)}</Text>
+                <Text style={styles.tableCell}>{cortina.detalleInstalacion}</Text>
+              </View>
+            ))}
+          </>
+        )}
+
+        {Rieles.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Rieles</Text>
+            <TableHeader headers={["Número", "Ambiente", "Ancho", "Tipo", "Detalle"]} />
+            {Rieles.map((riel, index) => (
+              <View
+                key={riel.idRiel}
+                style={[styles.tableRow, index % 2 === 0 && styles.tableRowAlternate]}
+              >
+                <Text style={styles.tableCell}>{riel.numeroArticulo}</Text>
+                <Text style={styles.tableCell}>{riel.ambiente}</Text>
+                <Text style={styles.tableCell}>{riel.ancho.toFixed(3)}</Text>
+                <Text style={styles.tableCell}>{riel.tipoRiel.tipo}</Text>
+                <Text style={styles.tableCell}>{riel.detalleInstalacion}</Text>
+              </View>
+            ))}
+          </>
+        )}
+      </Page>
     </Document>
   );
 };

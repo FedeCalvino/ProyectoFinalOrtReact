@@ -62,6 +62,14 @@
     {
       "source": "/CortinaEp/:path*",
       "destination": "http://200.40.89.254:8086/Cortina/:path*"
+    },
+    {
+      "source": "/RielEp/:path*",
+      "destination": "http://200.40.89.254:8086/Riel/:path*"
+    },
+    {
+      "source": "/TradicionalEp/:path*",
+      "destination": "http://200.40.89.254:8083/Tradicional/:path*"
     }
   ]
 }

@@ -11,6 +11,7 @@ export const EditarRiel = ({
   callBacktoast,
   CortinaEditedFnct,
 }) => {
+
   const ConfigRiel = useSelector(selectConfigRiel);
 
   const ladosAcumula = ConfigRiel.ladoAcumula || [];
@@ -18,27 +19,35 @@ export const EditarRiel = ({
   const bastones = ConfigRiel.tiposBastones || [];
   const soportes = ConfigRiel.tiposSoportes || [];
 
-  const EditarCortinaUrl = "/CortinaEp/";
+  const EditarCortinaUrl = "/RielEp";
 
   const [Riel, setRiel] = useState(rielEdited);
   const [ComentarioIns, setComentarioIns] = useState(
     rielEdited.detalleInstalacion
   );
   const bastonRiel = rielEdited.bastones.idtipo;
-  console.log(bastonRiel)
+  console.log(bastonRiel);
 
-  const [BastonesRiel, setBastonesRiel] = useState(rielEdited.bastones.idtipo);
-  const [AcumulaRiel, setAcumulaRiel] = useState(rielEdited.ladoAcumula.ladoAcumulaId);
-  
+  const [BastonesRiel, setBastonesRiel] = useState(Riel.bastones.idtipo);
+  const [SoportessRiel, setSoportessRiel] = useState(Riel.soportes.idTipo);
+  const [AcumulaRiel, setAcumulaRiel] = useState(
+    Riel.ladoAcumula.ladoAcumulaId
+  );
+  const [TipoRiel, setTipoRiel] = useState(Riel.tipoRiel.tipoId);
+  const [cantidadSoportes, setcantidadSoportes] = useState(
+    Riel.soportes.cantidad
+  );
+  console.log("Riel.soportes.cantidad", Riel.soportes.cantidad);
+  const [cantidadBastones, setcantidadBastones] = useState(
+    Riel.bastones.cantidad
+  );
+
   useEffect(() => {
     setRiel(rielEdited);
   }, [rielEdited]);
 
   const handleInputChange = (e, field) => {
-    const value =
-      field === "tipoRiel" || field === "ladoAcumula" || field === "soportes" || field === "bastones.idtipo"
-        ? JSON.parse(e.target.value)
-        : e.target.value;
+    const value = e.target.value;
 
     setRiel((prevState) => ({
       ...prevState,
@@ -47,39 +56,60 @@ export const EditarRiel = ({
   };
 
   const transformarRiel = (riel) => {
+    const objBastones = {
+      cantidad: cantidadBastones,
+      idtipo: Number(BastonesRiel),
+      idBastones:Riel.bastones.idBastones
+    };
+    const soporteObj = {
+      idTipo: Number(SoportessRiel),
+      cantidad: cantidadSoportes,
+      idSoporte:Riel.soportes.idSoporte
+    };
     return {
-      ...riel,
-      tipoRiel: riel.tipoRiel.tipoId || 1,
-      ladoAcumula: riel.ladoAcumula.ladoAcumulaId || 3,
-      soportes: riel.soportes.idTipo || 1,
+      ArticuloId: riel.IdArticulo,
+      ambiente: riel.ambiente,
+      ancho: Number(riel.ancho),
+      bastones: objBastones,
+      detalle: riel.detalle,
+      detalleInstalacion: ComentarioIns,
+      tipoRiel: TipoRiel,
+      soportes: soporteObj,
+      ladoAcumula: AcumulaRiel,
+      tipoArticulo: "riel",
+      nombre: "Riel",
     };
   };
 
   const handleConfirmEdit = () => {
-    console.log(rielEdited);
-    //Editar();
+    const rielObj = transformarRiel(Riel);
+    console.log("rielObj", rielObj);
+    Editar(rielObj);
   };
 
-  const Editar = async () => {
+  const Editar = async (riel) => {
     try {
-      const rielTransformado = transformarRiel(Riel);
-
       const requestOptions = {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(rielTransformado),
+        body: JSON.stringify(riel),
       };
 
       const response = await fetch(
-        EditarCortinaUrl + Riel.idRiel,
+        EditarCortinaUrl+"/"+Riel.IdArticulo,
         requestOptions
       );
+
+      if (!response.ok) {
+        throw new Error("Error en la actualización del riel");
+      }
+
       const result = await response.json();
-      console.log(result);
+      console.log("Respuesta:", result);
       callBacktoast("Riel actualizado", "success");
       CortinaEditedFnct();
     } catch (error) {
-      console.log(error);
+      console.error("Error:", error);
       callBacktoast("Error al actualizar", "error");
     }
   };
@@ -120,34 +150,48 @@ export const EditarRiel = ({
             </td>
             <td>
               <Form.Select
-                value={JSON.stringify(Riel.tipoRiel)}
-                onChange={(e) => handleInputChange(e, "tipoRiel")}
+                value={TipoRiel}
+                onChange={(e) => setTipoRiel(e.target.value)}
               >
                 {tipos.map((tipo) => (
-                  <option key={tipo.tipoId} value={JSON.stringify(tipo)}>
-                    {tipo.tipo || "Sin definir"}
+                  <option key={tipo.tipoId} value={tipo.tipoId}>
+                    {tipo.tipo}
                   </option>
                 ))}
               </Form.Select>
             </td>
             <td>
-              <Form.Select
-                value={JSON.stringify(Riel.soportes)}
-                onChange={(e) => handleInputChange(e, "soportes")}
-              >
-                {soportes.map((soporte) => (
-                  <option key={soporte.idTipo} value={JSON.stringify(soporte)}>
-                    {soporte.nombre}
-                  </option>
-                ))}
-              </Form.Select>
+              <div className="d-flex align-items-center justify-content-center">
+                <Form.Select
+                  value={SoportessRiel}
+                  onChange={(e) => setSoportessRiel(e.target.value)}
+                  style={{ width: "120px" }}
+                >
+                  {soportes.map((soporte) => (
+                    <option
+                      key={soporte.idTipoSoporte}
+                      value={soporte.idTipoSoporte}
+                    >
+                      {soporte.nombre}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Control
+                  type="number"
+                  value={cantidadSoportes}
+                  className="ms-2"
+                  style={{ width: "80px", textAlign: "center" }}
+                  onChange={(e) => setcantidadSoportes(e.target.value)}
+                />
+              </div>
             </td>
-            <td>
+            <td className="d-flex align-items-center justify-content-center">
               <Form.Select
-                value={BastonesRiel} 
+                value={BastonesRiel}
                 onChange={(e) => {
-                  setBastonesRiel(e.target.value)
+                  setBastonesRiel(e.target.value);
                 }}
+                style={{ width: "150px" }}
               >
                 {bastones.map((baston) => (
                   <option key={baston.idTipoBaton} value={baston.idTipoBaton}>
@@ -155,16 +199,28 @@ export const EditarRiel = ({
                   </option>
                 ))}
               </Form.Select>
+              { BastonesRiel!=="5" &&
+              <Form.Control
+                type="number"
+                value={cantidadBastones}
+                onChange={(e) => {
+                  setcantidadBastones(e.target.value);
+                }}
+                className="ms-2"
+                style={{ width: "80px", textAlign: "center" }}
+                placeholder="Cantidad"
+              />
+              }
             </td>
             <td>
               <Form.Select
-              value={AcumulaRiel} 
-              onChange={(e) => {
-                setAcumulaRiel(e.target.value)
-              }}
+                value={AcumulaRiel}
+                onChange={(e) => {
+                  setAcumulaRiel(e.target.value);
+                }}
               >
                 {ladosAcumula.map((lado) => (
-                  <option key={lado.ladoAcumulaId} value={JSON.stringify(lado)}>
+                  <option key={lado.ladoAcumulaId} value={lado.ladoAcumulaId}>
                     {lado.nombre || "Sin definir"}
                   </option>
                 ))}

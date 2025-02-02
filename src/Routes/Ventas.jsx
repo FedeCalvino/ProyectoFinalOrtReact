@@ -32,14 +32,13 @@ export const Ventas = () => {
   const [loadingDelete, setloadingDelete] = useState(false);
   
   const ConfigRoller = useSelector(selectRollerConfig);
-
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/VentasEP/";
 /*
-  const UrlVentas = "http://localhost:8083/Ventas";
+ const UrlVentas = "http://localhost:8083/Ventas";
   const UrlVenta = "http://localhost:8083/Ventas/";
-  const UrlDelete = "http://localhost:8083/VentasEP/";
+  const UrlDelete = "http://localhost:8083/Ventas/";
 */
   const setVentaView = async (Venta) => {
     console.log(ConfigRoller)
@@ -78,6 +77,7 @@ export const Ventas = () => {
       setVentasTotales(sortedData);
     } catch (error) {
       console.log(error);
+      toast.error("Error al cargar las ventas")
     }
   };
 
@@ -262,7 +262,7 @@ const callBackToast = (mensaje, tipo) => {
         </Modal.Body>
         <Modal.Footer className="d-flex justify-content-between">
         {loadingDelete ? 
-            <div style={{marginLeft:"10px"}}>
+            <div style={{marginLeft:"30px"}}>
             <Loading tipo="small"/>
             </div>
             : 
