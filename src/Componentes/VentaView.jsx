@@ -116,8 +116,8 @@ export const VentaView = ({ callBackToast }) => {
   const [ObraEdit, setObraEdit] = useState(Ven.obra);
   const [FechaInstEdit, setFechaInstEdit] = useState(Ven.fechaInstalacion);
 
-  //const VentasEp = "/VentasEP/"
-  const VentasEp = "http://localhost:8083/Ventas/";
+  const VentasEp = "/VentasEP/"
+  //const VentasEp = "http://localhost:8083/Ventas/";
 
   const VentasEpUpdate = VentasEp+"UpdateFO/"
 
