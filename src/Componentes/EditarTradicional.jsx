@@ -162,13 +162,14 @@ console.log("Tradi",Tradi)
         body: JSON.stringify(tradi),
       };
       console.log("url",EditarCortinaUrl + Tradi.IdArticulo +"/"+Tradi.IdCortina)
+
       const response = await fetch(
         EditarCortinaUrl + Tradi.IdArticulo +"/"+Tradi.IdCortina,
         requestOptions
       );
 
       if (!response.ok) {
-        throw new Error("Error en la actualización del riel");
+        throw new Error("Error en la actualización del tradicional");
       }
 
       const result = await response.json();

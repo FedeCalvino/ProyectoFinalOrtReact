@@ -69,7 +69,7 @@
     },
     {
       "source": "/TradicionalEp/:path*",
-      "destination": "http://200.40.89.254:8083/Tradicional/:path*"
+      "destination": "http://200.40.89.254:8086/Tradicional/:path*"
     }
   ]
 }
