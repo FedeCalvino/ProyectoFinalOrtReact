@@ -53,7 +53,7 @@
     },
     {
       "source": "/LoginEp",
-      "destination": "http://200.40.89.254:8086/auth/login"
+      "destination": "http://200.40.89.254:8086/auth"
     },
     {
       "source": "/OrdenEp",
