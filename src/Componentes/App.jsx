@@ -24,13 +24,13 @@ const App = () => {
     });
 
     const urlIP = import.meta.env.REACT_APP__IPSQL;
-
+/*
     const UrlTipoConfig = "/ConfiguracionEP"
     const UrlTelas = "/TelasEP"
-/*
-  const UrlTipoConfig = "http://localhost:8083/Conf"
+*/
+  const UrlTipoConfig = "http://200.40.89.254:8086/Conf"
     const UrlTelas = "http://200.40.89.254:8086/Telas"
-  */ 
+   
     const fetchRollerConf = async () => {
       try {
         const res = await fetch(UrlTipoConfig);
@@ -80,9 +80,8 @@ const App = () => {
 
     const login = async (usuario) => {
         try {
-            const url = `/LoginEp`;
+            const url = `http://localhost:8083/auth`;
             console.log(url);
-    
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -100,13 +99,11 @@ const App = () => {
                localStorage.setItem('user', JSON.stringify(result));
                setUser(result)
 
-               setLoginError(false);
                window.location.reload();
             }
 
         } catch (error) {
             console.log('Error:', error);
-            setLoginError(true); 
         }
     };
 

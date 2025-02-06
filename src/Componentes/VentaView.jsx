@@ -412,6 +412,7 @@ export const VentaView = ({ callBackToast }) => {
 
     downloadPDF(ven);
   };
+  
   const DescPdfInstalacion = () => {
     const ven = {
       Cliente: Ven.cliente,

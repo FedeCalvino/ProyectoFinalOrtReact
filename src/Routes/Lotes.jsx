@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button, Form } from "react-bootstrap";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Toaster, toast } from "react-hot-toast";
 import "./Css/Lote.css";
@@ -11,9 +11,10 @@ export const Lotes = () => {
   const [OrdenSelecc, setOrdenSelecc] = useState(null);
   const [VentaSelecc, setVentaSelecc] = useState(null);
   const [articuloSelecc, setarticuloSelecc] = useState(null);
+  const [VentasTotales, setVentasTotales] = useState([]);
 
   const [LoteClick, setLoteClick] = useState(null);
-
+  const [SearchText, setSearchText] = useState("");
   const [Ventas, setVentas] = useState([]);
   const [VentasDesorder, setVentasDesorder] = useState([]);
   const [Ordenes, setOrdenes] = useState([]);
@@ -30,6 +31,50 @@ export const Lotes = () => {
   useEffect(() => {
     console.log(Modal);
   }, [Modal]);
+
+  useEffect(() => {
+    FiltrarVentas();
+    lastDay = "";
+  }, [SearchText]);
+
+
+  const AgruparVentasDiaInstalacion = (AllVentas) => {
+    // Grouping ventas by fechaInstalacion
+    const groupedVentas = AllVentas.reduce((acc, venta) => {
+      const dateKey = venta.fechaInstalacion
+        ? venta.fechaInstalacion.split("T")[0]
+        : "Sin fecha instalacion";
+      if (!acc[dateKey]) {
+        acc[dateKey] = [];
+      }
+      acc[dateKey].push(venta);
+      return acc;
+    }, {});
+  
+    // Converting object to an array of entries for sorting
+    const sortedGroupedVentas = Object.entries(groupedVentas)
+      .sort(([dateA], [dateB]) => {
+        if (dateA === "Sin fecha instalacion") return 1; // Move "Sin fecha instalacion" to the end
+        if (dateB === "Sin fecha instalacion") return -1;
+        return new Date(dateA) - new Date(dateB); // Sort by date
+      })
+      .map(([key, value]) => ({ fecha: key, ventas: value })); // Format result as an array of objects
+  
+    console.log("sortedGroupedVentas", sortedGroupedVentas);
+    return sortedGroupedVentas;
+  };
+
+  const FiltrarVentas = () => {
+    if (SearchText.trim()) {
+      const filtered = VentasTotales.filter((venta) =>
+        venta.cliente.nombre.toLowerCase().includes(SearchText.toLowerCase())
+      );
+      setVentas(AgruparVentasDiaInstalacion(filtered))
+    } else {
+      setVentas(AgruparVentasDiaInstalacion(VentasTotales));
+    }
+  };
+
 
   useEffect(() => {
     const generateDateRange = () => {
@@ -71,43 +116,17 @@ export const Lotes = () => {
         const ventasOrden = response.body.sort(
           (a, b) => a.fechaInstalacion - b.fechaInstalacion
         );
-
+        setVentasTotales(ventasOrden);
         setVentas(AgruparVentasDiaInstalacion(ventasOrden));
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
     };
-
-    const AgruparVentasDiaInstalacion = (AllVentas) => {
-      // Grouping ventas by fechaInstalacion
-      const groupedVentas = AllVentas.reduce((acc, venta) => {
-        const dateKey = venta.fechaInstalacion
-          ? venta.fechaInstalacion.split("T")[0]
-          : "Sin fecha instalacion";
-        if (!acc[dateKey]) {
-          acc[dateKey] = [];
-        }
-        acc[dateKey].push(venta);
-        return acc;
-      }, {});
-    
-      // Converting object to an array of entries for sorting
-      const sortedGroupedVentas = Object.entries(groupedVentas)
-        .sort(([dateA], [dateB]) => {
-          if (dateA === "Sin fecha instalacion") return 1; // Move "Sin fecha instalacion" to the end
-          if (dateB === "Sin fecha instalacion") return -1;
-          return new Date(dateA) - new Date(dateB); // Sort by date
-        })
-        .map(([key, value]) => ({ fecha: key, ventas: value })); // Format result as an array of objects
-    
-      console.log("sortedGroupedVentas", sortedGroupedVentas);
-      return sortedGroupedVentas;
-    };
     
 
     const fetchDataLotes = async () => {
       try {
-        const data = await fetch("/LoteEp");
+        const data = await fetch("http://localhost:8083/Lote");
         const response = await data.json();
         console.log("response", response);
         setLotes(response.body);
@@ -140,7 +159,7 @@ export const Lotes = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const day = String(date.getDate() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     return `${day}/${month}`;
   };
@@ -372,7 +391,27 @@ export const Lotes = () => {
       <DragDropContext onDragEnd={handleDragEndVenta}>
         <div className="container">
           <Row style={{ marginTop: "80px" }}>
-            <h1 className="title">LOTES</h1>
+            <Col>
+
+            </Col>
+
+            <Col>
+                <h1 className="title">LOTES</h1>
+            </Col>
+            <Col>
+
+            </Col>
+            <Col>
+            <div className="search-container">
+            <Form.Control
+              type="text"
+              value={SearchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder="Buscar por cliente"
+              className="search-input"
+            />
+          </div>
+            </Col>
           </Row>
           <Row>
             <Col md={3}>

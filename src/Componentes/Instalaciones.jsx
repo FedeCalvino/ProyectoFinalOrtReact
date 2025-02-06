@@ -40,16 +40,6 @@ export const Instalaciones = () => {
   const [mostrarListaCompleta, setMostrarListaCompleta] = useState(true);
   const [loading, setLoading] = useState(true);
 
-  const FetchVentas = async () => {
-    try {
-      const res = await fetch(UrlVentas);
-      const data = await res.json();
-      setVentas(data.body);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const FetchInstalaciones = async () => {
     const Events = [];
@@ -79,19 +69,9 @@ export const Instalaciones = () => {
   };
 
   useEffect(() => {
-    FetchVentas();
     FetchInstalaciones();
   }, []);
 
-  const handleSelectVenta = (venta) => {
-    setVentaSelecc(venta);
-    setMostrarListaCompleta(false);
-  };
-
-  const handleMostrarListaCompleta = () => {
-    setVentaSelecc(null);
-    setMostrarListaCompleta(true);
-  };
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
@@ -105,7 +85,9 @@ export const Instalaciones = () => {
           messages={messages}  // Agrega los mensajes en español aquí
         />
       </div>
-      <div style={{ flex: 1, ...(loading ? { display: "flex", justifyContent: "center", alignItems: "center" } : {}) }}>
+      {
+        /*
+        <div style={{ flex: 1, ...(loading ? { display: "flex", justifyContent: "center", alignItems: "center" } : {}) }}>
         {loading ? (
           <Loading tipo="loading" />
         ) : (
@@ -139,7 +121,8 @@ export const Instalaciones = () => {
             )}
           </>
         )}
-      </div>
+      </div>*/
+      }
     </div>
   );
 };

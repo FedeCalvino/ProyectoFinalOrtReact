@@ -39,7 +39,7 @@ export const CrearVenta = () => {
 
   const [VentaInfo, setVentaInfo] = useState(null);
   const UrlVenta = "/VentasEP"
-
+  //const UrlVenta = "http://localhost:8083/Ventas"
   const CrearVenta = async () => {
     const VentaInfoObj={
       CliNombre:cliente.Nombre,

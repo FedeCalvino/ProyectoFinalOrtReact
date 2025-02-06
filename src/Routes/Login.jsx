@@ -16,11 +16,11 @@ export const Login = ({ loginFnct }) => {
     setloading(true);
     const user = { nombre: Nombre, password: Pass };
     const result = await loginFnct(user);
+    console.log("result",result)
 
-    if (result.status !== "OK") {
-      console.log("result.message", result.message);
-      if(result.message!=null){
-      toast.error(result.message);
+    if (!result || result.status !== "OK" ) {
+      if(result?.message && result.message!=null){
+        toast.error(result.message);
       }else{
         toast.error("Error en la conexion"); 
       }

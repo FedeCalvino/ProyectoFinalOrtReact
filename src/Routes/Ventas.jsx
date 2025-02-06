@@ -32,13 +32,14 @@ export const Ventas = () => {
   const [loadingDelete, setloadingDelete] = useState(false);
   
   const ConfigRoller = useSelector(selectRollerConfig);
+  
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/VentasEP/";
 /*
- const UrlVentas = "http://localhost:8083/Ventas";
+ const UrlVentas = "http://200.40.89.254:8086/Ventas";
   const UrlVenta = "http://localhost:8083/Ventas/";
-  const UrlDelete = "http://localhost:8083/Ventas/";
+  const UrlDelete = "http://200.40.89.254:8086/Ventas/";
 */
   const setVentaView = async (Venta) => {
     console.log(ConfigRoller)
@@ -48,7 +49,13 @@ export const Ventas = () => {
         setIsLoading(true);
   
         try {
-          const res = await fetch(UrlVenta + Venta.id);
+          const res = await fetch(UrlVenta + Venta.id, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzM4NzY4NjA3LCJleHAiOjE3Mzg3NzIyMDcsIm5vbWJyZSI6IjEyMzQ1In0.Ihx6ZdPhMp9xP8-5erZDkD5lUS-afw5SciY75OPweu2vtAAS4XMnVUX0yM02wggCcOqVhdzgcm18oV55y9kP0w`,
+              'Content-Type': 'application/json'
+            }
+          });
           const data = await res.json();
           console.log("articulos", data.body.listaArticulos);
           console.log(data.body)
@@ -122,7 +129,7 @@ export const Ventas = () => {
   const FiltrarVentas = () => {
     if (SearchText.trim()) {
       const filtered = VentasTotales.filter((venta) =>
-        venta.NombreCliente.toLowerCase().includes(SearchText.toLowerCase())
+        venta.cliente.nombre.toLowerCase().includes(SearchText.toLowerCase())
       );
       setVentas(filtered);
     } else {

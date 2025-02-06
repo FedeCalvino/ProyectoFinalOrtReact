@@ -36,14 +36,14 @@ export const NavBar = ({ logged, onLogout }) => {
                   <div>Ventas</div>
                 </div>
               </Nav.Link>
-              <Nav.Link as={Link} to="Instalaciones" className="nav-link-custom">
-                <div className="nav-item">
-                  <div>Instalaciones</div>
-                </div>
-              </Nav.Link>
               <Nav.Link as={Link} to="CrearVenta" className="nav-link-custom">
                 <div className="nav-item">
                   <div>Crear Venta</div>
+                </div>
+              </Nav.Link>
+              <Nav.Link as={Link} to="Instalaciones" className="nav-link-custom">
+                <div className="nav-item">
+                  <div>Instalaciones</div>
                 </div>
               </Nav.Link>
               <Nav.Link as={Link} to="Lotes" className="nav-link-custom">
