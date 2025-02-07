@@ -80,7 +80,7 @@ const App = () => {
 
     const login = async (usuario) => {
         try {
-            const url = `http://localhost:8083/auth`;
+            const url = `/LoginEp`;
             console.log(url);
             const requestOptions = {
                 method: 'POST',
