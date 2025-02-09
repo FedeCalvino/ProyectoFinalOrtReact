@@ -126,7 +126,7 @@ export const Lotes = () => {
 
     const fetchDataLotes = async () => {
       try {
-        const data = await fetch("http://localhost:8083/Lote");
+        const data = await fetch("/LoteEp");
         const response = await data.json();
         console.log("response", response);
         setLotes(response.body);
