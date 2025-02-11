@@ -1,6 +1,6 @@
 const isProduction = process.env.NODE_ENV === "production";
 
-const baseURL = isProduction ? "" : "http://200.40.89.254:8086";
+const baseURL = isProduction ? "" : "http://200.40.89.254:8085";
 
 const urls = {
   ventasEP: (path = "") => isProduction ? `/VentasEP/` : `${baseURL}/Ventas/`,
