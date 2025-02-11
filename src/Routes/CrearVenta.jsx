@@ -25,8 +25,10 @@ import { TablaArticulos } from "../Tables/TablaArticulos";
 import { VentaPreview } from "../Componentes/VentaPreview";
 import { Modal } from "react-bootstrap";
 import { Loading } from "../Componentes/Loading";
+import urls from "../Url";
 
 export const CrearVenta = () => {
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setloading] = useState(false);
@@ -38,7 +40,7 @@ export const CrearVenta = () => {
   const [Creando, setCreando] = useState("");
 
   const [VentaInfo, setVentaInfo] = useState(null);
-  const UrlVenta = "/VentasEP"
+  const UrlVenta = urls.ventasEP
   //const UrlVenta = "http://localhost:8083/Ventas"
   const CrearVenta = async () => {
     const VentaInfoObj={
@@ -81,9 +83,8 @@ export const CrearVenta = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(VentaModel),
       };
-      console.log(Articulos);
       try {
-        const response = await fetch(UrlVenta, requestOptions);
+       /* const response = await fetch(UrlVenta, requestOptions);
 
         console.log("Response:", response);
 
@@ -106,7 +107,7 @@ export const CrearVenta = () => {
         }
         toast.dismiss(loadingToast);
         setCreando(false);
-        setloading(false);
+        setloading(false);*/
       } catch (error) {
         setCreando(false);
         setloading(false);

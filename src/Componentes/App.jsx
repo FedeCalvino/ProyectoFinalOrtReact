@@ -18,19 +18,19 @@ const App = () => {
     
     const dispatch = useDispatch()
 
-    const [User, setUser] = useState(() => {
-        const storedUser = localStorage.getItem('user');
-        return storedUser ? JSON.parse(storedUser) : null;
+    const [token, settoken] = useState(() => {
+        const storedToken = localStorage.getItem('token');
+        return storedToken ? JSON.parse(storedToken) : null;
     });
 
     const urlIP = import.meta.env.REACT_APP__IPSQL;
-
+/*
     const UrlTipoConfig = "/ConfiguracionEP"
     const UrlTelas = "/TelasEP"
-/*
+*/
   const UrlTipoConfig = "http://200.40.89.254:8086/Conf"
     const UrlTelas = "http://200.40.89.254:8086/Telas"
-  */ 
+
     const fetchRollerConf = async () => {
       try {
         const res = await fetch(UrlTipoConfig);
@@ -80,7 +80,8 @@ const App = () => {
 
     const login = async (usuario) => {
         try {
-            const url = `/LoginEp`;
+            //const url = `/LoginEp`;
+            const url = "http://200.40.89.254:8086/auth";
             console.log(url);
             const requestOptions = {
                 method: 'POST',
@@ -91,15 +92,15 @@ const App = () => {
     
             const response = await fetch(url, requestOptions);
             const result = await response.json();
-            console.log(result);
+            console.log(result.body);
             
             if (result.status!="OK") {
                 return result
             } else {
-               localStorage.setItem('user', JSON.stringify(result));
-               setUser(result)
+               localStorage.setItem('token', JSON.stringify(result.body));
+               settoken(result)
 
-               window.location.reload();
+               //window.location.reload();
             }
 
         } catch (error) {
@@ -118,54 +119,54 @@ const App = () => {
         <div className='AppContainer'>
             <Routes>
                 <Route path='/Clientes' element={
-                    <ProtectedRoute user={User} login={login}>
+                    <ProtectedRoute token={token} login={login}>
                         <Clientes />
                     </ProtectedRoute>
                 } >
                 </Route>
                 <Route path='/CrearVenta' element={
-                <ProtectedRoute user={User} login={login}>
+                <ProtectedRoute token={token} login={login}>
                     <CrearVenta />
                 </ProtectedRoute>
                 } >
 
                 </Route>
                 <Route path='/Login' element={
-                    <ProtectedRoute user={User} login={login}>
+                    <ProtectedRoute token={token} login={login}>
                         <Login/>
                     </ProtectedRoute>
                 }>
                     </Route>
                 <Route path='/Ventas' element={
-                    <ProtectedRoute user={User} login={login}>
+                    <ProtectedRoute token={token} login={login}>
                         <Ventas/>
                     </ProtectedRoute>
                 } >
                 </Route>
 
                 <Route path='/*' element={
-                    <ProtectedRoute user={User} login={login}>
+                    <ProtectedRoute token={token} login={login}>
                        <CrearVenta />
                     </ProtectedRoute>} >
                     
                 </Route>
 
                 <Route path='/Instalaciones' element={
-                    <ProtectedRoute user={User} login={login}>
+                    <ProtectedRoute token={token} login={login}>
                        <Instalaciones />
                     </ProtectedRoute>} >
                     
                 </Route>
 
                 <Route path='/Lotes' element={
-                    <ProtectedRoute user={User} login={login}>
+                    <ProtectedRoute token={token} login={login}>
                        <Lotes/>
                     </ProtectedRoute>} >
                     
                 </Route>
 
                 <Route path='/Ordenes' element={
-                    <ProtectedRoute user={User} login={login}>
+                    <ProtectedRoute token={token} login={login}>
                        <Ordenes/>
                     </ProtectedRoute>} >
                     

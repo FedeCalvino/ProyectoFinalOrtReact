@@ -14,9 +14,10 @@ import { ShowClienteSelecc } from "./ShowClienteSelecc";
 export const SelecctCliente = React.memo(() => {
   const dispatch = useDispatch();
   const ClienteData = useSelector(selectCliente);
+  console.log(ClienteData)
   //CrearCliente
   const [NombreCliN, setCliNomN] = useState(ClienteData.Nombre);
-  const [MailCli, setMailCli] = useState(ClienteData.MailCli);
+  const [MailCli, setMailCli] = useState(ClienteData.Mail);
   const [TelefonoCliN, setCliTelN] = useState(ClienteData.NumeroTelefono);
   const [RutCliN, setCliRutN] = useState(ClienteData.rut);
   const [DireccCliN, setCliDireccN] = useState(ClienteData.direccion);

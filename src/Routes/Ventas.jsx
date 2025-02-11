@@ -32,28 +32,27 @@ export const Ventas = () => {
   const [loadingDelete, setloadingDelete] = useState(false);
   
   const ConfigRoller = useSelector(selectRollerConfig);
-  
+  /*
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/VentasEP/";
-/*
- const UrlVentas = "http://200.40.89.254:8086/Ventas";
+  */
+ const UrlVentas = "http://localhost:8083/Ventas";
   const UrlVenta = "http://localhost:8083/Ventas/";
-  const UrlDelete = "http://200.40.89.254:8086/Ventas/";
-*/
+  const UrlDelete = "http:/localhost:8083/Ventas/";
+
   const setVentaView = async (Venta) => {
     console.log(ConfigRoller)
     if(ConfigRoller.length!=0){
       if (Venta.id != null) {
         setShowModal(true);
         setIsLoading(true);
-  
         try {
           const res = await fetch(UrlVenta + Venta.id, {
-            method: 'GET',
+            method: "GET",
             headers: {
-              'Authorization': `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzM4NzY4NjA3LCJleHAiOjE3Mzg3NzIyMDcsIm5vbWJyZSI6IjEyMzQ1In0.Ihx6ZdPhMp9xP8-5erZDkD5lUS-afw5SciY75OPweu2vtAAS4XMnVUX0yM02wggCcOqVhdzgcm18oV55y9kP0w`,
-              'Content-Type': 'application/json'
+              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json"
             }
           });
           const data = await res.json();
@@ -74,7 +73,17 @@ export const Ventas = () => {
 
   const FetchVentas = async () => {
     try {
-      const res = await fetch(UrlVentas);
+      const token = localStorage.getItem("token")
+      console.log("token",token)
+      const res = await fetch(UrlVentas+"/con-token", 
+        {
+        method: "GET",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json"
+      },
+      mode: "cors"
+    });
       const data = await res.json();
       console.log(data);
       const sortedData = data.body.sort(
