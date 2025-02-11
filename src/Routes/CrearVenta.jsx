@@ -40,7 +40,7 @@ export const CrearVenta = () => {
   const [Creando, setCreando] = useState("");
 
   const [VentaInfo, setVentaInfo] = useState(null);
-  const UrlVenta = urls.ventasEP
+  const UrlVenta = "/VentasEP"
   //const UrlVenta = "http://localhost:8083/Ventas"
   const CrearVenta = async () => {
     const VentaInfoObj={
@@ -84,7 +84,7 @@ export const CrearVenta = () => {
         body: JSON.stringify(VentaModel),
       };
       try {
-       /* const response = await fetch(UrlVenta, requestOptions);
+        const response = await fetch(UrlVenta, requestOptions);
 
         console.log("Response:", response);
 
@@ -107,7 +107,7 @@ export const CrearVenta = () => {
         }
         toast.dismiss(loadingToast);
         setCreando(false);
-        setloading(false);*/
+        setloading(false);
       } catch (error) {
         setCreando(false);
         setloading(false);

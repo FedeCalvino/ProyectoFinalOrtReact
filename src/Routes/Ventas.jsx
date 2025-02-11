@@ -32,15 +32,15 @@ export const Ventas = () => {
   const [loadingDelete, setloadingDelete] = useState(false);
   
   const ConfigRoller = useSelector(selectRollerConfig);
-  /*
+  
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/VentasEP/";
-  */
+  /*
  const UrlVentas = "http://localhost:8083/Ventas";
   const UrlVenta = "http://localhost:8083/Ventas/";
   const UrlDelete = "http:/localhost:8083/Ventas/";
-
+*/
   const setVentaView = async (Venta) => {
     console.log(ConfigRoller)
     if(ConfigRoller.length!=0){
