@@ -37,6 +37,7 @@ const App = () => {
         const data = await res.json();
         return data.body; 
       } catch (error) {
+        
         console.error("Error fetching roller configuration:", error);
         return null; 
       }
