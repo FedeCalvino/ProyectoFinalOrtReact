@@ -100,7 +100,7 @@ const App = () => {
                localStorage.setItem('token', JSON.stringify(result.body));
                settoken(result)
 
-               //window.location.reload();
+               window.location.reload();
             }
 
         } catch (error) {

@@ -8,6 +8,7 @@ import { Toaster, toast } from "react-hot-toast";
 import { Loading } from "../Componentes/Loading";
 
 export const Login = ({ loginFnct }) => {
+  
   const [Nombre, setNombre] = useState("");
   const [Pass, setPass] = useState("");
   const [loading, setloading] = useState(false);
