@@ -75,7 +75,7 @@ export const Ventas = () => {
     try {
       const token = localStorage.getItem("token")
       console.log("token",token)
-      const res = await fetch(UrlVentas+"/con-token", 
+      const res = await fetch(UrlVentas, 
         {
         method: "GET",
       headers: {
