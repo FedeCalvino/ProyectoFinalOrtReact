@@ -82,7 +82,7 @@ const App = () => {
     const login = async (usuario) => {
         try {
             //const url = `/LoginEp`;
-            const url = "http://200.40.89.254:8086/auth";
+            const url = "/LoginEp";
             console.log(url);
             const requestOptions = {
                 method: 'POST',
