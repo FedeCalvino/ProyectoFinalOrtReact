@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 
 export const TicketCortina = ({ NombreCli, Articulos }) => {
 
-  const Cortinasroller = Articulos.filter((art) => art.tipoArticulo === "roller");
+  const Cortinasroller = Articulos?.filter((art) => art.tipoArticulo === "roller");
   console.log(Cortinasroller)
   const [fontSize, setFontSize] = useState(2);
   const [fontSizeMedidas, setfontSizeMedidas] = useState(2);

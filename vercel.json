@@ -18,6 +18,9 @@
     },{
       "source": "/Lotes",
       "destination": "/index.html"
+    },{
+      "source": "/Ordenes",
+      "destination": "/index.html"
     },
     {
       "source": "/VentasEP/:path*",
@@ -70,6 +73,10 @@
     {
       "source": "/TradicionalEp/:path*",
       "destination": "http://200.40.89.254:8085/Tradicional/:path*"
+    },
+    {
+      "source": "/setOrden/:path*",
+      "destination": "http://200.40.89.254:8085/Orden/PasoOrden/Completar/:path*"
     }
   ]
 }

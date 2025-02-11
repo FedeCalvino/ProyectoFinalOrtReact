@@ -24,20 +24,20 @@ const App = () => {
     });
 
     const urlIP = import.meta.env.REACT_APP__IPSQL;
-
+/*
     const UrlTipoConfig = "/ConfiguracionEP"
     const UrlTelas = "/TelasEP"
-
- /* const UrlTipoConfig = "http://200.40.89.254:8086/Conf"
-    const UrlTelas = "http://200.40.89.254:8086/Telas"
 */
+  const UrlTipoConfig = "http://200.40.89.254:8086/Conf"
+    const UrlTelas = "http://200.40.89.254:8086/Telas"
+
     const fetchRollerConf = async () => {
       try {
         const res = await fetch(UrlTipoConfig);
         const data = await res.json();
         return data.body; 
       } catch (error) {
-        
+
         console.error("Error fetching roller configuration:", error);
         return null; 
       }
@@ -81,8 +81,8 @@ const App = () => {
 
     const login = async (usuario) => {
         try {
-            const url = `/LoginEp`;
-            //const url = "http://200.40.89.254:8086/auth";
+            //const url = `/LoginEp`;
+            const url = "http://200.40.89.254:8086/auth";
             console.log(url);
             const requestOptions = {
                 method: 'POST',
