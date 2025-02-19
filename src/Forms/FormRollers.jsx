@@ -112,7 +112,7 @@ export const FormRollers = ({ toastCallBack }) => {
         ?.tipoCadena,
     soporte: soporteObj,
     detalleInstalacion: ComentarioIns,
-    factorLargoCadena: LargoTipoCadena,
+    factorLargoCadena: String(LargoTipoCadena),
     tipoArticulo: "roller",
     nombre: "Roller",
   };
