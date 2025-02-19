@@ -112,7 +112,7 @@ export const FormRollers = ({ toastCallBack }) => {
         ?.tipoCadena,
     soporte: soporteObj,
     detalleInstalacion: ComentarioIns,
-    factorLargoCadena: String(LargoTipoCadena),
+    factorLargoCadena: Number(LargoTipoCadena),
     tipoArticulo: "roller",
     nombre: "Roller",
   };
@@ -409,12 +409,12 @@ export const FormRollers = ({ toastCallBack }) => {
                   value={LargoTipoCadena}
                   onChange={(e) => setLargoTipoCadena(e.target.value)}
                 >
-                  {factoresCadena?.map((tipoCadena) => (
+                  {factoresCadena?.map((factores) => (
                     <option
-                      key={tipoCadena.idFactorLargoCadena}
-                      value={tipoCadena.valorFactorLargoCadena}
+                      key={factores.idFactorLargoCadena}
+                      value={factores.valorFactorLargoCadena}
                     >
-                      {tipoCadena.valorFactorLargoCadena}
+                      {factores.valorFactorLargoCadena}
                     </option>
                   ))}
                 </Form.Control>
