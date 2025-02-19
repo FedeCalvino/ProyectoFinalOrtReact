@@ -110,8 +110,9 @@ export const VentaPreview = ({Venta}) => {
                   <th>Ancho AF-AF</th>
                   <th>Alto</th>
                   <th>caño</th>
-                  <th>cant</th>
-                  <th>Lado Cadena</th>
+                  <th>Lado</th>
+                  <th>Tipo Cadena</th>
+                  <th>Factor Cadena</th>
                   <th>posicion</th>
                   <th>Comentarios</th>
                 </tr>
@@ -128,6 +129,7 @@ export const VentaPreview = ({Venta}) => {
                     <td>{Cor.TuboStr}</td>
                     <td>{Cor.LadoCadenaStr}</td>
                     <td>{Cor.TipoCadenaStr}</td>
+                    <td>{Cor.factorLargoCadena}</td>
                     <td>{Cor.PosicionStr}</td>
                     <td>{Cor.MotorStr}</td>
                     <td>
