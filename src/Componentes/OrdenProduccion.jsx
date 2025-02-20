@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#cccccc",
     width: "100%",
   },
-  itemD:{
-    marginBottom:"20px"
+  itemD: {
+    marginBottom: "20px",
   },
   tableRow: {
     flexDirection: "row",
@@ -75,16 +75,16 @@ const styles = StyleSheet.create({
   tableCell1: {
     width: "15%", // Ambiente tiene más espacio
     textAlign: "center",
-  },  
+  },
   logoContainer: {
     position: "absolute",
     top: 12,
     right: 21,
   },
   logo: {
-    marginTop: "10px",
-    width: 180,
-    height: 80,
+    marginTop: "5px",
+    width: 80,
+    height: 60,
     marginBottom: 15,
   },
   title1: {
@@ -124,9 +124,29 @@ const styles = StyleSheet.create({
   itemLabel: {
     fontWeight: "bold",
     color: "#333",
+  },
+  pageRiel: {
+    flexDirection: "column",
+    padding: 10,
+  },
+  containerRiel: {
+    flexDirection: "row",
+    flexWrap: "wrap", // Permite que los elementos se dividan en dos filas
+    justifyContent: "space-between",
+  },
+  itemContainerRiel: {
+    width: "48%", // Ocupa la mitad del ancho con un pequeño margen
+    height: "48%",
+    border: "2px solid black",
+    borderRadius: 5,
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: "#fff",
+  },
+  subtitle2:{
+    fontSize:28
   }
 });
-
 
 const FormatearFecha = ({ fecha }) => {
   if (!fecha) return ""; // Maneja el caso donde la fecha es nula o indefinida
@@ -136,24 +156,19 @@ const FormatearFecha = ({ fecha }) => {
   return `${dia}/${mes}/${anio}`;
 };
 
-const Header = ({Datos}) => (
+const Header = ({ Datos }) => (
   <>
-    { Datos.fechaInst ?
-    <Text style={styles.title1}>
-      Fecha Instalación: <FormatearFecha fecha={Datos.fechaInst} />
-    </Text>
-    :
-    <Text style={styles.title1}>
-      Fecha Instalación: A confirmar
-    </Text>
-    }
+    {Datos.fechaInst ? (
+      <Text style={styles.title1}>
+        Fecha Instalación: <FormatearFecha fecha={Datos.fechaInst} />
+      </Text>
+    ) : (
+      <Text style={styles.title1}>Fecha Instalación: A confirmar</Text>
+    )}
     <View style={styles.logoContainer}>
-      <Image style={styles.logo} src="ImgLogo.png" />
+      <Image style={styles.logo} src="ImgLogo2.png" />
     </View>
-    <Text style={styles.title}>Detalles de la Venta</Text>
-    <Text style={styles.subtitle}>
-      Nombre del Cliente: {Datos.cliNomb}
-    </Text>
+    <Text style={styles.subtitle2}>Cliente: {Datos.cliNomb}</Text>
     <Text style={styles.subtitle}>Obra: {Datos.obra || "N/A"}</Text>
   </>
 );
@@ -169,12 +184,13 @@ const TableHeader = () => (
     <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Cortina</Text>
     <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Tela</Text>
     <Text style={[styles.tableHeaderCell, styles.subtitle]}>Cadena</Text>
-    <Text style={[styles.tableHeaderCellPosicion, styles.subtitle]}>Posición</Text>
+    <Text style={[styles.tableHeaderCellPosicion, styles.subtitle]}>
+      Posición
+    </Text>
     <Text style={[styles.tableHeaderCellLado, styles.subtitle]}>Lado</Text>
     <Text style={[styles.tableHeaderCellMotor, styles.subtitle]}>Motor</Text>
   </View>
 );
-
 
 const ItemDetail = ({ label, value }) => (
   <Text style={styles.itemText}>
@@ -183,17 +199,19 @@ const ItemDetail = ({ label, value }) => (
   </Text>
 );
 
-
 const TelaTitle = ({ tela }) => <Text style={styles.title}>Tela: {tela}</Text>;
 
 export const OrdenProduccion = ({ Venta }) => {
-
-  console.log("Ventas",Venta)
+  console.log("Ventas", Venta);
   //Ventas.map((Venta)=>{
 
-  const Cortinasroller = Venta.listaArticulos.filter((art) => art.nombre === "Roller");
+  const Cortinasroller = Venta.listaArticulos.filter(
+    (art) => art.nombre === "Roller"
+  );
   const Rieles = Venta.listaArticulos.filter((art) => art.nombre === "Riel");
-  const Tradicionales = Venta.listaArticulos.filter((art) => art.nombre === "Tradicional");
+  const Tradicionales = Venta.listaArticulos.filter(
+    (art) => art.nombre === "Tradicional"
+  );
 
   const groupedCortinas = Object.entries(
     Cortinasroller.reduce((groups, cortina) => {
@@ -205,15 +223,15 @@ export const OrdenProduccion = ({ Venta }) => {
   );
 
   const groupedRieles = [];
-  for (let i = 0; i < Rieles.length; i += 2) {
-    groupedRieles.push(Rieles.slice(i, i + 2));
+  for (let i = 0; i < Rieles.length; i += 4) {
+    groupedRieles.push(Rieles.slice(i, i + 4));
   }
+  
 
   const groupedTradicionals = [];
   for (let i = 0; i < Tradicionales.length; i += 2) {
     groupedTradicionals.push(Tradicionales.slice(i, i + 2));
   }
-
 
   if (Cortinasroller.length > 9) {
     const pages = [];
@@ -243,48 +261,79 @@ export const OrdenProduccion = ({ Venta }) => {
             <TableHeader />
             {page.cortinas.map((Roll, cortinaIndex) => (
               <View style={styles.tableRow} key={cortinaIndex}>
-                <Text style={[styles.tableCell2, styles.text]}>{Roll.IdArticulo}</Text>
-                <Text style={[styles.tableCell1, styles.text]}>{Roll.Ambiente}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.ancho.toFixed(3)}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTela.toFixed(3)}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTubo.toFixed(3)}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.cano.tipo}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.alto.toFixed(3)}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.AltoTela.toFixed(3)}</Text>
-                <Text style={[styles.tableCell, styles.text]}>{Roll.LargoCadena.toFixed(3)}</Text>
-                <Text style={[styles.tableCellPosicion, styles.text]}>{Roll.posicion.posicion}</Text>
-                <Text style={[styles.tableCellLado, styles.text]}>{Roll.ladoCadena.lado}</Text>
-                <Text style={[styles.tableCellMotor, styles.text]}>{Roll.MotorRoller.nombre}</Text>
+                <Text style={[styles.tableCell2, styles.text]}>
+                  {Roll.IdArticulo}
+                </Text>
+                <Text style={[styles.tableCell1, styles.text]}>
+                  {Roll.Ambiente}
+                </Text>
+                <Text style={[styles.tableCell, styles.text]}>
+                  {Roll.ancho.toFixed(3)}
+                </Text>
+                <Text style={[styles.tableCell, styles.text]}>
+                  {Roll.AnchoTela.toFixed(3)}
+                </Text>
+                <Text style={[styles.tableCell, styles.text]}>
+                  {Roll.AnchoTubo.toFixed(3)}
+                </Text>
+                <Text style={[styles.tableCell, styles.text]}>
+                  {Roll.cano.tipo}
+                </Text>
+                <Text style={[styles.tableCell, styles.text]}>
+                  {Roll.alto.toFixed(3)}
+                </Text>
+                <Text style={[styles.tableCell, styles.text]}>
+                  {Roll.AltoTela.toFixed(3)}
+                </Text>
+                <Text style={[styles.tableCell, styles.text]}>
+                  {Roll.LargoCadena.toFixed(3)}
+                </Text>
+                <Text style={[styles.tableCellPosicion, styles.text]}>
+                  {Roll.posicion.posicion}
+                </Text>
+                <Text style={[styles.tableCellLado, styles.text]}>
+                  {Roll.ladoCadena.lado}
+                </Text>
+                <Text style={[styles.tableCellMotor, styles.text]}>
+                  {Roll.MotorRoller.nombre}
+                </Text>
               </View>
             ))}
           </Page>
+        ))}
+       {groupedRieles.map((group, pageIndex) => (
+          <Page
+            key={pageIndex}
+            size="A4"
+            style={styles.pageRiel}
+            orientation="portrait"
+          >
+            <Header Datos={Venta.Datos} />
 
-        ))}      
-          {groupedRieles.map((group, pageIndex) => (
-    <Page
-      key={pageIndex}
-      size="A4"
-      style={styles.page}
-      orientation="portrait"
-    >
-      <Header Datos={Venta.Datos} />
-      {group.map((riel, rielIndex) => (
-        <View style={styles.itemContainer} key={rielIndex}>
-          <ItemDetail label="Numero" value={riel.IdArticulo} />
-          <ItemDetail label="Ambiente" value={riel.ambiente} />
-          <ItemDetail label="Ancho" value={riel.ancho} />
-          <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
-          <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
-          <ItemDetail label="Bastones" value={riel.bastones.nombre} />
-          <ItemDetail label="Cantidad de Bastones" value={riel.bastones.cantidad} />
-          <ItemDetail label="Soportes" value={riel.soportes.nombre} />
-          <ItemDetail label="Cantidad de Soportes" value={riel.soportes.cantidad} />
-          <ItemDetail label="Detalle" value={riel.detalle} />
-        </View>
-      ))}
-    </Page>
-  ))
-  }
+            <View style={styles.containerRiel}>
+              {group.map((riel, rielIndex) => (
+                <View style={styles.itemContainerRiel} key={rielIndex}>
+                  <ItemDetail label="Numero" value={riel.numeroArticulo} />
+                  <ItemDetail label="Ambiente" value={riel.ambiente} />
+                  <ItemDetail label="Ancho" value={riel.ancho.toFixed(3)} />
+                  <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
+                  <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
+                  <ItemDetail label="Bastones" value={riel.bastones.nombre} />
+                  <ItemDetail
+                    label="Cantidad de Bastones"
+                    value={riel.bastones.cantidad}
+                  />
+                  <ItemDetail label="Soportes" value={riel.soportes.nombre} />
+                  <ItemDetail
+                    label="Cantidad de Soportes"
+                    value={riel.soportes.cantidad}
+                  />
+                  <ItemDetail label="Detalle" value={riel.detalle} />
+                </View>
+              ))}
+            </View>
+          </Page>
+        ))}
       </Document>
     );
   } else {
@@ -292,116 +341,159 @@ export const OrdenProduccion = ({ Venta }) => {
       <Document>
         {Cortinasroller.length > 0 && (
           <>
-          <Page size="A4" style={styles.page} orientation="landscape">
-            {/* Header */}
-            <Header Datos={Venta.Datos} />
-    
-            {groupedCortinas.map(([key, cortinas], index) => (
-              <React.Fragment key={index}>
-                {/* Tela Title */}
-                <TelaTitle tela={key} />
-    
-                {cortinas.length > 0 && (
-                  <>
-                    {/* Table Header */}
-                    <TableHeader />
-    
-                    {/* Cortinas Data Rows */}
-                    {cortinas.map((Roll, cortinaIndex) => (
-                      <View style={styles.tableRow} key={cortinaIndex}>
-                        <Text style={[styles.tableCell2, styles.text]}>{Roll.numeroArticulo}</Text>
-                        <Text style={[styles.tableCell1, styles.text]}>{Roll.Ambiente}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.ancho.toFixed(3)}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTela.toFixed(3)}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTubo.toFixed(3)}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.cano.tipo}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.alto.toFixed(3)}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.AltoTela.toFixed(3)}</Text>
-                        <Text style={[styles.tableCell, styles.text]}>{Roll.LargoCadena.toFixed(3)}</Text>
-                        <Text style={[styles.tableCellPosicion, styles.text]}>{Roll.posicion.posicion}</Text>
-                        <Text style={[styles.tableCellLado, styles.text]}>{Roll.ladoCadena.lado}</Text>
-                        <Text style={[styles.tableCellMotor, styles.text]}>{Roll.MotorRoller.nombre}</Text>
-                      </View>
-                    ))}
-                  </>
-                )}
-              </React.Fragment>
-            ))}
-          </Page>
+            <Page size="A4" style={styles.page} orientation="landscape">
+              {/* Header */}
+              <Header Datos={Venta.Datos} />
+
+              {groupedCortinas.map(([key, cortinas], index) => (
+                <React.Fragment key={index}>
+                  {/* Tela Title */}
+                  <TelaTitle tela={key} />
+
+                  {cortinas.length > 0 && (
+                    <>
+                      {/* Table Header */}
+                      <TableHeader />
+
+                      {/* Cortinas Data Rows */}
+                      {cortinas.map((Roll, cortinaIndex) => (
+                        <View style={styles.tableRow} key={cortinaIndex}>
+                          <Text style={[styles.tableCell2, styles.text]}>
+                            {Roll.numeroArticulo}
+                          </Text>
+                          <Text style={[styles.tableCell1, styles.text]}>
+                            {Roll.Ambiente}
+                          </Text>
+                          <Text style={[styles.tableCell, styles.text]}>
+                            {Roll.ancho.toFixed(3)}
+                          </Text>
+                          <Text style={[styles.tableCell, styles.text]}>
+                            {Roll.AnchoTela.toFixed(3)}
+                          </Text>
+                          <Text style={[styles.tableCell, styles.text]}>
+                            {Roll.AnchoTubo.toFixed(3)}
+                          </Text>
+                          <Text style={[styles.tableCell, styles.text]}>
+                            {Roll.cano.tipo}
+                          </Text>
+                          <Text style={[styles.tableCell, styles.text]}>
+                            {Roll.alto.toFixed(3)}
+                          </Text>
+                          <Text style={[styles.tableCell, styles.text]}>
+                            {Roll.AltoTela.toFixed(3)}
+                          </Text>
+                          <Text style={[styles.tableCell, styles.text]}>
+                            {Roll.LargoCadena.toFixed(3)}
+                          </Text>
+                          <Text style={[styles.tableCellPosicion, styles.text]}>
+                            {Roll.posicion.posicion}
+                          </Text>
+                          <Text style={[styles.tableCellLado, styles.text]}>
+                            {Roll.ladoCadena.lado}
+                          </Text>
+                          <Text style={[styles.tableCellMotor, styles.text]}>
+                            {Roll.MotorRoller.nombre}
+                          </Text>
+                        </View>
+                      ))}
+                    </>
+                  )}
+                </React.Fragment>
+              ))}
+            </Page>
           </>
         )}
         {groupedRieles.map((group, pageIndex) => (
-    <Page
-      key={pageIndex}
-      size="A4"
-      style={styles.page}
-      orientation="portrait"
-    >
-      <Header Datos={Venta.Datos} />
-      {group.map((riel, rielIndex) => (
-        <View style={styles.itemContainer} key={rielIndex}>
-          <ItemDetail label="Numero" value={riel.numeroArticulo} />
-          <ItemDetail label="Ambiente" value={riel.ambiente} />
-          <ItemDetail label="Ancho" value={riel.ancho.toFixed(3)} />
-          <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
-          <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
-          <ItemDetail label="Bastones" value={riel.bastones.nombre} />
-          <ItemDetail label="Cantidad de Bastones" value={riel.bastones.cantidad} />
-          <ItemDetail label="Soportes" value={riel.soportes.nombre} />
-          <ItemDetail label="Cantidad de Soportes" value={riel.soportes.cantidad} />
-          <ItemDetail label="Detalle" value={riel.detalle} />
-        </View>
-      ))}
-    </Page>
-  ))
-  }
+          <Page
+            key={pageIndex}
+            size="A4"
+            style={styles.pageRiel}
+            orientation="portrait"
+          >
+            <Header Datos={Venta.Datos} />
 
-  {groupedTradicionals.map((group, pageIndex) => (
-    <Page
-      key={pageIndex}
-      size="A4"
-      style={styles.page}
-      orientation="portrait"
-    >
-      <Header Datos={Venta.Datos} />
-      {group.map((tradi, rielIndex) => (
-        <View style={styles.itemContainer} key={rielIndex}>
-          <ItemDetail label="Tela" value={tradi.nombreTela + " " + tradi.coloTela} />
-          <ItemDetail label="Numero" value={tradi.numeroArticulo} />
-          <ItemDetail label="Ambiente" value={tradi.Ambiente} />
-          <ItemDetail label="Pinza" value={tradi.Pinza.nombre} />
-          <ItemDetail label="Ganchos" value={tradi.ganchos.nombre} />
-          <ItemDetail label="Paños" value={tradi.cantidadPanos} />
-          {
-            tradi.cantidadPanos===1 ?
-            <>
-            <ItemDetail label="Ancho" value={tradi.ancho.toFixed(3)} />
-            </>
-            :
-            <>
-            <ItemDetail label="Ancho Izquierdo" value={tradi.ancho.toFixed(3)} />
-            <ItemDetail label="Ancho Derecho" value={tradi.anchoDerecho.toFixed(3)} />
-            </>
-          }
-          {
-            tradi.cantidadAltos===1 ?
-            <>
-              <ItemDetail label="Alto" value={tradi.alto.toFixed(3)} />
-            </>
-            :
-            <>
-             <ItemDetail label="Alto Izquierdo" value={tradi.alto.toFixed(3)} />
-             <ItemDetail label="Alto Derecho" value={tradi.altoDerecho.toFixed(3)} />
-            </>
-          }
-        </View>
-      ))}
-    </Page>
-  ))
-  }
-         
+            <View style={styles.containerRiel}>
+              {group.map((riel, rielIndex) => (
+                <View style={styles.itemContainerRiel} key={rielIndex}>
+                  <ItemDetail label="Numero" value={riel.numeroArticulo} />
+                  <ItemDetail label="Ambiente" value={riel.ambiente} />
+                  <ItemDetail label="Ancho" value={riel.ancho.toFixed(3)} />
+                  <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
+                  <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
+                  <ItemDetail label="Bastones" value={riel.bastones.nombre} />
+                  <ItemDetail
+                    label="Cantidad de Bastones"
+                    value={riel.bastones.cantidad}
+                  />
+                  <ItemDetail label="Soportes" value={riel.soportes.nombre} />
+                  <ItemDetail
+                    label="Cantidad de Soportes"
+                    value={riel.soportes.cantidad}
+                  />
+                  <ItemDetail label="Detalle" value={riel.detalle} />
+                </View>
+              ))}
+            </View>
+          </Page>
+        ))}
+
+        {groupedTradicionals.map((group, pageIndex) => (
+          <Page
+            key={pageIndex}
+            size="A4"
+            style={styles.page}
+            orientation="portrait"
+          >
+            <Header Datos={Venta.Datos} />
+            {group.map((tradi, rielIndex) => (
+              <View style={styles.itemContainer} key={rielIndex}>
+                <ItemDetail
+                  label="Tela"
+                  value={tradi.nombreTela + " " + tradi.coloTela}
+                />
+                <ItemDetail label="Numero" value={tradi.numeroArticulo} />
+                <ItemDetail label="Ambiente" value={tradi.Ambiente} />
+                <ItemDetail label="Pinza" value={tradi.Pinza.nombre} />
+                <ItemDetail label="Ganchos" value={tradi.ganchos.nombre} />
+                <ItemDetail label="Paños" value={tradi.cantidadPanos} />
+                {tradi.cantidadPanos === 1 ? (
+                  <>
+                    <ItemDetail label="Ancho" value={tradi.ancho.toFixed(3)} />
+                  </>
+                ) : (
+                  <>
+                    <ItemDetail
+                      label="Ancho Izquierdo"
+                      value={tradi.ancho.toFixed(3)}
+                    />
+                    <ItemDetail
+                      label="Ancho Derecho"
+                      value={tradi.anchoDerecho.toFixed(3)}
+                    />
+                  </>
+                )}
+                {tradi.cantidadAltos === 1 ? (
+                  <>
+                    <ItemDetail label="Alto" value={tradi.alto.toFixed(3)} />
+                  </>
+                ) : (
+                  <>
+                    <ItemDetail
+                      label="Alto Izquierdo"
+                      value={tradi.alto.toFixed(3)}
+                    />
+                    <ItemDetail
+                      label="Alto Derecho"
+                      value={tradi.altoDerecho.toFixed(3)}
+                    />
+                  </>
+                )}
+              </View>
+            ))}
+          </Page>
+        ))}
       </Document>
     );
-                    }
-    //  })
+  }
+  //  })
 };
