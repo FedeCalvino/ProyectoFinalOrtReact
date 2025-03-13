@@ -67,7 +67,7 @@ export const Ordenes = () => {
     try {
       setLoding(true);
       console.log("se hace el fetch")
-      const data = await fetch("http://localhost:8083/Lote/Fecha/" + Fecha);
+      const data = await fetch("/LoteEp/Fecha/" + Fecha);
       const response = await data.json();
       setlotes(response.body);
       console.log("dataa", response.body);
@@ -147,7 +147,7 @@ export const Ordenes = () => {
 
   useEffect(() => {
     fetchData();
-    connect();
+    //connect();
   }, []);
 
   useEffect(() => {
