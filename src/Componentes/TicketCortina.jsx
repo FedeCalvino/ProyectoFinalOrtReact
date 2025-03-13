@@ -8,10 +8,10 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   tableContainer: {
-    marginTop: 0.5,
+    marginTop: 0.3,
     alignItems: "center",
     justifyContent: "center",
-    height: "50%",
+    height: "40%",
   },
   tableContainer1: {
     marginBottom: 0.2,
@@ -26,12 +26,20 @@ const styles = StyleSheet.create({
     fontSize: 1.5,
     justifyContent: "center",
   },
+  tableRow2: {
+    flexDirection: "row",
+    alignItems: "center",
+    fontSize: 1.5,
+    justifyContent: "center",
+    marginTop:0.3
+  },
   tableCell5: {
     fontSize: 1.5,
     width: "22%",
     textAlign: "left",
     borderBottomColor: "#000000",
-  },tableCell25: {
+  },
+  tableCell25: {
     fontSize: 1.5,
     width: "80%",
     textAlign: "center",
@@ -145,16 +153,18 @@ export const TicketCortina = ({ NombreCli, Articulos }) => {
               <Text style={[styles.tableCell131]}>{NombreCli}</Text>
             </View>
           </View>
+          <View style={styles.tableRow2}>
+            <Text
+              style={[
+                styles.tableCell25,
+                { fontSize: cor.ambiente.length >= 6 ? 1.8 : fontSize },
+              ]}
+            >
+              {cor.Ambiente}
+            </Text>
+          </View>
           <View style={styles.tableContainer}>
             <View style={styles.tableRow}>
-              <Text
-                style={[
-                  styles.tableCell5,
-                  { fontSize: cor.ambiente.length >= 6 ? 1.8 : fontSize },
-                ]}
-              >
-                {cor.Ambiente}
-              </Text>
               <Text style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}>
                 {cor.ancho.toFixed(3)}
               </Text>
@@ -180,24 +190,26 @@ export const TicketCortina = ({ NombreCli, Articulos }) => {
               <Text style={[styles.tableCell131]}>{NombreCli}</Text>
             </View>
           </View>
-          <View style={styles.tableContainer}>
+          <View style={styles.tableRow2}>
             <Text
-                style={[
-                  styles.tableCell25,
-                  { fontSize: tradi.ambiente.length >= 6 ? 1.8 : fontSize },
-                ]}
-              >
-                {tradi.Ambiente}
-              </Text>
+              style={[
+                styles.tableCell25,
+                { fontSize: tradi.ambiente.length >= 6 ? 1.8 : fontSize },
+              ]}
+            >
+              {tradi.Ambiente}
+            </Text>
+          </View>
+          <View style={styles.tableContainer}>
             <View style={styles.tableRow}>
-            <Text style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}>
+              <Text style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}>
                 {tradi.ancho.toFixed(3)}
               </Text>
               <Text style={[styles.tableCell6, { fontSize: fontSize }]}>X</Text>
               <Text style={[styles.tableCell8, { fontSize: fontSizeMedidas }]}>
                 {tradi.alto.toFixed(3)}
               </Text>
-              {tradi.CantidadPanos!==1 && (
+              {tradi.CantidadPanos !== 1 && (
                 <>
                   <Text
                     style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}
@@ -207,28 +219,33 @@ export const TicketCortina = ({ NombreCli, Articulos }) => {
                   <Text style={[styles.tableCell6, { fontSize: fontSize }]}>
                     X
                   </Text>
-                  { tradi.AltoDerecho ?
-                  <>
-                  <Text
-                    style={[styles.tableCell8, { fontSize: fontSizeMedidas }]}
-                  >
-                    {tradi.AltoDerecho.toFixed(3)}
-                  </Text>
-                  </>
-                  :
-                  <>
-                   <Text
-                    style={[styles.tableCell8, { fontSize: fontSizeMedidas }]}
-                  >
-                    {tradi.alto.toFixed(3)}
-                  </Text>
-                  </>
-                  }
+                  {tradi.AltoDerecho ? (
+                    <>
+                      <Text
+                        style={[
+                          styles.tableCell8,
+                          { fontSize: fontSizeMedidas },
+                        ]}
+                      >
+                        {tradi.AltoDerecho.toFixed(3)}
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text
+                        style={[
+                          styles.tableCell8,
+                          { fontSize: fontSizeMedidas },
+                        ]}
+                      >
+                        {tradi.alto.toFixed(3)}
+                      </Text>
+                    </>
+                  )}
                 </>
               )}
             </View>
           </View>
-          
         </Page>
       ))}
     </Document>
