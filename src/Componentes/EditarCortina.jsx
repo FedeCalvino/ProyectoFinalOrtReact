@@ -58,6 +58,7 @@ export const EditarCortina = ({
       cadena: parseInt(cortina.tipoCadena.idTipoCadena, 10),
       soporte: soporteObj,
       tipoArticulo: cortina.tipoArticulo,
+      factorLargoCadena:cortina.factorLargoCadena,
       nombre: cortina.nombre,
       detalleInstalacion: ComentarioIns,
     };

@@ -37,7 +37,7 @@ export const FormRollers = ({ toastCallBack }) => {
   const [CanoRoller, setCanoRoller] = useState("");
   const [MotorRoller, setMotorRoller] = useState("1");
   const [TipoCadena, setTipoCadena] = useState("1");
-  const [LargoTipoCadena, setLargoTipoCadena] = useState("1.20");
+  const [LargoTipoCadena, setLargoTipoCadena] = useState("1.30");
   const [TipoSoporte, setTipoSoporte] = useState("5");
   const [LadoCadenaRoller, setLadoCadenaRoller] = useState("");
   const [PosicionRoller, setPosicionRoller] = useState("");
