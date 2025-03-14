@@ -56,8 +56,8 @@
       "destination": "http://200.40.89.254:8086/auth"
     },
     {
-      "source": "/OrdenEp",
-      "destination": "http://200.40.89.254:8086/Orden"
+      "source": "/OrdenEp/:path*",
+      "destination": "http://200.40.89.254:8086/Orden/:path*"
     },
     {
       "source": "/CortinaEp/:path*",
