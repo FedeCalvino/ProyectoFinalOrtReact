@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     fontSize: 1.5,
     justifyContent: "center",
-    marginTop:0.3
+    marginTop: 0.3,
   },
   tableCell5: {
     fontSize: 1.5,
@@ -42,6 +42,12 @@ const styles = StyleSheet.create({
   tableCell25: {
     fontSize: 1.5,
     width: "80%",
+    textAlign: "center",
+    borderBottomColor: "#000000",
+  },
+  tableCell255: {
+    fontSize: 1.2,
+    width: "20%",
     textAlign: "center",
     borderBottomColor: "#000000",
   },
@@ -61,6 +67,12 @@ const styles = StyleSheet.create({
     fontSize: 2,
     width: "10%",
     textAlign: "center",
+    borderBottomColor: "#000000",
+  },
+  tableCell91: {
+    fontSize: 2,
+    width: "40%",
+    textAlign: "start",
     borderBottomColor: "#000000",
   },
   tableCell911: {
@@ -154,6 +166,13 @@ export const TicketCortina = ({ NombreCli, Articulos }) => {
             </View>
           </View>
           <View style={styles.tableRow2}>
+          <Text
+                    style={[
+                      styles.tableCell255
+                    ]}
+                  >
+                    Roller
+                  </Text>
             <Text
               style={[
                 styles.tableCell25,
@@ -184,69 +203,235 @@ export const TicketCortina = ({ NombreCli, Articulos }) => {
         </Page>
       ))}
       {CortinasTradicional.map((tradi) => (
-        <Page size={[34, 12]} style={styles.page} key={tradi.idCortina}>
-          <View style={styles.tableContainer1}>
-            <View style={styles.tableRow}>
-              <Text style={[styles.tableCell131]}>{NombreCli}</Text>
+        <>
+          <Page size={[34, 12]} style={styles.page} key={tradi.idCortina}>
+            <View style={styles.tableContainer1}>
+              <View style={styles.tableRow}>
+                <Text style={[styles.tableCell131]}>{NombreCli}</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.tableRow2}>
-            <Text
-              style={[
-                styles.tableCell25,
-                { fontSize: tradi.ambiente.length >= 6 ? 1.8 : fontSize },
-              ]}
-            >
-              {tradi.Ambiente}
-            </Text>
-          </View>
-          <View style={styles.tableContainer}>
-            <View style={styles.tableRow}>
-              <Text style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}>
-                {tradi.ancho.toFixed(3)}
+            <View style={styles.tableRow2}>
+
+              <Text
+                style={[
+                  styles.tableCell25,
+                  { fontSize: tradi.ambiente.length >= 6 ? 1.8 : fontSize },
+                ]}
+              >
+                {tradi.Ambiente}
               </Text>
-              <Text style={[styles.tableCell6, { fontSize: fontSize }]}>X</Text>
-              <Text style={[styles.tableCell8, { fontSize: fontSizeMedidas }]}>
-                {tradi.alto.toFixed(3)}
-              </Text>
-              {tradi.CantidadPanos !== 1 && (
-                <>
-                  <Text
-                    style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}
+            </View>
+            <View style={styles.tableContainer}>
+              <View style={styles.tableRow}>
+                <Text
+                  style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}
+                >
+                  {tradi.ancho.toFixed(3)}
+                </Text>
+                <Text style={[styles.tableCell6, { fontSize: fontSize }]}>
+                  X
+                </Text>
+                <Text
+                  style={[styles.tableCell8, { fontSize: fontSizeMedidas }]}
+                >
+                  {tradi.alto.toFixed(3)}
+                </Text>
+                {tradi.CantidadPanos !== 1 && (
+                  <>
+                    <Text
+                      style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}
+                    >
+                      {tradi.AnchoDerecho.toFixed(3)}
+                    </Text>
+                    <Text style={[styles.tableCell6, { fontSize: fontSize }]}>
+                      X
+                    </Text>
+                    {tradi.AltoDerecho ? (
+                      <>
+                        <Text
+                          style={[
+                            styles.tableCell8,
+                            { fontSize: fontSizeMedidas },
+                          ]}
+                        >
+                          {tradi.AltoDerecho.toFixed(3)}
+                        </Text>
+                      </>
+                    ) : (
+                      <>
+                        <Text
+                          style={[
+                            styles.tableCell8,
+                            { fontSize: fontSizeMedidas },
+                          ]}
+                        >
+                          {tradi.alto.toFixed(3)}
+                        </Text>
+                      </>
+                    )}
+                  </>
+                )}
+              </View>
+            </View>
+          </Page>
+
+          {tradi.CantidadPanos !== 1 ? (
+            <>
+              <Page size={[34, 12]} style={styles.page} key={tradi.idCortina}>
+                <View style={styles.tableContainer1}>
+                  <View style={styles.tableRow}>
+                    <Text style={[styles.tableCell131]}>{NombreCli}</Text>
+                  </View>
+                </View>
+                <View style={styles.tableRow2}>
+                <Text
+                    style={[
+                      styles.tableCell255
+                    ]}
                   >
-                    {tradi.AnchoDerecho.toFixed(3)}
+                    Tradicional
                   </Text>
-                  <Text style={[styles.tableCell6, { fontSize: fontSize }]}>
-                    X
+                  <Text
+                    style={[
+                      styles.tableCell25,
+                      { fontSize: tradi.ambiente.length >= 6 ? 1.8 : fontSize },
+                    ]}
+                  >
+                    {tradi.Ambiente}
                   </Text>
-                  {tradi.AltoDerecho ? (
-                    <>
-                      <Text
-                        style={[
-                          styles.tableCell8,
-                          { fontSize: fontSizeMedidas },
-                        ]}
-                      >
-                        {tradi.AltoDerecho.toFixed(3)}
-                      </Text>
-                    </>
-                  ) : (
-                    <>
-                      <Text
-                        style={[
-                          styles.tableCell8,
-                          { fontSize: fontSizeMedidas },
-                        ]}
-                      >
-                        {tradi.alto.toFixed(3)}
-                      </Text>
-                    </>
-                  )}
-                </>
-              )}
-            </View>
-          </View>
-        </Page>
+                </View>
+                <View style={styles.tableContainer}>
+                  <View style={styles.tableRow}>
+                    <Text style={[styles.tableCell91]}>Izquierda</Text>
+                    <Text
+                      style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}
+                    >
+                      {tradi.ancho.toFixed(3)}
+                    </Text>
+                    <Text style={[styles.tableCell6, { fontSize: fontSize }]}>
+                      X
+                    </Text>
+                    <Text
+                      style={[styles.tableCell8, { fontSize: fontSizeMedidas }]}
+                    >
+                      {tradi.alto.toFixed(3)}
+                    </Text>
+                  </View>
+                </View>
+              </Page>
+              <Page size={[34, 12]} style={styles.page} key={tradi.idCortina}>
+                <View style={styles.tableContainer1}>
+                  <View style={styles.tableRow}>
+                    <Text style={[styles.tableCell131]}>{NombreCli}</Text>
+                  </View>
+                </View>
+                <View style={styles.tableRow2}>
+                <Text
+                    style={[
+                      styles.tableCell255
+                    ]}
+                  >
+                    Tradicional
+                  </Text>
+                  <Text
+                    style={[
+                      styles.tableCell25,
+                      {
+                        fontSize: tradi.ambiente.length >= 6 ? 1.8 : fontSize,
+                      },
+                    ]}
+                  >
+                    {tradi.Ambiente}
+                  </Text>
+                </View>
+                <View style={styles.tableContainer}>
+                  <View style={styles.tableRow}>
+                    <Text style={[styles.tableCell91]}>Derecha</Text>
+                    <Text
+                      style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}
+                    >
+                      {tradi.AnchoDerecho.toFixed(3)}
+                    </Text>
+                    <Text style={[styles.tableCell6, { fontSize: fontSize }]}>
+                      X
+                    </Text>
+                    <Text
+                      style={[styles.tableCell8, { fontSize: fontSizeMedidas }]}
+                    >
+                      {tradi.AltoDerecho ? (
+                        <>
+                          <Text
+                            style={[
+                              styles.tableCell8,
+                              { fontSize: fontSizeMedidas },
+                            ]}
+                          >
+                            {tradi.AltoDerecho.toFixed(3)}
+                          </Text>
+                        </>
+                      ) : (
+                        <>
+                          <Text
+                            style={[
+                              styles.tableCell8,
+                              { fontSize: fontSizeMedidas },
+                            ]}
+                          >
+                            {tradi.alto.toFixed(3)}
+                          </Text>
+                        </>
+                      )}
+                    </Text>
+                  </View>
+                </View>
+              </Page>
+            </>
+          ) : (
+            <>
+              <Page size={[34, 12]} style={styles.page} key={tradi.idCortina}>
+                <View style={styles.tableContainer1}>
+                  <View style={styles.tableRow}>
+                    <Text style={[styles.tableCell131]}>{NombreCli}</Text>
+                  </View>
+                </View>
+                <View style={styles.tableRow2}>
+                <Text
+                    style={[
+                      styles.tableCell255
+                    ]}
+                  >
+                    Tradicional
+                  </Text>
+                  <Text
+                    style={[
+                      styles.tableCell25,
+                      { fontSize: tradi.ambiente.length >= 6 ? 1.8 : fontSize },
+                    ]}
+                  >
+                    {tradi.Ambiente}
+                  </Text>
+                </View>
+                <View style={styles.tableContainer}>
+                  <View style={styles.tableRow}>
+                    <Text
+                      style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}
+                    >
+                      {tradi.ancho.toFixed(3)}
+                    </Text>
+                    <Text style={[styles.tableCell6, { fontSize: fontSize }]}>
+                      X
+                    </Text>
+                    <Text
+                      style={[styles.tableCell8, { fontSize: fontSizeMedidas }]}
+                    >
+                      {tradi.alto.toFixed(3)}
+                    </Text>
+                  </View>
+                </View>
+              </Page>
+            </>
+          )}
+        </>
       ))}
     </Document>
   );
