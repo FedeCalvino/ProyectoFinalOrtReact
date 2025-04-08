@@ -50,6 +50,10 @@ const styles = StyleSheet.create({
     width: "6%", // Otras columnas pequeñas
     textAlign: "center",
   },
+  tableHeaderCellTipo:{
+    width: "16%",
+    textAlign: "center",
+  },
   tableHeaderCell3: {
     width: "6%", // Otras columnas pequeñas
     textAlign: "center",
@@ -59,11 +63,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   tableHeaderCellLado: {
-    width: "15%", // Lado con mayor prioridad
+    width: "10%", // Lado con mayor prioridad
     textAlign: "center",
   },
   tableHeaderCellMotor: {
-    width: "15%", // Motor con mayor prioridad
+    width: "10%", // Motor con mayor prioridad
     textAlign: "center",
   },
 
@@ -102,11 +106,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   tableCellLado: {
-    width: "15%", // Lado con mayor prioridad
+    width: "10%", // Lado con mayor prioridad
     textAlign: "center",
   },
   tableCellMotor: {
-    width: "15%", // Motor con mayor prioridad
+    width: "10%", // Motor con mayor prioridad
     textAlign: "center",
   },
   itemContainer: {
@@ -183,7 +187,8 @@ const TableHeader = () => (
     <Text style={[styles.tableHeaderCell, styles.subtitle]}>Caño</Text>
     <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Cortina</Text>
     <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Tela</Text>
-    <Text style={[styles.tableHeaderCell, styles.subtitle]}>Cadena</Text>
+    <Text style={[styles.tableHeaderCellTipo, styles.subtitle]}>Tipo Cadena</Text>
+    <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Cadena</Text>
     <Text style={[styles.tableHeaderCellPosicion, styles.subtitle]}>
       Posición
     </Text>
@@ -260,7 +265,7 @@ export const OrdenProduccion = ({ Venta }) => {
             <TelaTitle tela={page.tela} />
             <TableHeader />
             {page.cortinas.map((Roll, cortinaIndex) => (
-              <View style={styles.tableRow} key={cortinaIndex}>
+              <View style={styles.tableRow} key={cortinaIndex} border>
                 <Text style={[styles.tableCell2, styles.text]}>
                   {Roll.IdArticulo}
                 </Text>
@@ -284,6 +289,10 @@ export const OrdenProduccion = ({ Venta }) => {
                 </Text>
                 <Text style={[styles.tableCell, styles.text]}>
                   {Roll.AltoTela.toFixed(3)}
+                </Text>
+                
+                <Text style={[styles.tableHeaderCellTipo, styles.text]}>
+                  {Roll.TipoCadena.tipoCadena}
                 </Text>
                 <Text style={[styles.tableCell, styles.text]}>
                   {Roll.LargoCadena.toFixed(3)}
@@ -357,7 +366,7 @@ export const OrdenProduccion = ({ Venta }) => {
 
                       {/* Cortinas Data Rows */}
                       {cortinas.map((Roll, cortinaIndex) => (
-                        <View style={styles.tableRow} key={cortinaIndex}>
+                        <View style={styles.tableRow} key={cortinaIndex} border>
                           <Text style={[styles.tableCell2, styles.text]}>
                             {Roll.numeroArticulo}
                           </Text>
@@ -381,6 +390,9 @@ export const OrdenProduccion = ({ Venta }) => {
                           </Text>
                           <Text style={[styles.tableCell, styles.text]}>
                             {Roll.AltoTela.toFixed(3)}
+                          </Text>
+                          <Text style={[styles.tableHeaderCellTipo, styles.text]}>
+                            {Roll.TipoCadena.tipoCadena}
                           </Text>
                           <Text style={[styles.tableCell, styles.text]}>
                             {Roll.LargoCadena.toFixed(3)}
