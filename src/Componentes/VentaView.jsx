@@ -886,6 +886,7 @@ export const VentaView = ({ callBackToast }) => {
                     <th>Alto Cortina</th>
                     <th>Alto Tela</th>
                     <th>Cant</th>
+                    <th>Largo Cadena</th>
                     <th>Cadena</th>
                     <th>Lado Cadena</th>
                     <th>Posición</th>
@@ -908,6 +909,7 @@ export const VentaView = ({ callBackToast }) => {
                       <td>{Cor.AltoTela?.toFixed(3)}</td>
                       <td>1</td>
                       <td>{Cor.LargoCadena?.toFixed(3)}</td>
+                      <td>{findNameTipoCadena(Cor.tipoCadena.idTipoCadena)}</td>
                       <td>{findNameLadoCadena(Cor.ladoCadena?.ladoId)}</td>
                       <td>{findNamePos(Cor.posicion?.posicionId)}</td>
                       <td>{findNameMotor(Cor.motorRoller?.idMotor)}</td>
