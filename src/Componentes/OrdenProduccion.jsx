@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   // Columnas de la tabla
   tableHeaderCell2: {
-    width: "8%", // Número
+    width: "4%", // Número
     textAlign: "center",
   },
   tableHeaderCell1: {
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
 
   // Celdas de la tabla
   tableCell2: {
-    width: "8%", // Número
+    width: "4%", // Número
     textAlign: "center",
   },
   tableCell1: {
@@ -177,25 +177,7 @@ const Header = ({ Datos }) => (
   </>
 );
 
-const TableHeader = () => (
-  <View style={styles.tableHeader}>
-    <Text style={[styles.tableHeaderCell2, styles.subtitle]}>Numero</Text>
-    <Text style={[styles.tableHeaderCell1, styles.subtitle]}>Ambiente</Text>
-    <Text style={[styles.tableHeaderCell, styles.subtitle]}>Ancho AF-AF</Text>
-    <Text style={[styles.tableHeaderCell, styles.subtitle]}>Ancho Tela</Text>
-    <Text style={[styles.tableHeaderCell, styles.subtitle]}>Ancho Caño</Text>
-    <Text style={[styles.tableHeaderCell, styles.subtitle]}>Caño</Text>
-    <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Cortina</Text>
-    <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Tela</Text>
-    <Text style={[styles.tableHeaderCellTipo, styles.subtitle]}>Tipo Cadena</Text>
-    <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Cadena</Text>
-    <Text style={[styles.tableHeaderCellPosicion, styles.subtitle]}>
-      Posición
-    </Text>
-    <Text style={[styles.tableHeaderCellLado, styles.subtitle]}>Lado</Text>
-    <Text style={[styles.tableHeaderCellMotor, styles.subtitle]}>Motor</Text>
-  </View>
-);
+
 
 const ItemDetail = ({ label, value }) => (
   <Text style={styles.itemText}>
@@ -213,6 +195,8 @@ export const OrdenProduccion = ({ Venta }) => {
   const Cortinasroller = Venta.listaArticulos.filter(
     (art) => art.nombre === "Roller"
   );
+  const existeAlgunMotor = Cortinasroller.find(Roll=>Roll.MotorRoller.idMotor!==1)
+  console.log("existeAlgunMotor",existeAlgunMotor)
   const Rieles = Venta.listaArticulos.filter((art) => art.nombre === "Riel");
   const Tradicionales = Venta.listaArticulos.filter(
     (art) => art.nombre === "Tradicional"
@@ -237,6 +221,28 @@ export const OrdenProduccion = ({ Venta }) => {
   for (let i = 0; i < Tradicionales.length; i += 2) {
     groupedTradicionals.push(Tradicionales.slice(i, i + 2));
   }
+
+  const TableHeader = () => (
+    <View style={styles.tableHeader}>
+      <Text style={[styles.tableHeaderCell2, styles.subtitle]}>Nº</Text>
+      <Text style={[styles.tableHeaderCell1, styles.subtitle]}>Ambiente</Text>
+      <Text style={[styles.tableHeaderCell, styles.subtitle]}>Ancho AF-AF</Text>
+      <Text style={[styles.tableHeaderCell, styles.subtitle]}>Ancho Tela</Text>
+      <Text style={[styles.tableHeaderCell, styles.subtitle]}>Ancho Caño</Text>
+      <Text style={[styles.tableHeaderCell, styles.subtitle]}>Caño</Text>
+      <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Cortina</Text>
+      <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Tela</Text>
+      <Text style={[styles.tableHeaderCellTipo, styles.subtitle]}>Tipo Cadena</Text>
+      <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Cadena</Text>
+      <Text style={[styles.tableHeaderCellPosicion, styles.subtitle]}>
+        Posición
+      </Text>
+      <Text style={[styles.tableHeaderCellLado, styles.subtitle]}>Lado</Text>
+      { existeAlgunMotor &&
+      <Text style={[styles.tableHeaderCellMotor, styles.subtitle]}>Motor</Text>
+      }
+    </View>
+  );
 
   if (Cortinasroller.length > 9) {
     const pages = [];
@@ -303,9 +309,11 @@ export const OrdenProduccion = ({ Venta }) => {
                 <Text style={[styles.tableCellLado, styles.text]}>
                   {Roll.ladoCadena.lado}
                 </Text>
+                { existeAlgunMotor &&
                 <Text style={[styles.tableCellMotor, styles.text]}>
                   {Roll.MotorRoller.nombre}
-                </Text>
+                </Text>   
+                }
               </View>
             ))}
           </Page>
@@ -403,9 +411,11 @@ export const OrdenProduccion = ({ Venta }) => {
                           <Text style={[styles.tableCellLado, styles.text]}>
                             {Roll.ladoCadena.lado}
                           </Text>
+                          { existeAlgunMotor &&
                           <Text style={[styles.tableCellMotor, styles.text]}>
                             {Roll.MotorRoller.nombre}
                           </Text>
+                          }
                         </View>
                       ))}
                     </>
