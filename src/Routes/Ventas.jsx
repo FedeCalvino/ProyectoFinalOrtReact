@@ -30,17 +30,18 @@ export const Ventas = () => {
   let lastDay = "";
   const [ConfirmDelete, setConfirmDelete] = useState(false);
   const [loadingDelete, setloadingDelete] = useState(false);
-  
+  const [Pagina, setPagina] = useState(0);
   const ConfigRoller = useSelector(selectRollerConfig);
   
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/VentasEP/";
 /*
- const UrlVentas = "http://200.40.89.254:8086/Ventas";
-  const UrlVenta = "http://localhost:8083/Ventas/";
+ const UrlVentas = "http://200.40.89.254:8085/Ventas";
+  const UrlVenta = "http://200.40.89.254:8086/Ventas/";
   const UrlDelete = "http://200.40.89.254:8086/Ventas/";
 */
+
   const setVentaView = async (Venta) => {
     console.log(ConfigRoller)
     if(ConfigRoller.length!=0){
@@ -71,10 +72,22 @@ export const Ventas = () => {
       toast.error("Las configuraciones de rollers no estan cargadas")
     }
   };
-
-  const FetchVentas = async () => {
+  const sumarPagina = () => {
+    console.log("Pagina",Pagina)
+    FetchVentas(+1)
+    setPagina(prev => prev + 1);
+  };
+  const restarPagina = () => {
+    FetchVentas(-1)
+    setPagina(prev => prev - 1);
+  };
+  const FetchVentas = async (adelanto) => {
+    setVentas([]);
     try {
-      const res = await fetch(UrlVentas);
+      console.log("Pagina", Pagina);
+      const nuevaPagina = parseInt(Pagina) + parseInt(adelanto); 
+      console.log(nuevaPagina)
+      const res = await fetch(`${UrlVentas}/Paginas/${nuevaPagina}`);
       const data = await res.json();
       console.log(data);
       const sortedData = data.body.sort(
@@ -84,12 +97,13 @@ export const Ventas = () => {
       setVentasTotales(sortedData);
     } catch (error) {
       console.log(error);
-      toast.error("Error al cargar las ventas")
+      toast.error("Error al cargar las ventas");
     }
   };
+  
 
   useEffect(() => {
-    FetchVentas();
+    FetchVentas(0);
   }, []);
 
   const MostrarDia = ({ Day }) => {
@@ -164,7 +178,7 @@ export const Ventas = () => {
         if (response.ok) {
           setloadingDelete(false)
           handleClose();
-          FetchVentas();
+          FetchVentas(0);
           toast.success("venta eliminada")
         } else {
           toast.error("error al eliminar")
@@ -209,7 +223,8 @@ const callBackToast = (mensaje, tipo) => {
             />
           </div>
         </Col>
-        <Col></Col>
+        <Col>   
+    </Col>
       </Row>
 
       <div>
@@ -307,6 +322,19 @@ const callBackToast = (mensaje, tipo) => {
           }}
         />
       </div>
+      <Row>
+      <div style={{ padding: '20px' }}>
+      <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+        <button onClick={restarPagina} disabled={Pagina === 0}>
+        ⬅️ 
+        </button>
+        <span>Página {Pagina+1}</span>
+        <button onClick={sumarPagina}>
+          ➡️
+        </button>
+      </div>
+    </div>
+      </Row>
     </div>
   );
 };
