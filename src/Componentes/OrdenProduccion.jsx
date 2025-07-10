@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
   },
   itemText: {
-    marginBottom: 5,
+    fontSize: 14,
+    marginBottom: 1,
     lineHeight: 1.5,
   },
   itemLabel: {
@@ -135,16 +136,15 @@ const styles = StyleSheet.create({
   },
   containerRiel: {
     flexDirection: "row",
-    flexWrap: "wrap", // Permite que los elementos se dividan en dos filas
+    flexWrap: "wrap",
     justifyContent: "space-between",
   },
   itemContainerRiel: {
     width: "48%", // Ocupa la mitad del ancho con un pequeño margen
-    height: "48%",
-    border: "2px solid black",
+    border: "1px solid black",
     borderRadius: 5,
     marginBottom: 10,
-    padding: 10,
+    padding: 5,
     backgroundColor: "#fff",
   },
   subtitle2:{
@@ -212,8 +212,8 @@ export const OrdenProduccion = ({ Venta }) => {
   );
 
   const groupedRieles = [];
-  for (let i = 0; i < Rieles.length; i += 4) {
-    groupedRieles.push(Rieles.slice(i, i + 4));
+  for (let i = 0; i < Rieles.length; i += 6) {
+    groupedRieles.push(Rieles.slice(i, i + 6));
   }
   
 
@@ -335,11 +335,15 @@ export const OrdenProduccion = ({ Venta }) => {
                   <ItemDetail label="Ancho" value={riel.ancho.toFixed(3)} />
                   <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
                   <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
+                  { riel.bastones.nombre!=="Sin Bastones" && 
+                  <>
                   <ItemDetail label="Bastones" value={riel.bastones.nombre} />
                   <ItemDetail
                     label="Cantidad de Bastones"
                     value={riel.bastones.cantidad}
                   />
+                  </>
+                  }
                   <ItemDetail label="Soportes" value={riel.soportes.nombre} />
                   <ItemDetail
                     label="Cantidad de Soportes"
@@ -442,11 +446,15 @@ export const OrdenProduccion = ({ Venta }) => {
                   <ItemDetail label="Ancho" value={riel.ancho.toFixed(3)} />
                   <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
                   <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
+                  { riel.bastones.nombre!=="Sin Bastones" && 
+                  <>
                   <ItemDetail label="Bastones" value={riel.bastones.nombre} />
                   <ItemDetail
                     label="Cantidad de Bastones"
                     value={riel.bastones.cantidad}
                   />
+                  </>
+                  }
                   <ItemDetail label="Soportes" value={riel.soportes.nombre} />
                   <ItemDetail
                     label="Cantidad de Soportes"
