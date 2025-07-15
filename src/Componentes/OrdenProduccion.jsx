@@ -249,8 +249,8 @@ export const OrdenProduccion = ({ Venta }) => {
 
     groupedCortinas.forEach(([key, cortinas]) => {
       // Dividimos las cortinas en bloques de 9
-      for (let i = 0; i < cortinas.length; i += 9) {
-        const cortinasSlice = cortinas.slice(i, i + 9);
+      for (let i = 0; i < cortinas.length; i += 11) {
+        const cortinasSlice = cortinas.slice(i, i + 11);
         pages.push({
           tela: key,
           cortinas: cortinasSlice,
