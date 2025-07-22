@@ -127,6 +127,7 @@ console.log("Tradi",Tradi)
   };
 
   const transformarTradi = (tradi) => {
+    console.log("editorRef.current.getContent()",editorRef.current.getContent())
     const ObjGancho={
         nombre: ganchos.find((gancho)=>gancho.idGanchos===parseInt(GanchoTradi))?.nombre,
         idGanchos:GanchoTradi
