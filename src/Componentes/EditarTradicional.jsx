@@ -48,6 +48,8 @@ console.log("Tradi",Tradi)
 
   const Pinzas = TradicionalConfig.pinzas || [];
   const ganchos = TradicionalConfig.ganchos || [];
+  
+  const dobladillos = TradicionalConfig.dobladillos || [];
 
   const EditarCortinaUrl = "/TradicionalEp/";
   //const EditarCortinaUrl = "http://localhost:8086/Tradicional/";
@@ -55,7 +57,11 @@ console.log("Tradi",Tradi)
   const [selectedColorRoler, setselectedColorRoler] = useState(telaTradi.id);
   const [GanchoTradi, setGanchoTradi] = useState(Tradi.ganchos.idGanchos);
   const [PinzaTradi, setPinzaTradi] = useState(Tradi.Pinza.idPinza);
-
+  const [DobladilloTradi, setDobladilloTradi] = useState(Tradi.Dobladillo.idDobladillo);
+  const ObjDobladillo = {
+    valor: dobladillos.find((dob) => dob.idDobladillo === parseInt(DobladilloTradi))?.valor,
+    idDobladillo: DobladilloTradi,
+  };
   useEffect(() => {
     setTradi(tradiEdited);
   }, [tradiEdited]);
@@ -136,8 +142,6 @@ console.log("Tradi",Tradi)
         nombre: Pinzas.find((pinza)=>pinza.idPinza===parseInt(PinzaTradi))?.nombre,
         idPinza:PinzaTradi
       }
-    console.log(tradi.AnchoDerecho)
-    console.log(Tradi.CantidadAltos)
     return {
       Ambiente: tradi.ambiente,
       Idtela: selectedColorRoler,
@@ -151,6 +155,7 @@ console.log("Tradi",Tradi)
       pinza: ObjPinza,
       detalleInstalacion: ComentarioIns,
       tipoArticulo: "tradicional",
+      Dobladillo:ObjDobladillo,
       nombre: "Tradicional",
       contenidoProduccion: editorRef.current.getContent(),
     };
@@ -201,6 +206,7 @@ console.log("Tradi",Tradi)
               <th>Tela</th>
               <th>Color</th>
               <th>Pinza</th>
+              <th>Dobladillo</th>
               <th>Tipo riel</th>
             </tr>
           </thead>
@@ -253,6 +259,19 @@ console.log("Tradi",Tradi)
                   {Pinzas.map((pinza) => (
                     <option key={pinza.idPinza} value={pinza.idPinza}>
                       {pinza.nombre}
+                    </option>
+                  ))}
+                </Form.Select>
+              </td>
+
+              <td>
+                <Form.Select
+                  value={DobladilloTradi}
+                  onChange={(e) => setDobladilloTradi(e.target.value)}
+                >
+                  {dobladillos.map((dobladillo) => (
+                    <option key={dobladillo.idDobladillo} value={dobladillo.idDobladillo}>
+                      {dobladillo.nombre}
                     </option>
                   ))}
                 </Form.Select>
