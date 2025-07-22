@@ -13,7 +13,7 @@ import {setTelasRollerFeature,setTelasTradicionalFeature} from "../Features/Tela
 import { Ordenes } from '../Routes/Ordenes';
 import { Lotes } from '../Routes/Lotes';
 import { Toaster, toast } from "react-hot-toast";
-
+import { CrearVentaObra } from '../Routes/CrearVentaObra';
 const App = () => {
     
     const dispatch = useDispatch()
@@ -28,8 +28,8 @@ const App = () => {
     const UrlTipoConfig = "/ConfiguracionEP"
     const UrlTelas = "/TelasEP"
 /*
-  const UrlTipoConfig = "http://200.40.89.254:8086/Conf"
-    const UrlTelas = "http://200.40.89.254:8086/Telas"
+  const UrlTipoConfig = "http://localhost:8086/Conf"
+    const UrlTelas = "http://localhost:8086/Telas"
   */ 
     const fetchRollerConf = async () => {
       try {
@@ -125,7 +125,7 @@ const App = () => {
                 </Route>
                 <Route path='/CrearVenta' element={
                 <ProtectedRoute user={User} login={login}>
-                    <CrearVenta />
+                    <CrearVentaObra />
                 </ProtectedRoute>
                 } >
 

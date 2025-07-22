@@ -20,15 +20,23 @@ import {
   selectConfigRiel,
   selectConfigTradicional,
 } from "../Features/ConfigReducer";
-import { selectTelasRoller, selectTelas, selectTelasTradicional } from "../Features/TelasReducer";
+import {
+  selectTelasRoller,
+  selectTelas,
+  selectTelasTradicional,
+} from "../Features/TelasReducer";
 import { useDispatch } from "react-redux";
 import { Loading } from "./Loading";
 import { TicketCortina } from "./TicketCortina";
 import { OrdenInstalacion } from "./OrdenInstalacion";
 import { EditarRiel } from "./EditarRiel";
 import { EditarTradicional } from "./EditarTradicional";
+import { AgregarArticulo } from "./AgregarArticulo";
+import { Editor } from "@tinymce/tinymce-react";
+import html2pdf from "html2pdf.js";
+import html2canvas from "html2canvas";
 
-export const VentaView = ({ callBackToast }) => {
+export const VentaView = ({ callBackToast, callBackAddArt }) => {
   const dispatch = useDispatch();
 
   const ConfigRoller = useSelector(selectRollerConfig);
@@ -41,21 +49,26 @@ export const VentaView = ({ callBackToast }) => {
   const Posiciones = ConfigRoller.posiciones;
   const TiposCadenas = ConfigRoller.tiposCadena;
 
+  const [contenido, setcontenido] = useState("");
+  const editorRef = useRef(null);
 
   const ConfigTadicional = useSelector(selectConfigTradicional);
   console.log("ConfigTadicional", ConfigTadicional);
   //opciones de roller
   const Pinzas = ConfigTadicional.pinzas;
   const Ganchos = ConfigTadicional.ganchos;
-
+  const Dobladillos = ConfigTadicional.dobladillos;
   const findNameTipoPinza = (id_tipo) => {
-    return Pinzas.find((tipo) => tipo.idPinza === parseInt(id_tipo)).nombre;
+    return Pinzas.find((tipo) => tipo.idPinza === parseInt(id_tipo))?.nombre;
   };
 
   const findNameTipoGancho = (id_tipo) => {
-    return Ganchos.find((tipo) => tipo.idGanchos === parseInt(id_tipo)).nombre;
+    return Ganchos.find((tipo) => tipo.idGanchos === parseInt(id_tipo))?.nombre;
   };
 
+  const findNameTipoDobladillo = (id_tipo) => {
+    return Dobladillos.find((tipo) => tipo.idDobladillo === parseInt(id_tipo))?.valor;
+  };
   const TiposTelas = useSelector(selectTelasRoller);
   const TiposTelasTradi = useSelector(selectTelasTradicional);
   const tableRef = useRef(null);
@@ -63,13 +76,15 @@ export const VentaView = ({ callBackToast }) => {
   const [showModEditVenal, setEditVen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showModalRiel, setshowModalRiel] = useState(false);
-
+  const [agregarArt, setagregarArt] = useState(false);
   const Articulos = useSelector(selectArticulos);
   const Rollers = Articulos.filter((art) => art.nombre === "Roller");
   console.log("Rollers", Rollers);
 
   const Rieles = Articulos.filter((art) => art.tipoArticulo === "riel");
-  const Tradicionales = Articulos.filter((art) => art.tipoArticulo === "tradicional");
+  const Tradicionales = Articulos.filter(
+    (art) => art.tipoArticulo === "tradicional"
+  );
   const ConfigRiel = useSelector(selectConfigRiel);
 
   const ladosAcumula = ConfigRiel.ladoAcumula || [];
@@ -100,60 +115,56 @@ export const VentaView = ({ callBackToast }) => {
   const Ven = useSelector(selectVenta);
   console.log("Ven", Ven);
 
-  //datos de roller a agregar
-  const [motorizada, setMotorizada] = useState(false);
-  const [selectedTelaRoler, SetselectedTelaRoler] = useState([]);
-  const [selectedTelaMostrarRoler, SetselectedTelaMostrarRoler] = useState([]);
-  const [selectedTelaRolerNombre, SetselectedTelaRolerNombre] = useState("");
-  const [selectedAreaRoler, SetselectedAreaRoler] = useState("");
-  const [AnchoRoller, setAnchoRoller] = useState("");
-  const [LargoRoller, setLargoRoller] = useState("");
-  const [CanoRoller, setCanoRoller] = useState("");
-  const [IzqDer, setIzqDer] = useState("");
-  const [AdlAtr, setAdlAtr] = useState("");
-
   //Edit Venta
-  const [ObraEdit, setObraEdit] = useState(Ven.obra);
+  const [ObraEdit, setObraEdit] = useState(Ven.obra.nombre);
   const [FechaInstEdit, setFechaInstEdit] = useState(Ven.fechaInstalacion);
+  const [DireccionEdit, setDireccionEdit] = useState(Ven.obra.direccion);
+  const [LocalidadEdit, setLocalidadEdit] = useState(Ven.obra.localidad);
+  const [ProvinciaEdit, setProvinciaEdit] = useState(Ven.obra.provincia);
+  const [CPEdit, setCPEdit] = useState(Ven.obra.cp);
+  const [TelefonoEdit, setTelefonoEdit] = useState(Ven.obra.telefono);
+  const [EmailEdit, setEmailEdit] = useState(Ven.obra.email);
+  const [ContactoEdit, setContactoEdit] = useState(Ven.obra.contacto);
 
-  const VentasEp = "/VentasEP/"
+  const VentasEp = "/VentasEP/";
   //const VentasEp = "http://localhost:8083/Ventas/";
 
-  const VentasEpUpdate = VentasEp+"UpdateFO/"
-
+  const VentasEpUpdate = VentasEp + "UpdateFO/";
+  //const VentasEpUpdate = "http://localhost:8086/Ventas/UpdateFO/";
   const handleShow = (Art) => {
-    if(Art.nombre==="Roller"){
-      setTradicionalTryEdited(null)
-      setRielTryEdited(null)
+    if (Art.nombre === "Roller") {
+      setTradicionalTryEdited(null);
+      setRielTryEdited(null);
       setCortrtinaTrtyEdited(Art);
     }
-    if(Art.nombre==="Riel"){
-      setCortrtinaTrtyEdited(null)
-      setTradicionalTryEdited(null)
-      setRielTryEdited(Art)
-    }
-    if(Art.nombre==="Tradicional"){
+    if (Art.nombre === "Riel") {
       setCortrtinaTrtyEdited(null);
-      setRielTryEdited(null)
-      setTradicionalTryEdited(Art)
+      setTradicionalTryEdited(null);
+      setRielTryEdited(Art);
+    }
+    if (Art.nombre === "Tradicional") {
+      setCortrtinaTrtyEdited(null);
+      setRielTryEdited(null);
+      setTradicionalTryEdited(Art);
+      setcontenido(Art.contenidoProduccion);
     }
     setShowModal(true);
   };
 
   const ShowModalCallB = () => {
-    setopenEdit(false)
+    setopenEdit(false);
     setCortrtinaEdited(null);
-    setRielEdited(null)
+    setRielEdited(null);
     setShowModal(false);
   };
   const CortinaEditedFnct = () => {
-    setCortrtinaEdited(null)
-    setRielEdited(null)
+    setCortrtinaEdited(null);
+    setRielEdited(null);
     setCortrtinaTrtyEdited(null);
     setRielTryEdited(null);
     setShowModal(false);
-    setopenEdit(false)
-    FetchVentaCortinas()
+    setopenEdit(false);
+    FetchVentaCortinas();
   };
 
   const handleClose = () => setShowModal(false);
@@ -171,28 +182,28 @@ export const VentaView = ({ callBackToast }) => {
     p: 4,
   };
 
-  /*tabla tradicional*/ 
+  /*tabla tradicional*/
 
   function getAncho(tradi) {
     return tradi.cantidadPanos === 1 ? tradi.ancho : "N/A";
   }
-  
+
   function getAnchoIzquierdo(tradi) {
     return tradi.cantidadPanos !== 1 ? tradi.ancho : "N/A";
   }
-  
+
   function getAnchoDerecho(tradi) {
     return tradi.cantidadPanos !== 1 ? tradi.AnchoDerecho : "N/A";
   }
-  
+
   function getAlto(tradi) {
     return tradi.CantidadAltos === 1 ? tradi.alto : "N/A";
   }
-  
+
   function getAltoIzquierdo(tradi) {
     return tradi.CantidadAltos !== 1 ? tradi.alto : "N/A";
   }
-  
+
   function getAltoDerecho(tradi) {
     return tradi.CantidadAltos !== 1 ? tradi.AltoDerecho : "N/A";
   }
@@ -220,7 +231,7 @@ export const VentaView = ({ callBackToast }) => {
   };
 
   const FetchVentaCortinas = async () => {
-    console.log("ventas")
+    console.log("ventas");
     if (Ven.id != null) {
       try {
         const res = await fetch(VentasEp + Ven.id);
@@ -229,26 +240,13 @@ export const VentaView = ({ callBackToast }) => {
         console.log("articulos", data.body.listaArticulos);
 
         console.log(data.body);
-        console.log()
+        console.log();
         dispatch(setArticulos(data.body.listaArticulos));
         dispatch(setVenta(data.body));
       } catch (error) {
         console.log(error);
       }
     }
-  };
-
-  const CancelarAddCor = () => {
-    SetAgregarRollerBool(false);
-    SetselectedTelaRoler("");
-    SetselectedTelaMostrarRoler("");
-    SetselectedTelaRolerNombre("");
-    SetselectedAreaRoler("");
-    setAnchoRoller("");
-    setLargoRoller("");
-    setCanoRoller("");
-    setIzqDer("");
-    setAdlAtr("");
   };
 
   const findNameCano = (idCano) => {
@@ -327,7 +325,7 @@ export const VentaView = ({ callBackToast }) => {
         newCor.MotorRoller.nombre = nameMotor;
         console.log("newCor.MotorRoller.nombre", newCor.MotorRoller.nombre);
         newCor.TipoCadena.tipoCadena = findNameTipoCadena(
-          newCor.TipoCadena.idTipoCadena
+          newCor.TipoCadena?.idTipoCadena
         );
         newCor.cano.tipo = findNameCano(newCor.cano.id);
         newCor.posicion.posicion = findNamePos(newCor.posicion.posicionId);
@@ -345,10 +343,11 @@ export const VentaView = ({ callBackToast }) => {
         newCor.tipoRiel.tipo = findNameTipoRiel(newCor.tipoRiel.tipoId);
       }
       if (newCor.nombre === "Tradicional") {
-        newCor.nombreTela=findTelaTradi(newCor.IdTipoTela).nombre
-        newCor.coloTela=findTelaTradi(newCor.IdTipoTela).color
-        newCor.Pinza.nombre = findNameTipoPinza(newCor.Pinza.idPinza);
-        newCor.ganchos.nombre = findNameTipoGancho(newCor.ganchos.idGanchos);
+        console.log("contenido", contenido);
+        newCor.nombreTela = findTelaTradi(newCor.IdTipoTela)?.nombre;
+        newCor.coloTela = findTelaTradi(newCor.IdTipoTela)?.color;
+        newCor.Pinza.nombre = findNameTipoPinza(newCor.Pinza?.idPinza);
+        newCor.ganchos.nombre = findNameTipoGancho(newCor.ganchos?.idGanchos);
       }
 
       console.log("ArticuloDesp", newCor);
@@ -366,21 +365,21 @@ export const VentaView = ({ callBackToast }) => {
 
   const EditCor = () => {
     setopenEdit(true);
-    if(CortrtinaTrtyEdited){
+    if (CortrtinaTrtyEdited) {
       console.log(CortrtinaTrtyEdited);
-      setRielEdited(null)
-      setTradiEdited(null)
+      setRielEdited(null);
+      setTradiEdited(null);
       setCortrtinaEdited(CortrtinaTrtyEdited);
     }
-    if(TradicionalTryEdited){
+    if (TradicionalTryEdited) {
       setCortrtinaEdited(null);
-      setRielEdited(null)
-      setTradiEdited(TradicionalTryEdited)
+      setRielEdited(null);
+      setTradiEdited(TradicionalTryEdited);
     }
-    if(RielTryEdited){
-      setTradiEdited(null)
-      setCortrtinaEdited(null)
-      setRielEdited(RielTryEdited)
+    if (RielTryEdited) {
+      setTradiEdited(null);
+      setCortrtinaEdited(null);
+      setRielEdited(RielTryEdited);
     }
     handleClose();
   };
@@ -398,24 +397,116 @@ export const VentaView = ({ callBackToast }) => {
     callBackToast(mensaje, tipo);
   };
 
-  const DescPdf = () => {
-    const datos = {
-      fechaInst: Ven.fechaInstalacion,
-      obra: Ven.obra,
-      cliNomb: Ven.cliente.nombre,
+  const imprimirContenido = (tradicionales, datosHeader) => {
+    const grupos = agruparDeA4(tradicionales);
+    const htmlCompleto = grupos
+      .map((grupo, idx) => {
+        // Solo agrega page-break si NO es el último grupo
+        const pageBreak =
+          idx < grupos.length - 1
+            ? '<div style="page-break-after: always;"></div>'
+            : "";
+        return generarPaginaTradicionales(grupo, datosHeader) + pageBreak;
+      })
+      .join("");
+
+    const opt = {
+      margin: 0.5,
+      filename: "Tradicionales.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
     };
 
+    html2pdf().from(htmlCompleto).set(opt).save();
+  };
+  const descargarComoPDF = (html, nombreArchivo = "documento.pdf") => {
+    const opt = {
+      margin: 0.5,
+      filename: nombreArchivo,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+    };
+
+    html2pdf().from(html).set(opt).save();
+  };
+  function generarPaginaTradicionales(tradicionales, datosHeader) {
+    return `
+      <div style="width: 100%; box-sizing: border-box; padding: 20px 10px 10px 10px;">
+        <div style="margin-bottom: 10px;">
+          <div style="font-weight: bold; font-size: 15px;">
+            Fecha Instalación: ${datosHeader.fechaInstalacion || "A confirmar"}
+          </div>
+          <div style="margin: 5px 0;">
+        <img src="ImgLogo2.png" alt="Logo" style="height: 62px; float: right; margin-top: -20px;" />
+          </div>
+          <div style="font-size: 15px;">Cliente: ${datosHeader.cliente}</div>
+          <div style="font-size: 15px;">Obra: ${datosHeader.obra || "N/A"}</div>
+        </div>
+        <div style="
+          width: 100%; 
+          display: grid; 
+          grid-template-columns: 1fr 1fr; 
+          grid-template-rows: 1fr 1fr; 
+          gap: 8px;
+        ">
+          ${tradicionales
+            .map(
+              (trad) => `
+            <div style="
+              width: 100%; 
+              height: 250px; 
+              border: 1px solid #ccc; 
+              padding: 6px;
+              overflow: auto;
+              box-sizing: border-box;
+              font-size: 12px;
+            ">
+              ${trad.contenidoProduccion || ""}
+            </div>
+          `
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
+  }
+  function agruparDeA4(array) {
+    const grupos = [];
+    for (let i = 0; i < array.length; i += 4) {
+      grupos.push(array.slice(i, i + 4));
+    }
+    return grupos;
+  }
+
+  const DescPdf = () => {
+    const datos = {
+      fechaInst: Ven.obra.fechaInstalacion,
+      obra: Ven.obra.nombre,
+      cliNomb: Ven.obra.cliente.nombre,
+    };
+    let datosHeader = {
+      fechaInstalacion: Ven.obra.fechaInstalacion,
+      cliente: Ven.obra.cliente.nombre,
+      obra: Ven.obra.nombre,
+    };
     const ven = {
       listaArticulos: GetConfiguracionArticulos(),
       Datos: datos,
     };
-
-    downloadPDF(ven);
+    let tradicionales = ven.listaArticulos.filter(
+      (art) => art.nombre === "Tradicional"
+    );
+    imprimirContenido(tradicionales, datosHeader);
+    if (ven.listaArticulos.some((art) => art.nombre !== "Tradicional")) {
+      downloadPDF(ven);
+    }
   };
-  
+
   const DescPdfInstalacion = () => {
     const ven = {
-      Cliente: Ven.cliente,
+      Cliente: Ven.obra.cliente,
       listaArticulos: GetConfiguracionArticulos(),
     };
 
@@ -427,6 +518,7 @@ export const VentaView = ({ callBackToast }) => {
 
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
+    console.log("VenVen", Ven);
     link.download = `${Ven.Cliente.nombre} O.I.pdf`;
 
     // Simular el clic en el enlace de descarga
@@ -458,7 +550,7 @@ export const VentaView = ({ callBackToast }) => {
 
     const blob = await pdf(
       <TicketCortina
-        NombreCli={Ven.cliente.nombre}
+        NombreCli={Ven.obra.cliente.nombre}
         Articulos={GetConfiguracionArticulos()}
       />
     ).toBlob();
@@ -466,7 +558,7 @@ export const VentaView = ({ callBackToast }) => {
     // Crear un enlace de descarga
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `${Ven.cliente.nombre} ETQ.pdf`;
+    link.download = `${Ven.obra.cliente.nombre} ETQ.pdf`;
 
     // Simular el clic en el enlace de descarga
     link.click();
@@ -477,56 +569,81 @@ export const VentaView = ({ callBackToast }) => {
   };
 
   const confirmEditVen = async () => {
+    // Validaciones previas
+    if (!Ven?.id) {
+      callBackToast("Error: No se encontró la venta", "error");
+      return;
+    }
+
     setloadingAct(true);
+
     try {
       const requestOptions = {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
       };
-      let url = "";
-      
-      if (ObraEdit === "") {
-        console.log("EntroObraEdit");
-        url = VentasEpUpdate + FechaInstEdit + "/" + "null" + "/" + Ven.id;
-        console.log("ObraEdit", ObraEdit);
-      } else {
-        url = VentasEpUpdate + FechaInstEdit + "/" + ObraEdit + "/" + Ven.id;
-      }
-  
-      const response = await fetch(url, requestOptions);
-      const result = await response.json();
-      console.log("result", result);
-  
-      if (result.status === "OK") {
-        
-        // Crear una copia de Ven antes de modificarlo
-        const NewVenta = { ...Ven };
-  
-        if (ObraEdit !== "") {
-          NewVenta.obra = ObraEdit;
-        }
-        if (FechaInstEdit !== "null") {
-          NewVenta.fechaInstalacion = FechaInstEdit;
-        }
-  
-        dispatch(setVenta(NewVenta));
-        setloadingAct(false);
-        callBackToast("Se actualizó", "success");
-        setEditVen(false);
 
-      } else {
+      // Construir URL de manera más segura
+      const fechaParam = FechaInstEdit || "null";
+      const obraParam = ObraEdit?.trim() || "null";
+      const direccionParam = DireccionEdit?.trim() || "null";
+      const IdObra = Ven.obra.idObra;
+      const url = `${VentasEpUpdate}${fechaParam}/${obraParam}/${direccionParam}/${Ven.id}/${IdObra}`;
+      console.log("url", url);
+
+      const response = await fetch(url, requestOptions);
+
+      // Verificar si la respuesta es exitosa
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Respuesta del servidor:", result);
+
+      if (result.status === "OK") {
+        // Crear una copia profunda de Ven antes de modificarlo
+        const NewVenta = JSON.parse(JSON.stringify(Ven));
+
+        // Actualizar solo los campos que cambiaron
+        if (ObraEdit?.trim() !== "") {
+          NewVenta.obra = { ...NewVenta.obra, nombre: ObraEdit.trim() };
+        }
+        if (FechaInstEdit && FechaInstEdit !== "null") {
+          NewVenta.obra = { ...NewVenta.obra, fechaInstalacion: FechaInstEdit };
+        }
+
+        dispatch(setVenta(NewVenta));
+        callBackToast("Venta actualizada correctamente", "success");
         setEditVen(false);
-        setloadingAct(false);
-        callBackToast("error al actualizar", "error");
+      } else {
+        // Manejar diferentes tipos de errores del servidor
+        const errorMessage =
+          result.message || result.error || "Error desconocido del servidor";
+        callBackToast(`Error al actualizar: ${errorMessage}`, "error");
       }
     } catch (error) {
-      console.log(error);
-      setEditVen(false);
+      console.error("Error en confirmEditVen:", error);
+
+      // Mensajes de error más específicos
+      let errorMessage = "Error al actualizar la venta";
+
+      if (error.name === "TypeError" && error.message.includes("fetch")) {
+        errorMessage = "Error de conexión. Verifique su conexión a internet.";
+      } else if (error.message.includes("HTTP error")) {
+        errorMessage = "Error del servidor. Intente nuevamente.";
+      } else if (error.message.includes("JSON")) {
+        errorMessage = "Error en el formato de respuesta del servidor.";
+      }
+
+      callBackToast(errorMessage, "error");
+    } finally {
       setloadingAct(false);
-      callBackToast("error al actualizar", "error");
     }
   };
-  
 
   return (
     <>
@@ -536,11 +653,14 @@ export const VentaView = ({ callBackToast }) => {
           onClose={handleClose}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
+          disableEnforceFocus
+          disableAutoFocus
         >
           <Box sx={style}>
             <div>
               <h2>
-                {CortrtinaTrtyEdited && CortrtinaTrtyEdited.nombre} {RielTryEdited && RielTryEdited.nombre}
+                {CortrtinaTrtyEdited && CortrtinaTrtyEdited.nombre}{" "}
+                {RielTryEdited && RielTryEdited.nombre}
               </h2>
             </div>
             {CortrtinaTrtyEdited && (
@@ -574,8 +694,11 @@ export const VentaView = ({ callBackToast }) => {
                     <tr key={CortrtinaTrtyEdited.idRoller}>
                       <td>{CortrtinaTrtyEdited.nombre}</td>
                       <td>{CortrtinaTrtyEdited.Ambiente}</td>
-                      <td>{findTela(CortrtinaTrtyEdited.IdTipoTela).nombre}</td>
-                      <td>{findTela(CortrtinaTrtyEdited.IdTipoTela).color}</td>
+                      <td>
+                        {findTela(CortrtinaTrtyEdited.IdTipoTela)?.nombre ||
+                          null}
+                      </td>
+                      <td>{findTela(CortrtinaTrtyEdited.IdTipoTela)?.color}</td>
                       <td>{CortrtinaTrtyEdited.Ancho}</td>
                       <td>{CortrtinaTrtyEdited.AnchoTela}</td>
                       <td>{CortrtinaTrtyEdited.AnchoTubo}</td>
@@ -640,48 +763,79 @@ export const VentaView = ({ callBackToast }) => {
                 </tbody>
               </Table>
             )}
-{TradicionalTryEdited && (
-  <>
-    <Table responsive bordered>
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th>Num</th>
-          <th>Ambiente</th>
-          <th>Tela</th>
-          <th>Color</th>
-          <th>Pinza</th>
-          <th>Gancho</th>
-          <th>Paños</th>
-          <th>Ancho</th>
-          <th>Ancho Izquierdo</th>
-          <th>Ancho Derecho</th>
-          <th>Alto</th>
-          <th>Alto Izquierdo</th>
-          <th>Alto Derecho</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr key={TradicionalTryEdited.numeroArticulo}>
-          <td>{TradicionalTryEdited.nombre}</td>
-          <td>{TradicionalTryEdited.numeroArticulo}</td>
-          <td>{TradicionalTryEdited.Ambiente}</td>
-          <td>{findTelaTradi(TradicionalTryEdited.IdTipoTela).nombre}</td>
-          <td>{findTelaTradi(TradicionalTryEdited.IdTipoTela).color}</td>
-          <td>{findNameTipoPinza(TradicionalTryEdited.Pinza.idPinza)}</td>
-          <td>{findNameTipoGancho(TradicionalTryEdited.ganchos.idGanchos)}</td>
-          <td>{TradicionalTryEdited.cantidadPanos}</td>
-          <td>{getAncho(TradicionalTryEdited)}</td>
-          <td>{getAnchoIzquierdo(TradicionalTryEdited)}</td>
-          <td>{getAnchoDerecho(TradicionalTryEdited)}</td>
-          <td>{getAlto(TradicionalTryEdited)}</td>
-          <td>{getAltoIzquierdo(TradicionalTryEdited)}</td>
-          <td>{getAltoDerecho(TradicionalTryEdited)}</td>
-        </tr>
-      </tbody>
-    </Table>
-  </>
-)}
+            {TradicionalTryEdited && (
+              <>
+                <Table responsive bordered>
+                  <thead>
+                    <tr>
+                      <th>Tipo</th>
+                      <th>Num</th>
+                      <th>Ambiente</th>
+                      <th>Tela</th>
+                      <th>Color</th>
+                      <th>Pinza</th>
+                      <th>Gancho</th>
+                      <th>Paños</th>
+                      <th>Ancho</th>
+                      <th>Ancho Izquierdo</th>
+                      <th>Ancho Derecho</th>
+                      <th>Alto</th>
+                      <th>Alto Izquierdo</th>
+                      <th>Alto Derecho</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr key={TradicionalTryEdited.numeroArticulo}>
+                      <td>{TradicionalTryEdited.nombre}</td>
+                      <td>{TradicionalTryEdited.numeroArticulo}</td>
+                      <td>{TradicionalTryEdited.Ambiente}</td>
+                      <td>
+                        {findTelaTradi(TradicionalTryEdited.IdTipoTela)?.nombre}
+                      </td>
+                      <td>
+                        {findTelaTradi(TradicionalTryEdited.IdTipoTela)?.color}
+                      </td>
+                      <td>
+                        {findNameTipoPinza(TradicionalTryEdited.Pinza?.idPinza)}
+                      </td>
+                      <td>
+                        {findNameTipoGancho(
+                          TradicionalTryEdited.ganchos?.idGanchos
+                        )}
+                      </td>
+                      <td>{TradicionalTryEdited.cantidadPanos}</td>
+                      <td>{getAncho(TradicionalTryEdited)}</td>
+                      <td>{getAnchoIzquierdo(TradicionalTryEdited)}</td>
+                      <td>{getAnchoDerecho(TradicionalTryEdited)}</td>
+                      <td>{getAlto(TradicionalTryEdited)}</td>
+                      <td>{getAltoIzquierdo(TradicionalTryEdited)}</td>
+                      <td>{getAltoDerecho(TradicionalTryEdited)}</td>
+                    </tr>
+                  </tbody>
+                </Table>
+                <Row>
+                  <Col>
+                    <h3>Orden</h3>
+                    <div
+                      style={{
+                        padding: "1rem",
+                        fontFamily: "Arial",
+                        fontSize: "12pt",
+                        border: "1px solid #ccc",
+                        borderRadius: "5px",
+                        backgroundColor: "#f9f9f9",
+                      }}
+                      dangerouslySetInnerHTML={{ __html: contenido }}
+                    />
+                  </Col>
+                  <Col>
+                    <h3>Instalacion</h3>
+                    <p>{TradicionalTryEdited.detalleInstalacion}</p>
+                  </Col>
+                </Row>
+              </>
+            )}
+            {agregarArt && <AgregarArticulo />}
             <div
               style={{
                 display: "flex",
@@ -698,7 +852,6 @@ export const VentaView = ({ callBackToast }) => {
             </div>
           </Box>
         </Modal>
-
       }
 
       {openEdit ? (
@@ -730,12 +883,12 @@ export const VentaView = ({ callBackToast }) => {
         </>
       ) : (
         <>
-          <Row
-            className="align-items-center py-3"
-            style={{ backgroundColor: "#f8f9fa", borderRadius: "8px" }}
-          >
-            {showModEditVenal ? (
-              <>
+          {showModEditVenal ? (
+            <>
+              <Row
+                className="align-items-center py-3"
+                style={{ backgroundColor: "#f8f9fa", borderRadius: "8px" }}
+              >
                 <Col xs={12} md={3} className="text-center">
                   <h1
                     style={{
@@ -744,7 +897,7 @@ export const VentaView = ({ callBackToast }) => {
                       color: "#343a40",
                     }}
                   >
-                    {Ven.cliente ? Ven.cliente.nombre : null}
+                    {Ven.obra.cliente ? Ven.obra.cliente.nombre : null}
                   </h1>
                 </Col>
                 <Col xs={12} md={3} className="text-center">
@@ -791,7 +944,7 @@ export const VentaView = ({ callBackToast }) => {
                       style={{
                         borderRadius: "5px",
                         textAlign: "center",
-                        maxWidth: "150px",
+                        maxWidth: "200px",
                       }}
                     />
                   </div>
@@ -814,9 +967,44 @@ export const VentaView = ({ callBackToast }) => {
                     </div>
                   )}
                 </Col>
-              </>
-            ) : (
-              <>
+              </Row>
+              <Row
+                className="align-items-center py-3"
+                style={{ backgroundColor: "#f8f9fa", borderRadius: "8px" }}
+              >
+                <Col xs={12} md={12} className="text-center">
+                  <div className="d-flex align-items-center justify-content-center">
+                    <h3
+                      style={{
+                        fontSize: "1.5rem",
+                        fontWeight: "500",
+                        color: "#495057",
+                        marginRight: "10px",
+                      }}
+                    >
+                      Direccion:
+                    </h3>
+                    <input
+                      type="text"
+                      value={DireccionEdit}
+                      size={30}
+                      onChange={(e) => setDireccionEdit(e.target.value)}
+                      style={{
+                        borderRadius: "5px",
+                        textAlign: "center",
+                        maxWidth: "450px",
+                      }}
+                    />
+                  </div>
+                </Col>
+              </Row>
+            </>
+          ) : (
+            <>
+              <Row
+                className="align-items-center py-3"
+                style={{ backgroundColor: "#f8f9fa", borderRadius: "8px" }}
+              >
                 <Col className="text-center">
                   <h1
                     style={{
@@ -825,7 +1013,7 @@ export const VentaView = ({ callBackToast }) => {
                       color: "#343a40",
                     }}
                   >
-                    {Ven.cliente ? Ven.cliente.nombre : null}
+                    {Ven.obra.cliente ? Ven.obra.cliente.nombre : null}
                   </h1>
                 </Col>
                 <Col className="text-center">
@@ -851,7 +1039,7 @@ export const VentaView = ({ callBackToast }) => {
                         color: "#495057",
                       }}
                     >
-                      Obra: {Ven.obra}
+                      Obra: {Ven.obra.nombre}
                     </h3>
                   )}
                 </Col>
@@ -860,9 +1048,9 @@ export const VentaView = ({ callBackToast }) => {
                     Editar
                   </Button>
                 </Col>
-              </>
-            )}
-          </Row>
+              </Row>
+            </>
+          )}
 
           {Rollers.length > 0 && (
             <>
@@ -909,7 +1097,9 @@ export const VentaView = ({ callBackToast }) => {
                       <td>{Cor.AltoTela?.toFixed(3)}</td>
                       <td>1</td>
                       <td>{Cor.LargoCadena?.toFixed(3)}</td>
-                      <td>{findNameTipoCadena(Cor.tipoCadena.idTipoCadena)}</td>
+                      <td>
+                        {findNameTipoCadena(Cor.tipoCadena?.idTipoCadena)}
+                      </td>
                       <td>{findNameLadoCadena(Cor.ladoCadena?.ladoId)}</td>
                       <td>{findNamePos(Cor.posicion?.posicionId)}</td>
                       <td>{findNameMotor(Cor.motorRoller?.idMotor)}</td>
@@ -942,7 +1132,7 @@ export const VentaView = ({ callBackToast }) => {
                 </thead>
                 <tbody>
                   {Rieles.map((Cor) => (
-                    <tr key={Cor.idCortina} onClick={() =>handleShow(Cor)}>
+                    <tr key={Cor.idCortina} onClick={() => handleShow(Cor)}>
                       <td>{Cor.nombre}</td>
                       <td>{Cor.numeroArticulo}</td>
                       <td>{Cor.ambiente}</td>
@@ -960,58 +1150,77 @@ export const VentaView = ({ callBackToast }) => {
               </Table>
             </>
           ) : null}
-          { Tradicionales.length>0 && (
+          {Tradicionales.length > 0 && (
             <Table responsive bordered>
-            <thead
-              style={{
-                justifyContent: "center",
-                fontFamily: "Arial, sans-serif",
-              }}
-            >
-              <tr>
-              <th>Tipo</th>
-                <th>Num</th>
-                <th>Ambiente</th>
-                <th>Tela</th>
-                <th>Color</th>
-                <th>Pinza</th>
-                <th>Gancho</th>
-                <th>Paños</th>
-                <th>Ancho</th>
-                <th>Ancho Izquierdo</th>
-                <th>Ancho Derecho</th>
-                <th>Alto</th>
-                <th>Alto Izquierdo</th>
-                <th>Alto Derecho</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Tradicionales.map((tradi) => (
-                <tr key={tradi.numeroArticulo} onClick={() =>handleShow(tradi)}>
-                  <td>{tradi.nombre}</td>
-                  <td>{tradi.numeroArticulo}</td>
-                  <td>{tradi.Ambiente}</td>
-                  <td>{findTelaTradi(tradi.IdTipoTela).nombre}</td>
-                  <td>{findTelaTradi(tradi.IdTipoTela).color}</td>
-                  <td>{findNameTipoPinza(tradi.Pinza.idPinza)}</td>
-                  <td>{findNameTipoGancho(tradi.ganchos.idGanchos)}</td>
-                  <td>{tradi.cantidadPanos}</td>
-                  <td>{tradi.cantidadPanos===1 ? tradi.ancho : "N/A"}</td>
-                  <td>{tradi.cantidadPanos!==1 ? tradi.ancho : "N/A"}</td>
-                  <td>{tradi.cantidadPanos!==1 ? tradi.AnchoDerecho : "N/A"}</td>
-                  <td>{tradi.CantidadAltos==1 ? tradi.alto : "N/A"}</td>
-                  <td>{tradi.CantidadAltos!==1 ? tradi.alto : "N/A"}</td>
-                  <td>{tradi.CantidadAltos!==1 ? tradi.AltoDerecho : "N/A"}</td>
+              <thead
+                style={{
+                  justifyContent: "center",
+                  fontFamily: "Arial, sans-serif",
+                }}
+              >
+                <tr>
+                  <th>Tipo</th>
+                  <th>Num</th>
+                  <th>Ambiente</th>
+                  <th>Tela</th>
+                  <th>Color</th>
+                  <th>Pinza</th>
+                  <th>Gancho</th>
+                  <th>Paños</th>
+                  <th>Dobladillo</th>
+                  <th>Ancho</th>
+                  <th>Ancho Izquierdo</th>
+                  <th>Ancho Derecho</th>
+                  <th>Alto</th>
+                  <th>Alto Izquierdo</th>
+                  <th>Alto Derecho</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-          )
-          }
+              </thead>
+              <tbody>
+                {Tradicionales.map((tradi) => (
+                  <tr
+                    key={tradi.numeroArticulo}
+                    onClick={() => handleShow(tradi)}
+                  >
+                    <td>{tradi.nombre}</td>
+                    <td>{tradi.numeroArticulo}</td>
+                    <td>{tradi.Ambiente}</td>
+                    <td>{findTelaTradi(tradi.IdTipoTela)?.nombre}</td>
+                    <td>{findTelaTradi(tradi.IdTipoTela)?.color}</td>
+                    <td>{findNameTipoPinza(tradi.Pinza?.idPinza)}</td>
+                    <td>{findNameTipoGancho(tradi.ganchos?.idGanchos)}</td>
+                    <td>{tradi.cantidadPanos}</td>
+                    <td>{findNameTipoDobladillo(tradi.Dobladillo?.idDobladillo)}</td>
+                    <td>{tradi.cantidadPanos === 1 ? tradi.ancho : "N/A"}</td>
+                    <td>{tradi.cantidadPanos !== 1 ? tradi.ancho : "N/A"}</td>
+                    <td>
+                      {tradi.cantidadPanos !== 1 ? tradi.AnchoDerecho : "N/A"}
+                    </td>
+                    <td>{tradi.CantidadAltos == 1 ? tradi.alto : "N/A"}</td>
+                    <td>{tradi.CantidadAltos !== 1 ? tradi.alto : "N/A"}</td>
+                    <td>
+                      {tradi.CantidadAltos !== 1 ? tradi.AltoDerecho : "N/A"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+          <Row style={{ width: "100%" }}>
+            {showModEditVenal && (
+              <Button
+                variant="primary"
+                onClick={() => callBackAddArt()}
+                style={{ margin: "10px" }}
+              >
+                Agregar Articulos
+              </Button>
+            )}
+          </Row>
           <Row>
             <Col className="d-flex justify-content-center">
               <Button variant="primary" onClick={DescPdf}>
-                PDF
+                Orden Produccion
               </Button>
             </Col>
             <Col className="d-flex justify-content-center">

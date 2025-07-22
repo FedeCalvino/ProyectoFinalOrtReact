@@ -16,32 +16,41 @@ import {
   selectConfigRiel,
 } from "../Features/ConfigReducer";
 import { Loading } from "../Componentes/Loading";
-
+import { AgregarArticulo } from "../Componentes/AgregarArticulo.jsx";
+import { removeAllArticulos ,selectArticulos} from "../Features/ArticulosReducer";
+import { VentaPreview } from "../Componentes/VentaPreview";
 export const Ventas = () => {
   const [isLoading, setIsLoading] = useState(false);
-
+  const Ven = useSelector(selectVenta);
   const dispatch = useDispatch();
   const [SearchText, setSearchText] = useState("");
   const [Tamano, setTamano] = useState("1");
   const [Ventas, setVentas] = useState([]);
   const [VentasTotales, setVentasTotales] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const idVenta = useSelector(selectVenta).id;
+
+  const [ShowModalConfirmArt, setShowModalConfirmArt] = useState(false);
+  const [VentaInfo, setVentaInfo] = useState(null);
+  const [AddArt, setAddArt] = useState(false);
+  const [Agregando, setAgregando] = useState(false);
+  const Articulos = useSelector(selectArticulos);
+  const idVenta = Ven.id;
   let lastDay = "";
   const [ConfirmDelete, setConfirmDelete] = useState(false);
   const [loadingDelete, setloadingDelete] = useState(false);
   const [Pagina, setPagina] = useState(0);
   const ConfigRoller = useSelector(selectRollerConfig);
+
   
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/VentasEP/";
+  
 /*
- const UrlVentas = "http://200.40.89.254:8085/Ventas";
-  const UrlVenta = "http://200.40.89.254:8086/Ventas/";
+  const UrlVentas = "http://localhost:8086/Ventas";
+  const UrlVenta = "http://localhost:8086/Ventas/";
   const UrlDelete = "http://200.40.89.254:8086/Ventas/";
 */
-
   const setVentaView = async (Venta) => {
     console.log(ConfigRoller)
     if(ConfigRoller.length!=0){
@@ -72,6 +81,11 @@ export const Ventas = () => {
       toast.error("Las configuraciones de rollers no estan cargadas")
     }
   };
+  const callBackAddArt=()=>{
+    setAddArt(true)
+    setShowModal(false)
+    dispatch(removeAllArticulos())
+  }
   const sumarPagina = () => {
     console.log("Pagina",Pagina)
     FetchVentas(+1)
@@ -89,7 +103,7 @@ export const Ventas = () => {
       console.log(nuevaPagina)
       const res = await fetch(`${UrlVentas}/Paginas/${nuevaPagina}`);
       const data = await res.json();
-      console.log(data);
+      console.log("dataaa",data);
       const sortedData = data.body.sort(
         (a, b) => new Date(b.fecha) - new Date(a.fecha)
       );
@@ -143,7 +157,7 @@ export const Ventas = () => {
   const FiltrarVentas = () => {
     if (SearchText.trim()) {
       const filtered = VentasTotales.filter((venta) =>
-        venta.cliente.nombre.toLowerCase().includes(SearchText.toLowerCase())
+        venta.obra.cliente.nombre.toLowerCase().includes(SearchText.toLowerCase())
       );
       setVentas(filtered);
     } else {
@@ -159,9 +173,79 @@ export const Ventas = () => {
   const handleClose = () => {
     setConfirmDelete(false);
     setShowModal(false);
-    setIsLoading(false); // Restablece el estado de carga
+    setIsLoading(false);
+    setAddArt(false)
   };
-  
+
+  const handleCloseAddArt = () => {
+    setConfirmDelete(false);
+    setShowModal(true);
+    setIsLoading(false); 
+    setAddArt(false)
+  };
+
+  const ConfirmAgregarArticulos= async ()=>{
+    if (Articulos.length >0) {
+      setAgregando(true);
+      const loadingToast = toast.loading("Cargando...");
+
+      const VentaModel = {
+        Articulos
+      };
+
+      console.log("VentaModel",VentaModel)
+      
+      console.log("VentaModel", VentaModel);
+
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(Articulos),
+      };
+
+      console.log(Articulos);
+
+      try {
+        const response = await fetch(UrlVenta+"AddArt/"+Ven.id, requestOptions);
+
+        console.log("Response:", response);
+
+        if (!response.ok){
+          toast.dismiss(loadingToast);
+          setCreando(false);
+          toast.error("Error al crea la ventar");
+          console.error("Error en la solicitud:", response.statusText);
+          return;
+        }
+        toast.dismiss(loadingToast);
+        setShowModal(false)
+        setShowModalConfirmArt(false)
+        const result = await response.json();
+        setAgregando(false);
+        console.log("Response Venta", result);
+      } catch (error) {
+        setAgregando(false);
+        toast.dismiss(loadingToast);
+        toast.error("Error al crea la ventar")
+      }
+    }else{
+      setAgregando(false);
+      setShowModal(false)
+      toast.error("No hay articulos");
+    }
+  }
+
+  const ConfirmAddArt=()=>{
+    const VentaInfoObj={
+      CliNombre:Ven.obra.cliente.Nombre,
+      Obra:Ven.obra.nombre,
+      FechaInstalacion:Ven.obra.fechaInstalacion
+    }
+    setVentaInfo(VentaInfoObj)
+    setAddArt(false)
+    setShowModalConfirmArt(true)
+  }
+
   const handleDelete = async () => {
     console.log(idVenta);
     if (idVenta != null) {
@@ -245,9 +329,9 @@ const callBackToast = (mensaje, tipo) => {
                   <Row className="align-items-center">
                     <Col md={7}>
                       <div style={{ fontSize: "26px" }} className="fw-bold">
-                        {Ven.cliente.nombre}
+                        {Ven.obra.cliente?.nombre}
                       </div>
-                      <div className="text-muted">{Ven.obra && Ven.obra}</div>
+                      <div className="text-muted">{Ven.obra.nombre && Ven.obra.nombre}</div>
                     </Col>
                   </Row>
                 </div>
@@ -279,7 +363,7 @@ const callBackToast = (mensaje, tipo) => {
               </div>
             </div>
           ) : (
-            <VentaView callBackToast={callBackToast} />
+            <VentaView callBackToast={callBackToast} callBackAddArt={callBackAddArt} />
           )}
         </Modal.Body>
         <Modal.Footer className="d-flex justify-content-between">
@@ -311,6 +395,71 @@ const callBackToast = (mensaje, tipo) => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {/*modal de agregar articulo */}
+      <Modal show={AddArt} onHide={handleCloseAddArt} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>{Ven.obra?.cliente?.nombre}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <AgregarArticulo />
+          <Button style={{margin:"40px",width:"80%"}} variant="primary" onClick={ConfirmAddArt}>
+            Agregar
+          </Button>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/*modal confirmar agregar articulo */}
+      <Modal
+            show={ShowModalConfirmArt}
+            onHide={() => setShowModalConfirmArt(false)}
+            dialogClassName="custom-modal"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title style={{ textAlign: "center", width: "100%" }}>
+                Cortinas a agregar
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <VentaPreview Venta={VentaInfo}/>
+              <Row className="button-row">
+                <Col className="d-flex justify-content-center">
+                  {Agregando ?
+                  <Loading tipo="small"/>
+                  :
+                  <Button
+                    className="custom-button"
+                    variant="primary"
+                    onClick={() => {
+                      ConfirmAgregarArticulos();
+                    }}
+                  >
+                    Agregar
+                  </Button>
+                  }
+                </Col>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="custom-button"
+                    style={{ backgroundColor: "red", borderColor: "red" }}
+                    onClick={() => setShowModalConfirmArt(false)}
+                  >
+                    Cancelar
+                  </Button>
+                </Col>
+              </Row>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowModal(false)}>
+                Volver
+              </Button>
+            </Modal.Footer>
+          </Modal>
       <div>
         <Toaster
           position="bottom-center"

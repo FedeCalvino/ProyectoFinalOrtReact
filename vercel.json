@@ -21,55 +21,59 @@
     },
     {
       "source": "/VentasEP/:path*",
-      "destination": "http://200.40.89.254:8085/Ventas/:path*"
+      "destination": "http://200.40.89.254:8088/Ventas/:path*"
     },
     {
       "source": "/LoteEp/:path*",
-      "destination": "http://200.40.89.254:8086/Lote/:path*"
+      "destination": "http://200.40.89.254:8088/Lote/:path*"
     },
     {
       "source": "/LoteFecha/:Fecha",
-      "destination": "http://200.40.89.254:8086/Lote/Fecha/:Fecha"
+      "destination": "http://200.40.89.254:8088/Lote/Fecha/:Fecha"
     },
     {
       "source": "/InstalacionEP",
-      "destination": "http://200.40.89.254:8086/Instalacion"
+      "destination": "http://200.40.89.254:8088/Instalacion"
     },
     {
       "source": "/ClientesEP/:path*",
-      "destination": "http://200.40.89.254:8086/Cliente/:path*"
+      "destination": "http://200.40.89.254:8088/Cliente/:path*"
     },
     {
       "source": "/ConfiguracionEP/TiposCli",
-      "destination": "http://200.40.89.254:8086/Conf/TiposCli"
+      "destination": "http://200.40.89.254:8088/Conf/TiposCli"
     },
     {
       "source": "/ConfiguracionEP",
-      "destination": "http://200.40.89.254:8086/Conf"
+      "destination": "http://200.40.89.254:8088/Conf"
     },
     {
       "source": "/TelasEP",
-      "destination": "http://200.40.89.254:8086/Telas"
+      "destination": "http://200.40.89.254:8088/Telas"
     },
     {
       "source": "/LoginEp",
-      "destination": "http://200.40.89.254:8086/auth"
+      "destination": "http://200.40.89.254:8088/auth"
     },
     {
       "source": "/OrdenEp/:path*",
-      "destination": "http://200.40.89.254:8086/Orden/:path*"
+      "destination": "http://200.40.89.254:8088/Orden/:path*"
     },
     {
       "source": "/CortinaEp/:path*",
-      "destination": "http://200.40.89.254:8086/Cortina/:path*"
+      "destination": "http://200.40.89.254:8088/Cortina/:path*"
     },
     {
       "source": "/RielEp/:path*",
-      "destination": "http://200.40.89.254:8086/Riel/:path*"
+      "destination": "http://200.40.89.254:8088/Riel/:path*"
     },
     {
       "source": "/TradicionalEp/:path*",
-      "destination": "http://200.40.89.254:8086/Tradicional/:path*"
+      "destination": "http://200.40.89.254:8088/Tradicional/:path*"
+    },
+    {
+      "source": "/Ventas/ObrasEP/:path*",
+      "destination": "http://200.40.89.254:8088/Ventas/Obras/:path*"
     }
   ]
 }

@@ -17,6 +17,7 @@ export const EditarCortina = ({
   const Posiciones = ConfigRoller.posiciones;
   const TiposTelas = useSelector(selectTelasRoller);
   const EditarCortinaUrl = "/CortinaEp/";
+  //const EditarCortinaUrl = "http://localhost:8086/Cortina/";
   const [Cortina, setCortina] = useState(cortinaEdited);
   const [ComentarioIns, setComentarioIns] = useState(
     Cortina.detalleInstalacion

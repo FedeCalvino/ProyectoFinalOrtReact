@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef} from "react";
 import { Table, Form, FloatingLabel, Row, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import "../Routes/Css/EditarCortina.css";
 import { selectConfigTradicional } from "../Features/ConfigReducer";
 import { selectTelasTradicional } from "../Features/TelasReducer";
+import { Editor } from "@tinymce/tinymce-react";
+
 export const EditarTradicional = ({
   callBackCancel,
   tradiEdited,
   callBacktoast,
   CortinaEditedFnct,
 }) => {
+
+  const [contenido, setcontenido] = useState(tradiEdited.contenidoProduccion);
+  const editorRef = useRef(null);
+
   const inputStyle = {
     textAlign: "center",
     width: "300px",
@@ -43,8 +49,8 @@ console.log("Tradi",Tradi)
   const Pinzas = TradicionalConfig.pinzas || [];
   const ganchos = TradicionalConfig.ganchos || [];
 
-  const EditarCortinaUrl = "/TradicionalEp/";
-  //const EditarCortinaUrl = "http://localhost:8083/Tradicional/";
+  //const EditarCortinaUrl = "/TradicionalEp/";
+  const EditarCortinaUrl = "http://localhost:8086/Tradicional/";
   const [ComentarioIns, setComentarioIns] = useState(Tradi.detalleInstalacion);
   const [selectedColorRoler, setselectedColorRoler] = useState(telaTradi.id);
   const [GanchoTradi, setGanchoTradi] = useState(Tradi.ganchos.idGanchos);
@@ -145,6 +151,7 @@ console.log("Tradi",Tradi)
       detalleInstalacion: ComentarioIns,
       tipoArticulo: "tradicional",
       nombre: "Tradicional",
+      contenidoProduccion: editorRef.current.getContent(),
     };
   };
 
@@ -365,7 +372,6 @@ console.log("Tradi",Tradi)
             )}
           </Col>
         </Row>
-
         <Row>
           <Col className="d-flex justify-content-center">
             <FloatingLabel
@@ -386,6 +392,29 @@ console.log("Tradi",Tradi)
               />
             </FloatingLabel>
           </Col>
+          <Col>
+          <Editor
+            apiKey="9keqzteg52asm01hpxxlhy7gtddv7yrnwm80edgvznfq6mg9"
+            onInit={(evt, editor) => {
+              editorRef.current = editor;
+            }}
+            initialValue={contenido}
+            init={{
+              height: 500,
+              menubar: false,
+              plugins: [
+                "advlist autolink lists link image charmap preview anchor",
+                "searchreplace visualblocks code fullscreen",
+                "insertdatetime media table paste help wordcount",
+              ],
+              toolbar:
+                "undo redo | formatselect | bold italic backcolor | " +
+                "alignleft aligncenter alignright alignjustify | " +
+                "bullist numlist outdent indent | removeformat | help",
+            }}
+          />
+          </Col>
+
         </Row>
         <Row>
           <Col>

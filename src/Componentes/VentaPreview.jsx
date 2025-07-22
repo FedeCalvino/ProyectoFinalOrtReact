@@ -16,6 +16,7 @@ export const VentaPreview = ({Venta}) => {
   const CortinasRollers = Articulos.filter((art) => art.tipoArticulo === "roller");
   const Tradicionales = Articulos.filter((art) => art.tipoArticulo === "tradicional");
   const Rieles = Articulos.filter((art) => art.tipoArticulo === "riel");
+  const Romanas = Articulos.filter((art) => art.tipoArticulo === "romana");
 
   const handleDelete = (num) => {
     dispatch(removeArticulo({ numeroArticulo: num }));
@@ -210,6 +211,7 @@ export const VentaPreview = ({Venta}) => {
                   <th>Pinza</th>
                   <th>Gancho</th>
                   <th>Paños</th>
+                  <th>Dobladillo</th>
                   <th>Ancho</th>
                   <th>Ancho Izquierdo</th>
                   <th>Ancho Derecho</th>
@@ -228,6 +230,7 @@ export const VentaPreview = ({Venta}) => {
                     <td>{tradi.pinzaStr}</td>
                     <td>{tradi.ganchosStr}</td>
                     <td>{tradi.cantidadPanos}</td>
+                    <td>{tradi.Dobladillo?.valor}</td>
                     <td>{tradi.cantidadPanos===1 ? tradi.Ancho : "N/A"}</td>
                     <td>{tradi.cantidadPanos!==1 ? tradi.Ancho : "N/A"}</td>
                     <td>{tradi.cantidadPanos!==1 ? tradi.AnchoDerecho : "N/A"}</td>
@@ -238,6 +241,54 @@ export const VentaPreview = ({Venta}) => {
                       <Button
                         variant="danger"
                         onClick={() => handleDelete(Cor.numeroArticulo)}
+                      >
+                        Borrar
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </>
+        ) : null}
+        {Romanas.length !== 0 ? (
+          <>
+            <Table responsive bordered>
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Num</th>
+                  <th>Ambiente</th>
+                  <th>Tela</th>
+                  <th>Ancho</th>
+                  <th>Alto</th>
+                  <th>Caídas</th>
+                  <th>Lado</th>
+                  <th>Tipo Cadena</th>
+                  <th>Factor Cadena</th>
+                  <th>posicion</th>
+                  <th>Comentarios</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Romanas.map((romana) => (
+                  <tr key={romana.numeroArticulo}>
+                    <td>{romana.nombre}</td>
+                    <td>{romana.numeroArticulo}</td>
+                    <td>{romana.Ambiente}</td>
+                    <td>{romana.TelaNombre}</td>
+                    <td>{romana.Ancho}</td>
+                    <td>{romana.Alto}</td>
+                    <td>{romana.caidas}</td>
+                    <td>{romana.LadoCadenaStr}</td>
+                    <td>{romana.TipoCadenaStr}</td>
+                    <td>{romana.factorLargoCadena}</td>
+                    <td>{romana.PosicionStr}</td>
+                    <td>{romana.MotorStr}</td>
+                    <td>
+                      <Button
+                        variant="danger"
+                        onClick={() => handleDelete(romana.numeroArticulo)}
                       >
                         Borrar
                       </Button>

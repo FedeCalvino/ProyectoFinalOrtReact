@@ -140,6 +140,9 @@ export const TicketCortina = ({ NombreCli, Articulos }) => {
   const CortinasTradicional = Articulos.filter(
     (art) => art.tipoArticulo === "tradicional"
   );
+  const CortinasRiel = Articulos.filter(
+    (art) => art.tipoArticulo === "riel"
+  );
 
   console.log(Cortinasroller);
   const [fontSize, setFontSize] = useState(2);

@@ -7,6 +7,7 @@ import {
   Image,
   View,
 } from "@react-pdf/renderer";
+import { Html } from "react-pdf-html";
 
 const styles = StyleSheet.create({
   page: {
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     width: "6%", // Otras columnas pequeñas
     textAlign: "center",
   },
-  tableHeaderCellTipo:{
+  tableHeaderCellTipo: {
     width: "16%",
     textAlign: "center",
   },
@@ -147,9 +148,9 @@ const styles = StyleSheet.create({
     padding: 5,
     backgroundColor: "#fff",
   },
-  subtitle2:{
-    fontSize:28
-  }
+  subtitle2: {
+    fontSize: 28,
+  },
 });
 
 const FormatearFecha = ({ fecha }) => {
@@ -177,8 +178,6 @@ const Header = ({ Datos }) => (
   </>
 );
 
-
-
 const ItemDetail = ({ label, value }) => (
   <Text style={styles.itemText}>
     <Text style={styles.itemLabel}>{label}: </Text>
@@ -195,8 +194,10 @@ export const OrdenProduccion = ({ Venta }) => {
   const Cortinasroller = Venta.listaArticulos.filter(
     (art) => art.nombre === "Roller"
   );
-  const existeAlgunMotor = Cortinasroller.find(Roll=>Roll.MotorRoller.idMotor!==1)
-  console.log("existeAlgunMotor",existeAlgunMotor)
+  const existeAlgunMotor = Cortinasroller.find(
+    (Roll) => Roll.MotorRoller.idMotor !== 1
+  );
+  console.log("existeAlgunMotor", existeAlgunMotor);
   const Rieles = Venta.listaArticulos.filter((art) => art.nombre === "Riel");
   const Tradicionales = Venta.listaArticulos.filter(
     (art) => art.nombre === "Tradicional"
@@ -215,12 +216,12 @@ export const OrdenProduccion = ({ Venta }) => {
   for (let i = 0; i < Rieles.length; i += 6) {
     groupedRieles.push(Rieles.slice(i, i + 6));
   }
-  
-
+console.log("Tradicionales",Tradicionales)
   const groupedTradicionals = [];
   for (let i = 0; i < Tradicionales.length; i += 2) {
     groupedTradicionals.push(Tradicionales.slice(i, i + 2));
   }
+  console.log("groupedTradicionals",groupedTradicionals)
 
   const TableHeader = () => (
     <View style={styles.tableHeader}>
@@ -230,17 +231,23 @@ export const OrdenProduccion = ({ Venta }) => {
       <Text style={[styles.tableHeaderCell, styles.subtitle]}>Ancho Tela</Text>
       <Text style={[styles.tableHeaderCell, styles.subtitle]}>Ancho Caño</Text>
       <Text style={[styles.tableHeaderCell, styles.subtitle]}>Caño</Text>
-      <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Cortina</Text>
+      <Text style={[styles.tableHeaderCell, styles.subtitle]}>
+        Alto Cortina
+      </Text>
       <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Tela</Text>
-      <Text style={[styles.tableHeaderCellTipo, styles.subtitle]}>Tipo Cadena</Text>
+      <Text style={[styles.tableHeaderCellTipo, styles.subtitle]}>
+        Tipo Cadena
+      </Text>
       <Text style={[styles.tableHeaderCell, styles.subtitle]}>Alto Cadena</Text>
       <Text style={[styles.tableHeaderCellPosicion, styles.subtitle]}>
         Posición
       </Text>
       <Text style={[styles.tableHeaderCellLado, styles.subtitle]}>Lado</Text>
-      { existeAlgunMotor &&
-      <Text style={[styles.tableHeaderCellMotor, styles.subtitle]}>Motor</Text>
-      }
+      {existeAlgunMotor && (
+        <Text style={[styles.tableHeaderCellMotor, styles.subtitle]}>
+          Motor
+        </Text>
+      )}
     </View>
   );
 
@@ -296,7 +303,7 @@ export const OrdenProduccion = ({ Venta }) => {
                 <Text style={[styles.tableCell, styles.text]}>
                   {Roll.AltoTela.toFixed(3)}
                 </Text>
-                
+
                 <Text style={[styles.tableHeaderCellTipo, styles.text]}>
                   {Roll.TipoCadena.tipoCadena}
                 </Text>
@@ -309,16 +316,16 @@ export const OrdenProduccion = ({ Venta }) => {
                 <Text style={[styles.tableCellLado, styles.text]}>
                   {Roll.ladoCadena.lado}
                 </Text>
-                { existeAlgunMotor &&
-                <Text style={[styles.tableCellMotor, styles.text]}>
-                  {Roll.MotorRoller.nombre}
-                </Text>   
-                }
+                {existeAlgunMotor && (
+                  <Text style={[styles.tableCellMotor, styles.text]}>
+                    {Roll.MotorRoller.nombre}
+                  </Text>
+                )}
               </View>
             ))}
           </Page>
         ))}
-       {groupedRieles.map((group, pageIndex) => (
+        {groupedRieles.map((group, pageIndex) => (
           <Page
             key={pageIndex}
             size="A4"
@@ -335,15 +342,18 @@ export const OrdenProduccion = ({ Venta }) => {
                   <ItemDetail label="Ancho" value={riel.ancho.toFixed(3)} />
                   <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
                   <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
-                  { riel.bastones.nombre!=="Sin Bastones" && 
-                  <>
-                  <ItemDetail label="Bastones" value={riel.bastones.nombre} />
-                  <ItemDetail
-                    label="Cantidad de Bastones"
-                    value={riel.bastones.cantidad}
-                  />
-                  </>
-                  }
+                  {riel.bastones.nombre !== "Sin Bastones" && (
+                    <>
+                      <ItemDetail
+                        label="Bastones"
+                        value={riel.bastones.nombre}
+                      />
+                      <ItemDetail
+                        label="Cantidad de Bastones"
+                        value={riel.bastones.cantidad}
+                      />
+                    </>
+                  )}
                   <ItemDetail label="Soportes" value={riel.soportes.nombre} />
                   <ItemDetail
                     label="Cantidad de Soportes"
@@ -403,7 +413,9 @@ export const OrdenProduccion = ({ Venta }) => {
                           <Text style={[styles.tableCell, styles.text]}>
                             {Roll.AltoTela.toFixed(3)}
                           </Text>
-                          <Text style={[styles.tableHeaderCellTipo, styles.text]}>
+                          <Text
+                            style={[styles.tableHeaderCellTipo, styles.text]}
+                          >
                             {Roll.TipoCadena.tipoCadena}
                           </Text>
                           <Text style={[styles.tableCell, styles.text]}>
@@ -415,11 +427,11 @@ export const OrdenProduccion = ({ Venta }) => {
                           <Text style={[styles.tableCellLado, styles.text]}>
                             {Roll.ladoCadena.lado}
                           </Text>
-                          { existeAlgunMotor &&
-                          <Text style={[styles.tableCellMotor, styles.text]}>
-                            {Roll.MotorRoller.nombre}
-                          </Text>
-                          }
+                          {existeAlgunMotor && (
+                            <Text style={[styles.tableCellMotor, styles.text]}>
+                              {Roll.MotorRoller.nombre}
+                            </Text>
+                          )}
                         </View>
                       ))}
                     </>
@@ -446,15 +458,18 @@ export const OrdenProduccion = ({ Venta }) => {
                   <ItemDetail label="Ancho" value={riel.ancho.toFixed(3)} />
                   <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
                   <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
-                  { riel.bastones.nombre!=="Sin Bastones" && 
-                  <>
-                  <ItemDetail label="Bastones" value={riel.bastones.nombre} />
-                  <ItemDetail
-                    label="Cantidad de Bastones"
-                    value={riel.bastones.cantidad}
-                  />
-                  </>
-                  }
+                  {riel.bastones.nombre !== "Sin Bastones" && (
+                    <>
+                      <ItemDetail
+                        label="Bastones"
+                        value={riel.bastones.nombre}
+                      />
+                      <ItemDetail
+                        label="Cantidad de Bastones"
+                        value={riel.bastones.cantidad}
+                      />
+                    </>
+                  )}
                   <ItemDetail label="Soportes" value={riel.soportes.nombre} />
                   <ItemDetail
                     label="Cantidad de Soportes"
@@ -464,62 +479,6 @@ export const OrdenProduccion = ({ Venta }) => {
                 </View>
               ))}
             </View>
-          </Page>
-        ))}
-
-        {groupedTradicionals.map((group, pageIndex) => (
-          <Page
-            key={pageIndex}
-            size="A4"
-            style={styles.page}
-            orientation="portrait"
-          >
-            <Header Datos={Venta.Datos} />
-            {group.map((tradi, rielIndex) => (
-              <View style={styles.itemContainer} key={rielIndex}>
-                <ItemDetail
-                  label="Tela"
-                  value={tradi.nombreTela + " " + tradi.coloTela}
-                />
-                <ItemDetail label="Numero" value={tradi.numeroArticulo} />
-                <ItemDetail label="Ambiente" value={tradi.Ambiente} />
-                <ItemDetail label="Pinza" value={tradi.Pinza.nombre} />
-                <ItemDetail label="Ganchos" value={tradi.ganchos.nombre} />
-                <ItemDetail label="Paños" value={tradi.cantidadPanos} />
-                {tradi.cantidadPanos === 1 ? (
-                  <>
-                    <ItemDetail label="Ancho" value={tradi.ancho.toFixed(3)} />
-                  </>
-                ) : (
-                  <>
-                    <ItemDetail
-                      label="Ancho Izquierdo"
-                      value={tradi.ancho.toFixed(3)}
-                    />
-                    <ItemDetail
-                      label="Ancho Derecho"
-                      value={tradi.anchoDerecho.toFixed(3)}
-                    />
-                  </>
-                )}
-                {tradi.cantidadAltos === 1 ? (
-                  <>
-                    <ItemDetail label="Alto" value={tradi.alto.toFixed(3)} />
-                  </>
-                ) : (
-                  <>
-                    <ItemDetail
-                      label="Alto Izquierdo"
-                      value={tradi.alto.toFixed(3)}
-                    />
-                    <ItemDetail
-                      label="Alto Derecho"
-                      value={tradi.altoDerecho.toFixed(3)}
-                    />
-                  </>
-                )}
-              </View>
-            ))}
           </Page>
         ))}
       </Document>
