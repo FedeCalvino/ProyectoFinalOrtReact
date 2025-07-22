@@ -145,7 +145,7 @@ const App = () => {
 
                 <Route path='/*' element={
                     <ProtectedRoute user={User} login={login}>
-                       <CrearVenta />
+                       <CrearVentaObra />
                     </ProtectedRoute>} >
                     
                 </Route>
