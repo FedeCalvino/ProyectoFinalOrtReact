@@ -49,8 +49,8 @@ console.log("Tradi",Tradi)
   const Pinzas = TradicionalConfig.pinzas || [];
   const ganchos = TradicionalConfig.ganchos || [];
 
-  //const EditarCortinaUrl = "/TradicionalEp/";
-  const EditarCortinaUrl = "http://localhost:8086/Tradicional/";
+  const EditarCortinaUrl = "/TradicionalEp/";
+  //const EditarCortinaUrl = "http://localhost:8086/Tradicional/";
   const [ComentarioIns, setComentarioIns] = useState(Tradi.detalleInstalacion);
   const [selectedColorRoler, setselectedColorRoler] = useState(telaTradi.id);
   const [GanchoTradi, setGanchoTradi] = useState(Tradi.ganchos.idGanchos);
