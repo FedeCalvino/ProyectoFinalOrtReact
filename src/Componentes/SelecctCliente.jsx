@@ -26,8 +26,8 @@ export const SelecctCliente = React.memo(() => {
   //SeleccCliente
   const [Tipo, setTipo] = useState("Cliente");
   const [TiposClientes, setTiposClientes] = useState([]);
-  const UrlCLientesLike = "http://localhost:8086/Cliente/Name/";
-
+  //const UrlCLientesLike = "http://localhost:8086/Cliente/Name/";
+  const UrlCLientesLike= "ClientesEP/Name/"
   const [showModal, setShowModal] = useState(false);
 
   const [Clienteselecc, setClienteselecc] = useState(null);
