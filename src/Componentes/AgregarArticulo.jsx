@@ -27,9 +27,6 @@ export const AgregarArticulo = () => {
           <Tab eventKey="Tradicional" title="Tradicional">
             <FormTradicional toastCallBack={toastCallBack} />
           </Tab>
-          <Tab eventKey="Romana" title="Romana">
-            <FormRomanas toastCallBack={toastCallBack} />
-          </Tab>
         </Tabs>
       </Col>
       <Col>
