@@ -58,10 +58,12 @@ console.log("Tradi",Tradi)
   const [GanchoTradi, setGanchoTradi] = useState(Tradi.ganchos.idGanchos);
   const [PinzaTradi, setPinzaTradi] = useState(Tradi.Pinza.idPinza);
   const [DobladilloTradi, setDobladilloTradi] = useState(Tradi.Dobladillo.idDobladillo);
+
   const ObjDobladillo = {
     valor: dobladillos.find((dob) => dob.idDobladillo === parseInt(DobladilloTradi))?.valor,
     idDobladillo: DobladilloTradi,
   };
+  
   useEffect(() => {
     setTradi(tradiEdited);
   }, [tradiEdited]);
