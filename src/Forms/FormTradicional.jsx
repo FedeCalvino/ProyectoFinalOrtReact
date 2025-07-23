@@ -86,6 +86,7 @@ export const FormTradicional = ({ toastCallBack }) => {
       NombreTelas.push(tela);
     }
   });
+  
 
   const contenidoGenerado = `
       <strong>Ambiente:</strong> ${selectedAreaRoler}<br>
