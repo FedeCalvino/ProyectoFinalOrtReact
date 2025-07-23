@@ -412,7 +412,7 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
 
     const opt = {
       margin: 0.5,
-      filename: `${datosHeader.cliente}_Tradicionales.pdf`,
+      filename: `${datosHeader.cliente}_Orden de Corte Tradicionales.pdf${datosHeader.fecha}`,
       image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
@@ -481,18 +481,20 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
   }
 
   const DescPdf = () => {
-    if(ven.listaArticulos.length>0){
+    if(Ven.listaArticulos.length>0){
       const datos = {
         fechaInst: Ven.obra.fechaInstalacion,
         obra: Ven.obra.nombre,
         cliNomb: Ven.obra.cliente.nombre,
       };
       let datosHeader = {
+        fecha:Ven.fecha,
         fechaInstalacion: Ven.obra.fechaInstalacion,
         cliente: Ven.obra.cliente.nombre,
         obra: Ven.obra.nombre,
       };
       const ven = {
+        fecha:Ven.fecha,
         listaArticulos: GetConfiguracionArticulos(),
         Datos: datos,
       };
@@ -536,17 +538,69 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
   };
 
   const downloadPDF = async (Ven) => {
-    const blob = await pdf(<OrdenProduccion Venta={Ven} />).toBlob();
+    console.log("VenVen",Ven)
+    const contieneRoller = Ven.listaArticulos.some(art => art.nombre === "Roller");
+  
+    if (contieneRoller) {
+      // Crear una copia profunda de Ven para no mutar el original
+      const venRoller = {
+        ...Ven,
+        listaArticulos: Ven.listaArticulos.filter(art => art.nombre === "Roller"),
+      };
+  
+      // Generar y descargar el PDF
+      const blob = await pdf(<OrdenProduccion Venta={venRoller} />).toBlob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${Ven.Datos.cliNomb} Orden De Corte ROLLERS ${Ven.fecha}.pdf`;
+      document.body.appendChild(link); // Añadirlo al DOM por compatibilidad
+      link.click();
+      document.body.removeChild(link); // Quitarlo del DOM
+  
+      setTimeout(() => URL.revokeObjectURL(link.href), 100); // Limpieza posterior
+    }
 
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `${Ven.Datos.cliNomb} Orden de corte ${Ven.fecha}.pdf`;
+    const contieneRiel = Ven.listaArticulos.some(art => art.nombre === "Riel");
+  
+    if (contieneRiel) {
+      // Crear una copia profunda de Ven para no mutar el original
+      const venRiel = {
+        ...Ven,
+        listaArticulos: Ven.listaArticulos.filter(art => art.nombre === "Riel"),
+      };
+  
+      // Generar y descargar el PDF
+      const blob = await pdf(<OrdenProduccion Venta={venRiel} />).toBlob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${Ven.Datos.cliNomb} Orden De Corte Riel ${Ven.fecha}.pdf`;
+      document.body.appendChild(link); // Añadirlo al DOM por compatibilidad
+      link.click();
+      document.body.removeChild(link); // Quitarlo del DOM
+  
+      setTimeout(() => URL.revokeObjectURL(link.href), 100); // Limpieza posterior
+    }
 
-    // Simular el clic en el enlace de descarga
-    link.click();
-
-    // Liberar la URL del objeto
-    URL.revokeObjectURL(link.href);
+    const contieneTradicional = Ven.listaArticulos.some(art => art.nombre === "Tradicional");
+  
+    if (contieneTradicional) {
+      // Crear una copia profunda de Ven para no mutar el original
+      const venTradicional = {
+        ...Ven,
+        listaArticulos: Ven.listaArticulos.filter(art => art.nombre === "Tradicional"),
+      };
+  
+      // Generar y descargar el PDF
+      const blob = await pdf(<OrdenProduccion Venta={venTradicional} />).toBlob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${Ven.Datos.cliNomb} Orden De Corte Tradicional ${Ven.fecha}.pdf`;
+      document.body.appendChild(link); // Añadirlo al DOM por compatibilidad
+      link.click();
+      document.body.removeChild(link); // Quitarlo del DOM
+  
+      setTimeout(() => URL.revokeObjectURL(link.href), 100); // Limpieza posterior
+    }
   };
 
   const downloadTicket = async () => {
