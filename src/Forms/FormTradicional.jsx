@@ -89,6 +89,7 @@ export const FormTradicional = ({ toastCallBack }) => {
 
   const contenidoGenerado = `
       <strong>Ambiente:</strong> ${selectedAreaRoler}<br>
+      <strong>Tela:</strong> ${tela?.nombre} ${tela?.color}<br>
       <strong>Cantidad de Paños:</strong> ${parseInt(Paños)}<br>
       ${
         parseInt(Paños) === 1
