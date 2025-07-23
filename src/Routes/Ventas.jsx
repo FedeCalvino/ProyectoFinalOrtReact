@@ -45,11 +45,11 @@ export const Ventas = () => {
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/VentasEP/";
-  
+
 /*
-  const UrlVentas = "http://localhost:8086/Ventas";
-  const UrlVenta = "http://localhost:8086/Ventas/";
-  const UrlDelete = "http://200.40.89.254:8086/Ventas/";
+  const UrlVentas = "http://localhost:8083/Ventas";
+  const UrlVenta = "http://localhost:8083/Ventas/";
+  const UrlDelete = "http://localhost:8083/Ventas/";
 */
   const setVentaView = async (Venta) => {
     console.log(ConfigRoller)
@@ -315,7 +315,7 @@ const callBackToast = (mensaje, tipo) => {
         {Object.entries(groupedVentas).map(([date, ventasDelDia]) => {
           const sortedVentasDelDia = ventasDelDia
             .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
-            .reverse();
+            ;
 
           return (
             <React.Fragment key={date}>
