@@ -11,6 +11,7 @@ import { FaList } from "react-icons/fa6";
 import { BsFillDiagram3Fill } from "react-icons/bs";
 import './NavBar.css'
 import { Link } from 'react-router-dom';
+import { ProximasVentas } from '../Routes/ProximasVentas';
 
 export const NavBar = ({ logged, onLogout }) => {
   
@@ -46,6 +47,7 @@ export const NavBar = ({ logged, onLogout }) => {
                   <div>Instalaciones</div>
                 </div>
               </Nav.Link>
+              {/*
               <Nav.Link as={Link} to="Lotes" className="nav-link-custom">
                 <div className="nav-item">
                   <div>Lotes</div>
@@ -56,6 +58,12 @@ export const NavBar = ({ logged, onLogout }) => {
                   <div>Ordenes</div>
                 </div>
               </Nav.Link>
+              <Nav.Link as={Link} to="ProximasVentas" className="nav-link-custom">
+                <div className="nav-item">
+                  <div>Proximas Ventas</div>
+                </div>
+              </Nav.Link>*/
+              }
             </Nav>
             {logged ? (
               <Button variant='danger' onClick={handleLogout}>LogOut</Button>
