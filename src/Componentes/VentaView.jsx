@@ -470,7 +470,7 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
               padding: 6px;
               overflow: auto;
               box-sizing: border-box;
-              font-size: 15px;
+              font-size: 18px;
             ">
               ${trad.contenidoProduccion || ""}
             </div>
