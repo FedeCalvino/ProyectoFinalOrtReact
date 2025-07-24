@@ -313,6 +313,15 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
     }
   };*/
 
+  <style>
+{`
+  .hover-gray:hover {
+    background-color: #f0f0f0; /* Gris claro */
+    cursor: pointer;
+  }
+`}
+</style>
+
   const GetConfiguracionArticulos = () => {
     const listaArticulos = [];
     Articulos.forEach((cor) => {
@@ -412,7 +421,7 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
 
     const opt = {
       margin: 0.5,
-      filename: `${datosHeader.cliente}_Orden de Corte Tradicionales.pdf${datosHeader.fecha}`,
+      filename: `${datosHeader.cliente}_Orden de Corte Tradicionales ${datosHeader.fecha}.pdf`,
       image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
@@ -456,12 +465,12 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
               (trad) => `
             <div style="
               width: 100%; 
-              height: 250px; 
+              height: auto; 
               border: 1px solid #ccc; 
               padding: 6px;
               overflow: auto;
               box-sizing: border-box;
-              font-size: 12px;
+              font-size: 15px;
             ">
               ${trad.contenidoProduccion || ""}
             </div>
@@ -1240,9 +1249,10 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
               <tbody>
                 {Tradicionales.map((tradi) => (
                   <tr
-                    key={tradi.numeroArticulo}
-                    onClick={() => handleShow(tradi)}
-                  >
+                  key={tradi.numeroArticulo}
+                  onClick={() => handleShow(tradi)}
+                  className="hover-gray"
+                >
                     <td>{tradi.nombre}</td>
                     <td>{tradi.numeroArticulo}</td>
                     <td>{tradi.Ambiente}</td>
