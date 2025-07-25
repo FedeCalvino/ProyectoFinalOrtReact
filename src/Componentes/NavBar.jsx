@@ -3,15 +3,8 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
 import Navbar from 'react-bootstrap/Navbar';
-//import {StyleSheet} from 'react-native';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import { FaCalendarAlt, FaWarehouse, FaMoneyBill } from "react-icons/fa";
-import { IoCreateSharp, IoPerson } from "react-icons/io5";
-import { FaList } from "react-icons/fa6";
-import { BsFillDiagram3Fill } from "react-icons/bs";
 import './NavBar.css'
 import { Link } from 'react-router-dom';
-import { ProximasVentas } from '../Routes/ProximasVentas';
 
 export const NavBar = ({ logged, onLogout }) => {
   
