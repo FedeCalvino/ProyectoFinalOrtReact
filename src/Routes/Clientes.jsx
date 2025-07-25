@@ -7,6 +7,7 @@ import { Loading } from "../Componentes/Loading";
 
 export const Clientes = () => {
   const UrlClientes = "/ClientesEP";
+  //const UrlClientes = "http://localhost:8083/Cliente";
   const [Clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [BoolEditCli, setBoolEditCli] = useState(false);
@@ -33,7 +34,9 @@ export const Clientes = () => {
             numeroTelefono: Cli.numeroTelefono,
             rut: Cli.rut,
             direccion: Cli.direccion,
-            Tipo:Cli.Tipo
+            Mail:Cli.mail,
+            Tipo:Cli.Tipo,
+            Id:Cli.id
           }),
         });
         // Manejar la respuesta
@@ -86,8 +89,8 @@ export const Clientes = () => {
     try {
       const res = await fetch(UrlClientes);
       const data = await res.json();
-
-      setClientes(data.body);
+      const dataReverse = data.body.reverse()
+      setClientes(dataReverse);
       setLoading(false);
       console.log(data);
     } catch (error) {
