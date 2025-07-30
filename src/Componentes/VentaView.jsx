@@ -1305,6 +1305,7 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
             </Table>
 
           )}
+          
           {Romanas.length !== 0 && (
             <>
               <Table responsive bordered className="table-romanas">
