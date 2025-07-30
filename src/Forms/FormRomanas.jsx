@@ -7,7 +7,7 @@ import Row from "react-bootstrap/Row";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 
 import { useDispatch, useSelector } from "react-redux";
-import { selectTelasRoller, selectTelas } from "../Features/TelasReducer";
+import { selectTelasTradicional, selectTelas } from "../Features/TelasReducer";
 import { addArticulo } from "../Features/ArticulosReducer";
 import { TableRollers } from "../Tables/TableRollers";
 import { GoCheckCircle } from "react-icons/go";
@@ -35,7 +35,7 @@ export const FormRomanas = ({toastCallBack}) => {
   const [selectedColorRoler, setselectedColorRoler] = useState("");
   const [TelasDelTipo, setTelasDelTipo] = useState([]);
   const dispatch = useDispatch();
-  const TiposTelas = useSelector(selectTelasRoller);
+  const TiposTelas = useSelector(selectTelasTradicional);
   const NombreTelas = [];
   const [largoCadena, setlargoCadena] = useState("");
   const [CantidadVarillas, setCantidadVarillas] = useState(null);
@@ -68,9 +68,9 @@ export const FormRomanas = ({toastCallBack}) => {
     detalleInstalacion: ComentarioIns,
     cantvarillas: parseInt(CantidadVarillas),
     caidas: parseInt(caidasRomana),
-    ladoCadena: LadosCadenas?.find((lado) => lado.ladoId === parseInt(ladoCadenaRomana)),
-    factorLargoCadena: parseFloat(LargoTipoCadena),
     LargoCadena: parseFloat(largoCadena),
+    factorLargoCadena: parseFloat(LargoTipoCadena),
+    ladoCadena: parseInt(ladoCadenaRomana),
     distanciavarillas: parseFloat(distanciaVarillas),
     tipoArticulo: "romana",
     // --- Atributos auxiliares para mostrar en la UI ---
