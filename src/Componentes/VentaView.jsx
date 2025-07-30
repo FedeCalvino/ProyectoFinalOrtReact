@@ -1,4 +1,5 @@
 import React from "react";
+import "../Routes/Css/ventaView.css";
 import { useState, useEffect, useRef } from "react";
 import { Table, Button, Row, Col } from "react-bootstrap";
 import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
@@ -63,11 +64,13 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
   };
 
   const findNameTipoGancho = (id_tipo) => {
-    return Ganchos?.find((tipo) => tipo.idGanchos === parseInt(id_tipo))?.nombre;
+    return Ganchos?.find((tipo) => tipo.idGanchos === parseInt(id_tipo))
+      ?.nombre;
   };
 
   const findNameTipoDobladillo = (id_tipo) => {
-    return Dobladillos?.find((tipo) => tipo.idDobladillo === parseInt(id_tipo))?.valor;
+    return Dobladillos?.find((tipo) => tipo.idDobladillo === parseInt(id_tipo))
+      ?.valor;
   };
   const TiposTelas = useSelector(selectTelasRoller);
   const TiposTelasTradi = useSelector(selectTelasTradicional);
@@ -92,7 +95,8 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
   const tipos = ConfigRiel?.tipos || [];
 
   const findNameladoAcumula = (idLado) => {
-    return ladosAcumula?.find((acc) => acc.ladoAcumulaId === parseInt(idLado))?.nombre;
+    return ladosAcumula?.find((acc) => acc.ladoAcumulaId === parseInt(idLado))
+      ?.nombre;
   };
   const findNameTipoRiel = (id_tipo) => {
     return tipos?.find((tipo) => tipo.tipoId === parseInt(id_tipo))?.tipo;
@@ -314,13 +318,13 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
   };*/
 
   <style>
-{`
+    {`
   .hover-gray:hover {
     background-color: #f0f0f0; /* Gris claro */
     cursor: pointer;
   }
 `}
-</style>
+  </style>;
 
   const GetConfiguracionArticulos = () => {
     const listaArticulos = [];
@@ -340,6 +344,14 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
         newCor.posicion.posicion = findNamePos(newCor.posicion.posicionId);
         newCor.ladoCadena.lado = findNameLadoCadena(newCor.ladoCadena.ladoId);
         const telaArt = TiposTelas?.find(
+          (tela) => tela.id === newCor.IdTipoTela
+        );
+        newCor.nombreTela = telaArt?.nombre;
+        newCor.colorTela = telaArt?.color;
+      }
+      if (cor.nombre === "Romana") {
+        newCor.ladoCadena.lado = findNameLadoCadena(newCor.ladoCadena.ladoId);
+        const telaArt = TiposTelasTradi?.find(
           (tela) => tela.id === newCor.IdTipoTela
         );
         newCor.nombreTela = telaArt?.nombre;
@@ -490,34 +502,34 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
   }
 
   const DescPdf = () => {
-    if(Ven.listaArticulos.length>0){
+    if (Ven.listaArticulos.length > 0) {
       const datos = {
         fechaInst: Ven.obra.fechaInstalacion,
         obra: Ven.obra.nombre,
         cliNomb: Ven.obra.cliente.nombre,
       };
       let datosHeader = {
-        fecha:Ven.fecha,
+        fecha: Ven.fecha,
         fechaInstalacion: Ven.obra.fechaInstalacion,
         cliente: Ven.obra.cliente.nombre,
         obra: Ven.obra.nombre,
       };
       const ven = {
-        fecha:Ven.fecha,
+        fecha: Ven.fecha,
         listaArticulos: GetConfiguracionArticulos(),
         Datos: datos,
       };
       let tradicionales = ven.listaArticulos.filter(
         (art) => art.nombre === "Tradicional"
       );
-      if(tradicionales.length>=1){
+      if (tradicionales.length >= 1) {
         imprimirContenido(tradicionales, datosHeader);
       }
 
       if (ven.listaArticulos.some((art) => art.nombre !== "Tradicional")) {
         downloadPDF(ven);
       }
-    }else{
+    } else {
       callBackToast("no se encontraron articulos", "error");
     }
   };
@@ -547,16 +559,20 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
   };
 
   const downloadPDF = async (Ven) => {
-    console.log("VenVen",Ven)
-    const contieneRoller = Ven.listaArticulos.some(art => art.nombre === "Roller");
-  
+    console.log("VenVen", Ven);
+    const contieneRoller = Ven.listaArticulos.some(
+      (art) => art.nombre === "Roller"
+    );
+
     if (contieneRoller) {
       // Crear una copia profunda de Ven para no mutar el original
       const venRoller = {
         ...Ven,
-        listaArticulos: Ven.listaArticulos.filter(art => art.nombre === "Roller"),
+        listaArticulos: Ven.listaArticulos.filter(
+          (art) => art.nombre === "Roller"
+        ),
       };
-  
+
       // Generar y descargar el PDF
       const blob = await pdf(<OrdenProduccion Venta={venRoller} />).toBlob();
       const link = document.createElement("a");
@@ -565,19 +581,23 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
       document.body.appendChild(link); // Añadirlo al DOM por compatibilidad
       link.click();
       document.body.removeChild(link); // Quitarlo del DOM
-  
+
       setTimeout(() => URL.revokeObjectURL(link.href), 100); // Limpieza posterior
     }
 
-    const contieneRiel = Ven.listaArticulos.some(art => art.nombre === "Riel");
-  
+    const contieneRiel = Ven.listaArticulos.some(
+      (art) => art.nombre === "Riel"
+    );
+
     if (contieneRiel) {
       // Crear una copia profunda de Ven para no mutar el original
       const venRiel = {
         ...Ven,
-        listaArticulos: Ven.listaArticulos.filter(art => art.nombre === "Riel"),
+        listaArticulos: Ven.listaArticulos.filter(
+          (art) => art.nombre === "Riel"
+        ),
       };
-  
+
       // Generar y descargar el PDF
       const blob = await pdf(<OrdenProduccion Venta={venRiel} />).toBlob();
       const link = document.createElement("a");
@@ -586,28 +606,34 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
       document.body.appendChild(link); // Añadirlo al DOM por compatibilidad
       link.click();
       document.body.removeChild(link); // Quitarlo del DOM
-  
+
       setTimeout(() => URL.revokeObjectURL(link.href), 100); // Limpieza posterior
     }
 
-    const contieneTradicional = Ven.listaArticulos.some(art => art.nombre === "Tradicional");
-  
-    if (contieneTradicional) {
+    const contieneRomana = Ven.listaArticulos.some(
+      (art) => art.nombre === "Romana"
+    );
+
+    if (contieneRomana) {
       // Crear una copia profunda de Ven para no mutar el original
-      const venTradicional = {
+      const venRomana = {
         ...Ven,
-        listaArticulos: Ven.listaArticulos.filter(art => art.nombre === "Tradicional"),
+        listaArticulos: Ven.listaArticulos.filter(
+          (art) => art.nombre === "Romana"
+        ),
       };
-  
+
       // Generar y descargar el PDF
-      const blob = await pdf(<OrdenProduccion Venta={venTradicional} />).toBlob();
+      const blob = await pdf(
+        <OrdenProduccion Venta={venRomana} />
+      ).toBlob();
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `${Ven.Datos.cliNomb} Orden De Corte Tradicional ${Ven.fecha}.pdf`;
+      link.download = `${Ven.Datos.cliNomb} Orden De Corte Romanas ${Ven.fecha}.pdf`;
       document.body.appendChild(link); // Añadirlo al DOM por compatibilidad
       link.click();
       document.body.removeChild(link); // Quitarlo del DOM
-  
+
       setTimeout(() => URL.revokeObjectURL(link.href), 100); // Limpieza posterior
     }
   };
@@ -1249,10 +1275,9 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
               <tbody>
                 {Tradicionales.map((tradi) => (
                   <tr
-                  key={tradi.numeroArticulo}
-                  onClick={() => handleShow(tradi)}
-                  className="hover-gray"
-                >
+                    key={tradi.numeroArticulo}
+                    onClick={() => handleShow(tradi)}
+                  >
                     <td>{tradi.nombre}</td>
                     <td>{tradi.numeroArticulo}</td>
                     <td>{tradi.Ambiente}</td>
@@ -1261,74 +1286,81 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
                     <td>{findNameTipoPinza(tradi.Pinza?.idPinza)}</td>
                     <td>{findNameTipoGancho(tradi.ganchos?.idGanchos)}</td>
                     <td>{tradi.cantidadPanos}</td>
-                    <td>{findNameTipoDobladillo(tradi.Dobladillo?.idDobladillo)}</td>
-                    <td>{tradi.cantidadPanos === 1 ? tradi.ancho : "N/A"}</td>
-                    <td>{tradi.cantidadPanos !== 1 ? tradi.ancho : "N/A"}</td>
                     <td>
-                      {tradi.cantidadPanos !== 1 ? tradi.AnchoDerecho : "N/A"}
+                      {findNameTipoDobladillo(tradi.Dobladillo?.idDobladillo)}
                     </td>
-                    <td>{tradi.CantidadAltos == 1 ? tradi.alto : "N/A"}</td>
-                    <td>{tradi.CantidadAltos !== 1 ? tradi.alto : "N/A"}</td>
+                    <td>{tradi.cantidadPanos === 1 ? tradi.ancho : ""}</td>
+                    <td>{tradi.cantidadPanos !== 1 ? tradi.ancho : ""}</td>
                     <td>
-                      {tradi.CantidadAltos !== 1 ? tradi.AltoDerecho : "N/A"}
+                      {tradi.cantidadPanos !== 1 ? tradi.AnchoDerecho : ""}
+                    </td>
+                    <td>{tradi.CantidadAltos == 1 ? tradi.alto : ""}</td>
+                    <td>{tradi.CantidadAltos !== 1 ? tradi.alto : ""}</td>
+                    <td>
+                      {tradi.CantidadAltos !== 1 ? tradi.AltoDerecho : ""}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </Table>
+
           )}
           {Romanas.length !== 0 && (
-          <>
-            <Table responsive bordered>
-              <thead>
-                <tr>
-                  <th>Tipo</th>
-                  <th>Num</th>
-                  <th>Ambiente</th>
-                  <th>Tela</th>
-                  <th>Color</th>
-                  <th>Ancho</th>
-                  <th>Ancho varilla</th>
-                  <th>Ancho contrapeso</th>
-                  <th>Alto</th>
-                  <th>Caídas</th>
-                  <th>Lado</th>
-                  <th>Largo Cadena</th>
-                  <th>Varillas</th>
-                  <th>Distancia Varillas</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Romanas.map((romana) => (
-                  <tr key={romana.numeroArticulo}>
-                    <td>{romana.nombre}</td>
-                    <td>{romana.numeroArticulo}</td>
-                    <td>{romana.Ambiente}</td>
-                    <td>{findTela(romana.IdTipoTela)?.nombre}</td>
-                    <td>{findTela(romana.IdTipoTela)?.color}</td>
-                    <td>{romana.ancho.toFixed(3)}</td>
-                    <td>{romana.anchoVarilla?.toFixed(3)}</td>
-                    <td>{romana.anchoVarilla?.toFixed(3)}</td>
-                    <td>{romana.alto?.toFixed(3)}</td>
-                    <td>{romana.caidas}</td>
-                    <td>{findNameLadoCadena(romana.ladoCadena.ladoId)}</td>
-                    <td>{(romana.factorLargoCadena*romana.alto).toFixed(3)}</td>
-                    <td>{romana.cantvarillas}</td>
-                    <td>{romana.distanciavarillas}</td>
-                    <td>
-                      <Button
-                        variant="danger"
-                        onClick={() => handleDelete(romana.numeroArticulo)}
-                      >
-                        Borrar
-                      </Button>
-                    </td>
+            <>
+              <Table responsive bordered className="table-romanas">
+                <thead>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Num</th>
+                    <th>Ambiente</th>
+                    <th>Tela</th>
+                    <th>Color</th>
+                    <th>Ancho</th>
+                    <th>Ancho varilla</th>
+                    <th>Ancho contrapeso</th>
+                    <th>Alto</th>
+                    <th>Caídas</th>
+                    <th>Lado</th>
+                    <th>Largo Cadena</th>
+                    <th>Varillas</th>
+                    <th>Distancia Varillas</th>
+                    <th>Acciones</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          </>
-        )}
+                </thead>
+                <tbody>
+                  {Romanas.map((romana) => (
+                    <tr key={romana.numeroArticulo}>
+                      <td>{romana.nombre}</td>
+                      <td>{romana.numeroArticulo}</td>
+                      <td>{romana.Ambiente}</td>
+                      <td>{findTelaTradi(romana.IdTipoTela)?.nombre}</td>
+                      <td>{findTelaTradi(romana.IdTipoTela)?.color}</td>
+                      <td>{romana.ancho.toFixed(3)}</td>
+                      <td>{romana.anchoVarilla?.toFixed(3)}</td>
+                      <td>{romana.anchoVarilla?.toFixed(3)}</td>
+                      <td>{romana.alto?.toFixed(3)}</td>
+                      <td>{romana.caidas}</td>
+                      <td>{findNameLadoCadena(romana.ladoCadena.ladoId)}</td>
+                      <td>
+                        {(romana.factorLargoCadena * romana.alto).toFixed(3)}
+                      </td>
+                      <td>{romana.cantvarillas}</td>
+                      <td>{romana.distanciavarillas}</td>
+                      <td>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => handleDelete(romana.numeroArticulo)}
+                        >
+                          Borrar
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </>
+          )}
           <Row style={{ width: "100%" }}>
             {showModEditVenal && (
               <Button

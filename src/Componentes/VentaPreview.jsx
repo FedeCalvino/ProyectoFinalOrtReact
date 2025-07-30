@@ -264,10 +264,9 @@ export const VentaPreview = ({Venta}) => {
                   <th>Alto</th>
                   <th>Caídas</th>
                   <th>Lado</th>
-                  <th>Tipo Cadena</th>
-                  <th>Factor Cadena</th>
-                  <th>posicion</th>
-                  <th>Comentarios</th>
+                  <th>Largo Cadena</th>
+                  <th>Varillas</th>
+                  <th>Distancia Varillas</th>
                 </tr>
               </thead>
               <tbody>
@@ -276,15 +275,14 @@ export const VentaPreview = ({Venta}) => {
                     <td>{romana.nombre}</td>
                     <td>{romana.numeroArticulo}</td>
                     <td>{romana.Ambiente}</td>
-                    <td>{romana.TelaNombre}</td>
+                    <td>{romana.telaStr}</td>
                     <td>{romana.Ancho}</td>
                     <td>{romana.Alto}</td>
                     <td>{romana.caidas}</td>
-                    <td>{romana.LadoCadenaStr}</td>
-                    <td>{romana.TipoCadenaStr}</td>
-                    <td>{romana.factorLargoCadena}</td>
-                    <td>{romana.PosicionStr}</td>
-                    <td>{romana.MotorStr}</td>
+                    <td>{romana.ladoCadenaStr}</td>
+                    <td>{romana.LargoCadena}</td>
+                    <td>{romana.cantvarillas}</td>
+                    <td>{romana.distanciavarillas}</td>
                     <td>
                       <Button
                         variant="danger"
