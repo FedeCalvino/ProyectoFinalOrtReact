@@ -18,6 +18,9 @@ tr.hover-gray:hover, .hover-gray:hover {
   padding: 8px 4px;
   font-size: 12px;
 }
+.table-romanas tr{
+  font-size: 12px;
+}
 
 /* Anchos específicos para cada columna de la tabla Romanas */
 .table-romanas th:nth-child(1), .table-romanas td:nth-child(1) { width: 6%; }  /* Tipo */

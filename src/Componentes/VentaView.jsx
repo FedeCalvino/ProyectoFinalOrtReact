@@ -1205,6 +1205,7 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
               </Table>
             </>
           )}
+          
           {Rieles.length !== 0 ? (
             <>
               <Table responsive bordered>
@@ -1317,8 +1318,8 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
                     <th>Tela</th>
                     <th>Color</th>
                     <th>Ancho</th>
-                    <th>Ancho varilla</th>
-                    <th>Ancho contrapeso</th>
+                    <th>varilla</th>
+                    <th>contrapeso</th>
                     <th>Alto</th>
                     <th>Caídas</th>
                     <th>Lado</th>
