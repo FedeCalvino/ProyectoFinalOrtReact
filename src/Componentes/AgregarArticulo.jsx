@@ -6,6 +6,7 @@ import { FormTradicional } from "../Forms/FormTradicional";
 import { FormRieles } from "../Forms/FormRieles";
 import { Row, Col } from "react-bootstrap";
 import { TablaArticulos } from "../Tables/TablaArticulos";
+import { FormRomanas } from "../Forms/FormRomanas";
 
 export const AgregarArticulo = () => {
   const toastCallBack = () => {};
@@ -26,6 +27,9 @@ export const AgregarArticulo = () => {
           </Tab>
           <Tab eventKey="Tradicional" title="Tradicional">
             <FormTradicional toastCallBack={toastCallBack} />
+          </Tab>
+          <Tab eventKey="Romana" title="Romana">
+            <FormRomanas toastCallBack={toastCallBack} />
           </Tab>
         </Tabs>
       </Col>

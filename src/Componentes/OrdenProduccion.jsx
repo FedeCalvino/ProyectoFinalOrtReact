@@ -204,24 +204,38 @@ const Header = ({ Datos }) => (
   </>
 );
 
-const TableHeaderRomana=()=>(
+const TableHeaderRomana = () => (
   <>
-  <View style={styles.tableHeader}>
+    <View style={styles.tableHeader}>
       <Text style={[styles.tableHeaderCell2Romana, styles.subtitle]}>Nº</Text>
-      <Text style={[styles.tableHeaderCell1Romana, styles.subtitle]}>Ambiente</Text>
-      <Text style={[styles.tableHeaderCell1RomanaVarilla, styles.subtitle]}>Tela</Text>
+      <Text style={[styles.tableHeaderCell1Romana, styles.subtitle]}>
+        Ambiente
+      </Text>
+      <Text style={[styles.tableHeaderCell1RomanaVarilla, styles.subtitle]}>
+        Tela
+      </Text>
       <Text style={[styles.tableHeaderCellRomana, styles.subtitle]}>Color</Text>
-      <Text style={[styles.tableHeaderCellRomana, styles.subtitle]}>Ancho AF-AF</Text>
-      <Text style={[styles.tableHeaderCell1RomanaVarilla, styles.subtitle]}>Ancho Varilla y Contrapeso</Text>
+      <Text style={[styles.tableHeaderCellRomana, styles.subtitle]}>
+        Ancho AF-AF
+      </Text>
+      <Text style={[styles.tableHeaderCell1RomanaVarilla, styles.subtitle]}>
+        Ancho Varilla y Contrapeso
+      </Text>
       <Text style={[styles.tableHeaderCellRomana, styles.subtitle]}>Alto</Text>
       <Text style={[styles.tableHeaderCellRomana, styles.subtitle]}>Caida</Text>
       <Text style={[styles.tableHeaderCellRomana, styles.subtitle]}>Lado</Text>
-      <Text style={[styles.tableHeaderCellRomana, styles.subtitle]}>Cadena</Text>
-      <Text style={[styles.tableHeaderCellRomana, styles.subtitle]}>Varillas</Text>
-      <Text style={[styles.tableHeaderCell1RomanaDistVarilla, styles.subtitle]}>Distancia Varillas</Text>
+      <Text style={[styles.tableHeaderCellRomana, styles.subtitle]}>
+        Cadena
+      </Text>
+      <Text style={[styles.tableHeaderCellRomana, styles.subtitle]}>
+        Varillas
+      </Text>
+      <Text style={[styles.tableHeaderCell1RomanaDistVarilla, styles.subtitle]}>
+        Distancia Varillas
+      </Text>
     </View>
   </>
-)
+);
 
 const ItemDetail = ({ label, value }) => (
   <Text style={styles.itemText}>
@@ -242,7 +256,7 @@ export const OrdenProduccion = ({ Venta }) => {
   const CortinasRomanas = Venta.listaArticulos.filter(
     (art) => art.nombre === "Romana"
   );
-  console.log("CortinasRomanas",CortinasRomanas)
+  console.log("CortinasRomanas", CortinasRomanas);
 
   const existeAlgunMotor = Cortinasroller.find(
     (Roll) => Roll.MotorRoller.idMotor !== 1
@@ -539,127 +553,148 @@ export const OrdenProduccion = ({ Venta }) => {
             </View>
           </Page>
         ))}
-        {CortinasRomanas.length > 9
-          ? (() => {
-              const pages = [];
+        {CortinasRomanas.length > 9 ? (
+          () => {
+            const pages = [];
 
-              groupedRomanas.forEach(([key, cortinas]) => {
-                for (let i = 0; i < cortinas.length; i += 14) {
-                  const cortinasSlice = cortinas.slice(i, i + 14);
-                  pages.push({
-                    tela: key,
-                    cortinas: cortinasSlice,
-                  });
-                }
-              });
-              console.log("groupedRomanas",groupedRomanas)
+            groupedRomanas.forEach(([key, cortinas]) => {
+              for (let i = 0; i < cortinas.length; i += 14) {
+                const cortinasSlice = cortinas.slice(i, i + 14);
+                pages.push({
+                  tela: key,
+                  cortinas: cortinasSlice,
+                });
+              }
+            });
+            console.log("groupedRomanas", groupedRomanas);
 
-              return pages.map((group, pageIndex) => (
-                <Page
-                  key={pageIndex}
-                  size="A4"
-                  style={styles.pageRiel}
-                  orientation="portrait"
-                >
-                  {/* Table Header */}
-                  <TableHeaderRomana />
+            return pages.map((group, pageIndex) => (
+              <Page
+                key={pageIndex}
+                size="A4"
+                style={styles.pageRiel}
+                orientation="portrait"
+              >
+                {/* Table Header */}
+                <TableHeaderRomana />
 
-                  {/* Cortinas Data Rows */}
-                  {groupedRomanas.map((Rom, cortinaIndex) => (
-                    <View style={styles.tableRow} key={cortinaIndex} border>
-                      <Text style={[styles.tableHeaderCell2Romana, styles.text]}>
-                        {Rom.numeroArticulo}
-                      </Text>
-                      <Text style={[styles.tableCell1Romana, styles.text]}>
-                        {Rom.Ambiente}
-                      </Text>
-                      <Text style={[styles.tableCellRomana, styles.text]}>
-                        {Rom.nombreTela}
-                      </Text>
-                      <Text style={[styles.tableCellRomana, styles.text]}>
-                        {Rom.colorTela}
-                      </Text>
-                      <Text style={[styles.tableCellRomana, styles.text]}>
-                        {Rom.ancho.toFixed(3)}
-                      </Text>
-                      <Text style={[styles.tableCellRomana, styles.text]}>
-                        {Rom.anchoVarilla.toFixed(3)}
-                      </Text>
-                      <Text style={[styles.tableCellTipo, styles.text]}>
-                        {Rom.alto.toFixed(3)}
-                      </Text>
-                      <Text style={[styles.tableCell, styles.text]}>
-                        {Rom.caidas}
-                      </Text>
-                      <Text style={[styles.tableCellPosicion, styles.text]}>
-                        {Rom.ladoCadena.lado}
-                      </Text>
-                      <Text style={[styles.tableCellLado, styles.text]}>
-                        {Rom.largoCadena}
-                      </Text>
-                      <Text style={[styles.tableCellMotor, styles.text]}>
-                        {Rom.cantvarillas}
-                      </Text>
-                      <Text style={[styles.tableCellMotor, styles.text]}>
-                        {Rom.distanciavarillas}
-                      </Text>
-                    </View>
-                  ))}
-                </Page>
-              ));
-            })
-          : 
-            <Page
-              size="A4"
-              style={styles.pageRiel}
-               orientation="landscape"
-            >
-              {/* Table Header */}
-              <TableHeaderRomana />
-
-              {/* Cortinas Data Rows */}
-              {CortinasRomanas.map((Rom, cortinaIndex) => (
-                <View style={styles.tableRow} key={cortinaIndex} border>
-                  <Text style={[styles.tableHeaderCell2Romana, styles.text]}>
-                    {Rom.numeroArticulo}
-                  </Text>
-                  <Text style={[styles.tableHeaderCell1Romana, styles.text]}>
-                    {Rom.Ambiente}
-                  </Text>
-                  <Text style={[styles.tableHeaderCell1RomanaVarilla, styles.text]}>
-                    {Rom.nombreTela}
-                  </Text>
-                  <Text style={[styles.tableHeaderCellRomana, styles.text]}>
-                    {Rom.colorTela}
-                  </Text>
-                  <Text style={[styles.tableHeaderCellRomana, styles.text]}>
-                    {Rom.ancho.toFixed(3)}
-                  </Text>
-                  <Text style={[styles.tableHeaderCell1RomanaVarilla, styles.text]}>
-                    {Rom.anchoVarilla.toFixed(3)}
-                  </Text>
-                  <Text style={[styles.tableHeaderCellRomana, styles.text]}>
-                    {Rom.alto.toFixed(3)}
-                  </Text>
-                  <Text style={[styles.tableHeaderCellRomana, styles.text]}>
-                    {Rom.caidas}
-                  </Text>
-                  <Text style={[styles.tableHeaderCellRomana, styles.text]}>
-                    {Rom.ladoCadena.lado}
-                  </Text>
-                  <Text style={[styles.tableHeaderCellRomana, styles.text]}>
-                    {Rom.largoCadena.toFixed(3)}
-                  </Text>
-                  <Text style={[styles.tableHeaderCellRomana, styles.text]}>
-                    {Rom.cantvarillas}
-                  </Text>
-                  <Text style={[styles.tableHeaderCell1RomanaDistVarilla, styles.text]}>
-                    {Rom.distanciavarillas.toFixed(3)}
-                  </Text>
-                </View>
-              ))}
-            </Page>
+                {/* Cortinas Data Rows */}
+                {groupedRomanas.map((Rom, cortinaIndex) => (
+                  <View style={styles.tableRow} key={cortinaIndex} border>
+                    <Text style={[styles.tableHeaderCell2Romana, styles.text]}>
+                      {Rom.numeroArticulo}
+                    </Text>
+                    <Text style={[styles.tableHeaderCell1Romana, styles.text]}>
+                      {Rom.Ambiente}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.tableHeaderCell1RomanaVarilla,
+                        styles.text,
+                      ]}
+                    >
+                      {Rom.nombreTela}
+                    </Text>
+                    <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                      {Rom.colorTela}
+                    </Text>
+                    <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                      {Rom.ancho.toFixed(3)}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.tableHeaderCell1RomanaVarilla,
+                        styles.text,
+                      ]}
+                    >
+                      {Rom.anchoVarilla.toFixed(3)}
+                    </Text>
+                    <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                      {Rom.alto.toFixed(3)}
+                    </Text>
+                    <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                      {Rom.caidas}
+                    </Text>
+                    <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                      {Rom.ladoCadena.lado}
+                    </Text>
+                    <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                      {Rom.largoCadena.toFixed(3)}
+                    </Text>
+                    <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                      {Rom.cantvarillas}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.tableHeaderCell1RomanaDistVarilla,
+                        styles.text,
+                      ]}
+                    >
+                      {Rom.distanciavarillas.toFixed(3)}
+                    </Text>
+                  </View>
+                ))}
+              </Page>
+            ));
           }
+        ) : (
+          <Page size="A4" style={styles.pageRiel} orientation="landscape">
+            {/* Table Header */}
+            <Header Datos={Venta.Datos} />
+            <TableHeaderRomana />
+
+            {/* Cortinas Data Rows */}
+            {CortinasRomanas.map((Rom, cortinaIndex) => (
+              <View style={styles.tableRow} key={cortinaIndex} border>
+                <Text style={[styles.tableHeaderCell2Romana, styles.text]}>
+                  {Rom.numeroArticulo}
+                </Text>
+                <Text style={[styles.tableHeaderCell1Romana, styles.text]}>
+                  {Rom.Ambiente}
+                </Text>
+                <Text
+                  style={[styles.tableHeaderCell1RomanaVarilla, styles.text]}
+                >
+                  {Rom.nombreTela}
+                </Text>
+                <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                  {Rom.colorTela}
+                </Text>
+                <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                  {Rom.ancho.toFixed(3)}
+                </Text>
+                <Text
+                  style={[styles.tableHeaderCell1RomanaVarilla, styles.text]}
+                >
+                  {Rom.anchoVarilla.toFixed(3)}
+                </Text>
+                <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                  {Rom.alto.toFixed(3)}
+                </Text>
+                <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                  {Rom.caidas}
+                </Text>
+                <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                  {Rom.ladoCadena.lado}
+                </Text>
+                <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                  {Rom.largoCadena.toFixed(3)}
+                </Text>
+                <Text style={[styles.tableHeaderCellRomana, styles.text]}>
+                  {Rom.cantvarillas}
+                </Text>
+                <Text
+                  style={[
+                    styles.tableHeaderCell1RomanaDistVarilla,
+                    styles.text,
+                  ]}
+                >
+                  {Rom.distanciavarillas.toFixed(3)}
+                </Text>
+              </View>
+            ))}
+          </Page>
+        )}
       </Document>
     );
   }
