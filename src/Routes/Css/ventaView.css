@@ -16,10 +16,12 @@ tr.hover-gray:hover, .hover-gray:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
   padding: 8px 4px;
-  font-size: 16px;
 }
 .table-romanas tr{
   font-size: 12px;
+}
+.table-romanas td{
+  font-size: 16px;
 }
 
 /* Anchos específicos para cada columna de la tabla Romanas */
@@ -29,15 +31,13 @@ tr.hover-gray:hover, .hover-gray:hover {
 .table-romanas th:nth-child(4), .table-romanas td:nth-child(4) { width: 10%; } /* Tela */
 .table-romanas th:nth-child(5), .table-romanas td:nth-child(5) { width: 8%; }  /* Color */
 .table-romanas th:nth-child(6), .table-romanas td:nth-child(6) { width: 7%; }  /* Ancho */
-.table-romanas th:nth-child(7), .table-romanas td:nth-child(7) { width: 8%; }  /* Ancho varilla */
-.table-romanas th:nth-child(8), .table-romanas td:nth-child(8) { width: 8%; }  /* Ancho contrapeso */
-.table-romanas th:nth-child(9), .table-romanas td:nth-child(9) { width: 7%; }  /* Alto */
-.table-romanas th:nth-child(10), .table-romanas td:nth-child(10) { width: 6%; } /* Caídas */
-.table-romanas th:nth-child(11), .table-romanas td:nth-child(11) { width: 7%; } /* Lado */
-.table-romanas th:nth-child(12), .table-romanas td:nth-child(12) { width: 8%; } /* Largo Cadena */
-.table-romanas th:nth-child(13), .table-romanas td:nth-child(13) { width: 7%; } /* Varillas */
-.table-romanas th:nth-child(14), .table-romanas td:nth-child(14) { width: 8%; } /* Distancia Varillas */
-.table-romanas th:nth-child(15), .table-romanas td:nth-child(15) { width: 7%; } /* Botón Borrar */
+.table-romanas th:nth-child(7), .table-romanas td:nth-child(7) { width: 14%; }  /* Ancho varilla */
+.table-romanas th:nth-child(9), .table-romanas td:nth-child(8) { width: 7%; }  /* Alto */
+.table-romanas th:nth-child(10), .table-romanas td:nth-child(9) { width: 6%; } /* Caídas */
+.table-romanas th:nth-child(11), .table-romanas td:nth-child(10) { width: 10%; } /* Lado */
+.table-romanas th:nth-child(12), .table-romanas td:nth-child(11) { width: 8%; } /* Largo Cadena */
+.table-romanas th:nth-child(13), .table-romanas td:nth-child(12) { width: 7%; } /* Varillas */
+.table-romanas th:nth-child(14), .table-romanas td:nth-child(13) { width: 8%; } /* Distancia Varillas */
 
 /* Hover para la tabla de Romanas */
 .table-romanas tbody tr:hover {

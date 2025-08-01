@@ -1205,7 +1205,7 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
               </Table>
             </>
           )}
-          
+
           {Rieles.length !== 0 ? (
             <>
               <Table responsive bordered>
@@ -1318,15 +1318,13 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
                     <th>Tela</th>
                     <th>Color</th>
                     <th>Ancho</th>
-                    <th>varilla</th>
-                    <th>contrapeso</th>
+                    <th>Ancho varilla y contrapeso</th>
                     <th>Alto</th>
                     <th>Caídas</th>
                     <th>Lado</th>
                     <th>Largo Cadena</th>
                     <th>Varillas</th>
-                    <th>Distancia Varillas</th>
-                    <th>Acciones</th>
+                    <th>Dist Varillas</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1339,7 +1337,6 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
                       <td>{findTelaTradi(romana.IdTipoTela)?.color}</td>
                       <td>{romana.ancho.toFixed(3)}</td>
                       <td>{romana.anchoVarilla?.toFixed(3)}</td>
-                      <td>{romana.anchoVarilla?.toFixed(3)}</td>
                       <td>{romana.alto?.toFixed(3)}</td>
                       <td>{romana.caidas}</td>
                       <td>{findNameLadoCadena(romana.ladoCadena.ladoId)}</td>
@@ -1348,15 +1345,6 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
                       </td>
                       <td>{romana.cantvarillas}</td>
                       <td>{romana.distanciavarillas}</td>
-                      <td>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => handleDelete(romana.numeroArticulo)}
-                        >
-                          Borrar
-                        </Button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
