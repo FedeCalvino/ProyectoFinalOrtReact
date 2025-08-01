@@ -1335,11 +1335,11 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
                       <td>{romana.Ambiente}</td>
                       <td>{findTelaTradi(romana.IdTipoTela)?.nombre}</td>
                       <td>{findTelaTradi(romana.IdTipoTela)?.color}</td>
-                      <td>{romana.ancho.toFixed(3)}</td>
+                      <td>{romana.ancho?.toFixed(3)}</td>
                       <td>{romana.anchoVarilla?.toFixed(3)}</td>
                       <td>{romana.alto?.toFixed(3)}</td>
                       <td>{romana.caidas}</td>
-                      <td>{findNameLadoCadena(romana.ladoCadena.ladoId)}</td>
+                      <td>{findNameLadoCadena(romana.ladoCadena?.ladoId)}</td>
                       <td>
                         {(romana.factorLargoCadena * romana.alto).toFixed(3)}
                       </td>
