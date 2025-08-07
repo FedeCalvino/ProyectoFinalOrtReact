@@ -189,9 +189,9 @@ const FormatearFecha = ({ fecha }) => {
 
 const Header = ({ Datos }) => (
   <>
-    {Datos.fechaInst ? (
+    {Datos.fechaInstalacion ? (
       <Text style={styles.title1}>
-        Fecha Instalación: <FormatearFecha fecha={Datos.fechaInst} />
+        Fecha Instalación: <FormatearFecha fecha={Datos.fechaInstalacion} />
       </Text>
     ) : (
       <Text style={styles.title1}>Fecha Instalación: A confirmar</Text>
@@ -513,6 +513,7 @@ export const OrdenProduccion = ({ Venta }) => {
             </Page>
           </>
         )}
+        { groupedRieles.length > 0 && (
         {groupedRieles.map((group, pageIndex) => (
           <Page
             key={pageIndex}
@@ -553,6 +554,7 @@ export const OrdenProduccion = ({ Venta }) => {
             </View>
           </Page>
         ))}
+        )}
         {CortinasRomanas.length > 9
   ? (() => {
       const pages = [];
@@ -575,7 +577,7 @@ export const OrdenProduccion = ({ Venta }) => {
           key={pageIndex}
           size="A4"
           style={styles.pageRiel}
-          orientation="landscape"
+          orientation="portrait"
         >
           {/* Table Header */}
           <Header Datos={Venta.Datos} />
@@ -632,7 +634,7 @@ export const OrdenProduccion = ({ Venta }) => {
       ));
     })()
   : (
-          <Page size="A4" style={styles.pageRiel} orientation="landscape">
+          <Page size="A4" style={styles.pageRiel} orientation="portrait">
             {/* Table Header */}
             <Header Datos={Venta.Datos} />
             <TableHeaderRomana />

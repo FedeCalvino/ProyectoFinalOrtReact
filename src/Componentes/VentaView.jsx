@@ -510,7 +510,7 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
       };
       let datosHeader = {
         fecha: Ven.fecha,
-        fechaInstalacion: Ven.obra.fechaInstalacion,
+        fechaInstalacion: Ven.fechaInstalacion,
         cliente: Ven.obra.cliente.nombre,
         obra: Ven.obra.nombre,
       };
