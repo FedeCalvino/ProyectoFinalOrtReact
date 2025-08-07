@@ -504,7 +504,7 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
   const DescPdf = () => {
     if (Ven.listaArticulos.length > 0) {
       const datos = {
-        fechaInst: Ven.obra.fechaInstalacion,
+        fechaInst: Ven.fechaInstalacion,
         obra: Ven.obra.nombre,
         cliNomb: Ven.obra.cliente.nombre,
       };
