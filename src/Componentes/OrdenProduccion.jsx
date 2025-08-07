@@ -513,7 +513,6 @@ export const OrdenProduccion = ({ Venta }) => {
             </Page>
           </>
         )}
-        { groupedRieles.length > 0 && (
         {groupedRieles.map((group, pageIndex) => (
           <Page
             key={pageIndex}
@@ -554,9 +553,8 @@ export const OrdenProduccion = ({ Venta }) => {
             </View>
           </Page>
         ))}
-        )}
-        {CortinasRomanas.length > 9
-  ? (() => {
+
+        {CortinasRomanas.length >= 9 && (() => {
       const pages = [];
 
       groupedRomanas.forEach(([key, cortinas]) => {
@@ -633,7 +631,9 @@ export const OrdenProduccion = ({ Venta }) => {
         </Page>
       ));
     })()
-  : (
+   }
+   
+     {CortinasRomanas.length < 9 && (
           <Page size="A4" style={styles.pageRiel} orientation="portrait">
             {/* Table Header */}
             <Header Datos={Venta.Datos} />
