@@ -189,9 +189,9 @@ const FormatearFecha = ({ fecha }) => {
 
 const Header = ({ Datos }) => (
   <>
-    {Datos.fechaInstalacion ? (
+    {Datos.fechaInst ? (
       <Text style={styles.title1}>
-        Fecha Instalación: <FormatearFecha fecha={Datos.fechaInstalacion} />
+        Fecha Instalación: <FormatearFecha fecha={Datos.fechaInst} />
       </Text>
     ) : (
       <Text style={styles.title1}>Fecha Instalación: A confirmar</Text>
