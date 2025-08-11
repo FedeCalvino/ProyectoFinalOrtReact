@@ -59,7 +59,7 @@ export const TablaArticulos = () => {
   const Articulos = useSelector(selectArticulos);
   const [ArtSelecc,setArtSelecc]=useState(null)
   const Cortinas = useMemo(
-    () => Articulos.filter((Cortinas) => Cortinas.nombre === "Cortina"),
+    () => Articulos?.filter((Cortinas) => Cortinas?.nombre === "Cortina"),
     [Articulos]
   );
   const [showModal, setShowModal] = useState(false);
@@ -69,65 +69,63 @@ export const TablaArticulos = () => {
   const [TradicionalTryEdited, setTradicionalTryEdited] = useState(null);
 
   const findNameCano = (idCano) => {
-    return CanosRoller.find((cano) => cano.id === idCano)?.tipo;
+    return CanosRoller?.find((cano) => cano?.id === idCano)?.tipo;
   };
   const findNameLadoCadena = (idlado) => {
-    return LadosCadenas.find((lado) => lado.ladoId === idlado)?.lado;
+    return LadosCadenas?.find((lado) => lado?.ladoId === idlado)?.lado;
   };
   const findNameMotor = (idMotor) => {
-    return Motores.find((motor) => motor.idMotor === idMotor)?.nombre;
+    return Motores?.find((motor) => motor?.idMotor === idMotor)?.nombre;
   };
   const findNamePos = (idPos) => {
-    return Posiciones.find((pos) => pos.posicionId === idPos)?.posicion;
+    return Posiciones?.find((pos) => pos?.posicionId === idPos)?.posicion;
   };
   const findNameTipoCadena = (idTipoCadena) => {
-    return TiposCadenas.find((cad) => cad.idTipoCadena === idTipoCadena)
-      .tipoCadena;
+    return TiposCadenas?.find((cad) => cad?.idTipoCadena === idTipoCadena)?.tipoCadena;
   };
 
 
 
   const findTela = (IdTela) => {
-    return TiposTelas.find((Tela) => Tela.id === IdTela);
+    return TiposTelas?.find((Tela) => Tela?.id === IdTela);
   };
   const findTelaTradi = (IdTela) => {
-    return TiposTelasTradi.find((Tela) => Tela.id === IdTela);
+    return TiposTelasTradi?.find((Tela) => Tela?.id === IdTela);
   };
 
   const ConfigTadicional = useSelector(selectConfigTradicional);
   console.log("ConfigTadicional", ConfigTadicional);
   //opciones de roller
-  const Pinzas = ConfigTadicional.pinzas;
-  const Ganchos = ConfigTadicional.ganchos;
+  const Pinzas = ConfigTadicional?.pinzas;
+  const Ganchos = ConfigTadicional?.ganchos;
 
   const findNameTipoPinza = (id_tipo) => {
-    return Pinzas.find((tipo) => tipo.idPinza === parseInt(id_tipo)).nombre;
+    return Pinzas?.find((tipo) => tipo?.idPinza === parseInt(id_tipo))?.nombre;
   };
 
   const findNameTipoGancho = (id_tipo) => {
-    return Ganchos.find((tipo) => tipo.idGanchos === parseInt(id_tipo)).nombre;
+    return Ganchos?.find((tipo) => tipo?.idGanchos === parseInt(id_tipo))?.nombre;
   };
 
   const ConfigRiel = useSelector(selectConfigRiel);
 
-  const ladosAcumula = ConfigRiel.ladoAcumula || [];
-  const tipos = ConfigRiel.tipos || [];
-const soportes=ConfigRiel.tiposSoportes
-const bastones=ConfigRiel.tiposBastones
+  const ladosAcumula = ConfigRiel?.ladoAcumula || [];
+  const tipos = ConfigRiel?.tipos || [];
+const soportes=ConfigRiel?.tiposSoportes
+const bastones=ConfigRiel?.tiposBastones
 console.log("soportessoportes",soportes)
   const findNameSoporte =(idSoporte)=>{
-    return soportes.find((soporte) => soporte.idTipoSoporte === idSoporte)?.nombre;
+    return soportes?.find((soporte) => soporte?.idTipoSoporte === idSoporte)?.nombre;
   }
   const findNameBastones=(idBaston)=>{
-    return bastones.find((baston) => baston.idTipoBaton === idBaston)?.nombre;
+    return bastones?.find((baston) => baston?.idTipoBaton === idBaston)?.nombre;
   }
 
   const findNameladoAcumula = (idLado) => {
-    return ladosAcumula.find((acc) => acc.ladoAcumulaId === parseInt(idLado))
-      .nombre;
+    return ladosAcumula?.find((acc) => acc?.ladoAcumulaId === parseInt(idLado))?.nombre;
   };
   const findNameTipoRiel = (id_tipo) => {
-    return tipos.find((tipo) => tipo.tipoId === parseInt(id_tipo)).tipo;
+    return tipos?.find((tipo) => tipo?.tipoId === parseInt(id_tipo))?.tipo;
   };
 
   const handleDelete = (num) => {
@@ -139,6 +137,7 @@ const handleClose=()=>{
   setShowModal(false)
 }
   const showArticulo = (Art) => {
+    if(Articulos.find(art=>{art.numeroArticulo===Art.numeroArticulo})){
     if (Art.nombre === "Roller") {
       setTradicionalTryEdited(null);
       setRielTryEdited(null);
@@ -155,6 +154,7 @@ const handleClose=()=>{
       setTradicionalTryEdited(Art);
     }
     setShowModal(true);
+  }
   };
 
   const style = {
@@ -222,21 +222,21 @@ const handleClose=()=>{
                       <td>{CortrtinaTrtyEdited.Ancho}</td>
                       <td>{CortrtinaTrtyEdited.AnchoTela}</td>
                       <td>{CortrtinaTrtyEdited.AnchoTubo}</td>
-                      <td>{findNameCano(CortrtinaTrtyEdited.cano.id)}</td>
+                      <td>{findNameCano(CortrtinaTrtyEdited?.cano.id)}</td>
                       <td>{CortrtinaTrtyEdited.alto}</td>
                       <td>{CortrtinaTrtyEdited.AltoTela}</td>
                       <td>1</td>
                       <td>{CortrtinaTrtyEdited.LargoCadena}</td>
                       <td>
                         {findNameLadoCadena(
-                          CortrtinaTrtyEdited.ladoCadena.ladoId
+                          CortrtinaTrtyEdited.ladoCadena?.ladoId
                         )}
                       </td>
                       <td>
-                        {findNamePos(CortrtinaTrtyEdited.posicion.posicionId)}
+                        {findNamePos(CortrtinaTrtyEdited.posicion?.posicionId)}
                       </td>
                       <td>
-                        {findNameMotor(CortrtinaTrtyEdited.motorRoller.idMotor)}
+                        {findNameMotor(CortrtinaTrtyEdited.motorRoller?.idMotor)}
                       </td>
                       <td>{CortrtinaTrtyEdited.Exterior ? "Sí" : "No"}</td>
                     </tr>
@@ -360,13 +360,13 @@ const handleClose=()=>{
         </tr>
       </thead>
       <tbody>
-        {Articulos.map((Art, index) => (
+        {Articulos?.map((Art, index) => (
           <tr key={index} style={{ marginBottom: "1em" }} onClick={()=>showArticulo(Art)}>
-            <td>{Art.numeroArticulo}</td>
-            <td>{Art.tipoArticulo.toUpperCase()}</td>
-            <td>{Art.Ambiente || Art.ambiente}</td>
+            <td>{Art?.numeroArticulo}</td>
+            <td>{Art?.tipoArticulo?.toUpperCase()}</td>
+            <td>{Art?.Ambiente || Art?.ambiente}</td>
             <td>
-              <Button onClick={() => handleDelete(Art.numeroArticulo)}>
+              <Button onClick={() => handleDelete(Art?.numeroArticulo)}>
                 Borrar
               </Button>
             </td>
