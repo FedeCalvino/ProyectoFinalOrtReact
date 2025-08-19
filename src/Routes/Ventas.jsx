@@ -348,7 +348,7 @@ const callBackToast = (mensaje, tipo) => {
       >
         <Modal.Header closeButton>
           <Modal.Title style={{ textAlign: "center", width: "100%" }}>
-            {isLoading ? null : <>Detalle de la Venta</>}
+            {isLoading ? null : <>Detalle de la Venta: {Ven.id}</>}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
