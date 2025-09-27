@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     width: "15%", // Ambiente tiene más espacio
     textAlign: "center",
   },
+  
   tableHeaderCell: {
     width: "6%", // Otras columnas pequeñas
     textAlign: "center",
