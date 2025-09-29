@@ -684,8 +684,8 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
 
       // Construir URL de manera más segura
       const fechaParam = FechaInstEdit || "null";
-      const obraParam = ObraEdit?.trim() || "null";
-      const direccionParam = DireccionEdit?.trim() || "null";
+      const obraParam = ObraEdit ? ObraEdit.trim() : "null";
+      const direccionParam = DireccionEdit ? DireccionEdit.trim() : "null";
       const IdObra = Ven.obra.idObra;
       const url = `${VentasEpUpdate}${fechaParam}/${obraParam}/${direccionParam}/${Ven.id}/${IdObra}`;
       console.log("url", url);
@@ -705,7 +705,7 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
         const NewVenta = JSON.parse(JSON.stringify(Ven));
 
         // Actualizar solo los campos que cambiaron
-        if (ObraEdit?.trim() !== "") {
+        if (ObraEdit ? ObraEdit?.trim() !== "" : false) {
           NewVenta.obra = { ...NewVenta.obra, nombre: ObraEdit.trim() };
         }
         if (FechaInstEdit && FechaInstEdit !== "null") {
