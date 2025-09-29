@@ -702,7 +702,7 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
 
       if (result.status === "OK") {
         // Crear una copia profunda de Ven antes de modificarlo
-        const response = await fetch(VentasEp+"/Mensaje", requestOptions);
+        const response = await fetch(VentasEp+"/Mensaje");
         console.log("response mensaje",response)
         const NewVenta = JSON.parse(JSON.stringify(Ven));
 
