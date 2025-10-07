@@ -54,6 +54,7 @@ export const Ventas = () => {
   const UrlDelete = "http://200.40.89.254:8086/Ventas/";
 */
 
+
   const setVentaView = async (Venta) => {
     console.log(ConfigRoller)
     if (ConfigRoller.length != 0) {
