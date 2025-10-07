@@ -17,8 +17,9 @@ import {
 } from "../Features/ConfigReducer";
 import { Loading } from "../Componentes/Loading";
 import { AgregarArticulo } from "../Componentes/AgregarArticulo.jsx";
-import { removeAllArticulos ,selectArticulos} from "../Features/ArticulosReducer";
+import { removeAllArticulos, selectArticulos } from "../Features/ArticulosReducer";
 import { VentaPreview } from "../Componentes/VentaPreview";
+import StatusCard from "../Componentes/StatusCard.jsx";
 export const Ventas = () => {
   const [isLoading, setIsLoading] = useState(false);
   const Ven = useSelector(selectVenta);
@@ -41,23 +42,25 @@ export const Ventas = () => {
   const [Pagina, setPagina] = useState(0);
   const ConfigRoller = useSelector(selectRollerConfig);
 
+
   
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/VentasEP/";
-
+  
 /*
-  const UrlVentas = "http://localhost:8083/Ventas";
-  const UrlVenta = "http://localhost:8083/Ventas/";
-  const UrlDelete = "http://localhost:8083/Ventas/";
+  const UrlVentas = "http://200.40.89.254:8081/Ventas";
+  const UrlVenta = "http://200.40.89.254:8086/Ventas/";
+  const UrlDelete = "http://200.40.89.254:8086/Ventas/";
 */
+
   const setVentaView = async (Venta) => {
     console.log(ConfigRoller)
-    if(ConfigRoller.length!=0){
+    if (ConfigRoller.length != 0) {
       if (Venta.id != null) {
         setShowModal(true);
         setIsLoading(true);
-  
+
         try {
           const res = await fetch(UrlVenta + Venta.id, {
             method: 'GET',
@@ -77,17 +80,17 @@ export const Ventas = () => {
           setIsLoading(false);
         }
       }
-    }else{
+    } else {
       toast.error("Las configuraciones de rollers no estan cargadas")
     }
   };
-  const callBackAddArt=()=>{
+  const callBackAddArt = () => {
     setAddArt(true)
     setShowModal(false)
     dispatch(removeAllArticulos())
   }
   const sumarPagina = () => {
-    console.log("Pagina",Pagina)
+    console.log("Pagina", Pagina)
     FetchVentas(+1)
     setPagina(prev => prev + 1);
   };
@@ -99,11 +102,11 @@ export const Ventas = () => {
     setVentas([]);
     try {
       console.log("Pagina", Pagina);
-      const nuevaPagina = parseInt(Pagina) + parseInt(adelanto); 
+      const nuevaPagina = parseInt(Pagina) + parseInt(adelanto);
       console.log(nuevaPagina)
       const res = await fetch(`${UrlVentas}/Paginas/${nuevaPagina}`);
       const data = await res.json();
-      console.log("dataaa",data);
+      console.log("dataaa", data);
       const sortedData = data.body.sort(
         (a, b) => new Date(b.fecha) - new Date(a.fecha)
       );
@@ -114,7 +117,9 @@ export const Ventas = () => {
       toast.error("Error al cargar las ventas");
     }
   };
-  
+
+
+
 
   useEffect(() => {
     FetchVentas(0);
@@ -180,12 +185,12 @@ export const Ventas = () => {
   const handleCloseAddArt = () => {
     setConfirmDelete(false);
     setShowModal(true);
-    setIsLoading(false); 
+    setIsLoading(false);
     setAddArt(false)
   };
 
-  const ConfirmAgregarArticulos= async ()=>{
-    if (Articulos.length >0) {
+  const ConfirmAgregarArticulos = async () => {
+    if (Articulos.length > 0) {
       setAgregando(true);
       const loadingToast = toast.loading("Cargando...");
 
@@ -193,8 +198,8 @@ export const Ventas = () => {
         Articulos
       };
 
-      console.log("VentaModel",VentaModel)
-      
+      console.log("VentaModel", VentaModel)
+
       console.log("VentaModel", VentaModel);
 
       const requestOptions = {
@@ -206,11 +211,11 @@ export const Ventas = () => {
       console.log(Articulos);
 
       try {
-        const response = await fetch(UrlVenta+"AddArt/"+Ven.id, requestOptions);
+        const response = await fetch(UrlVenta + "AddArt/" + Ven.id, requestOptions);
 
         console.log("Response:", response);
 
-        if (!response.ok){
+        if (!response.ok) {
           toast.dismiss(loadingToast);
           setCreando(false);
           toast.error("Error al crea la ventar");
@@ -228,18 +233,18 @@ export const Ventas = () => {
         toast.dismiss(loadingToast);
         toast.error("Error al crea la ventar")
       }
-    }else{
+    } else {
       setAgregando(false);
       setShowModal(false)
       toast.error("No hay articulos");
     }
   }
 
-  const ConfirmAddArt=()=>{
-    const VentaInfoObj={
-      CliNombre:Ven.obra.cliente.Nombre,
-      Obra:Ven.obra.nombre,
-      FechaInstalacion:Ven.obra.fechaInstalacion
+  const ConfirmAddArt = () => {
+    const VentaInfoObj = {
+      CliNombre: Ven.obra.cliente.Nombre,
+      Obra: Ven.obra.nombre,
+      FechaInstalacion: Ven.obra.fechaInstalacion
     }
     setVentaInfo(VentaInfoObj)
     setAddArt(false)
@@ -270,24 +275,31 @@ export const Ventas = () => {
           setloadingDelete(false)
         }
       } catch (error) {
-        toast.error("error al eliminar",error)
+        toast.error("error al eliminar", error)
         setloadingDelete(false)
         console.error("Error al realizar la solicitud", error);
       }
     }
   };
+  const getStatus = (Venid) => {
+
+  }
+
 
   const [toastloading, settoastloading] = useState(null);
 
-const callBackToast = (mensaje, tipo) => {
-  if (tipo === "error") {
-    toast.error(mensaje);
+  const callBackToast = (mensaje, tipo) => {
+    if (tipo === "error") {
+      toast.error(mensaje);
+    }
+    if (tipo === "success") {
+      toast.success(mensaje);
+    }
+  };
+  const getStatuses =()=>{
+
   }
-  if (tipo === "success") {
-    toast.success(mensaje);
-  }
-};
-  
+
 
   return (
     <div className="container">
@@ -307,8 +319,8 @@ const callBackToast = (mensaje, tipo) => {
             />
           </div>
         </Col>
-        <Col>   
-    </Col>
+        <Col>
+        </Col>
       </Row>
 
       <div>
@@ -333,6 +345,21 @@ const callBackToast = (mensaje, tipo) => {
                       </div>
                       <div className="text-muted">{Ven.obra.nombre && Ven.obra.nombre}</div>
                     </Col>
+                    <Col>
+                      {!Ven.fechaInstalacion ? (
+                        <span style={{ color: "red" }}>
+                          Sin fecha de entrega
+                        </span>
+                      ) : new Date(Ven.fechaInstalacion) < Date.now() ? (
+                         <span style={{ color: "green" }}>
+                          Fecha de entrega pasada
+                        </span>
+                      ) : (
+                        <StatusCard statuses={{ telaCortada: Ven.estadoCorteTela, canoCortado: false, armado: true, probado: false }} />
+                       
+                      )}
+
+                    </Col>
                   </Row>
                 </div>
               ))}
@@ -348,7 +375,7 @@ const callBackToast = (mensaje, tipo) => {
       >
         <Modal.Header closeButton>
           <Modal.Title style={{ textAlign: "center", width: "100%" }}>
-            {isLoading ? null : <>Detalle de la Venta: {Ven.id-19000}</>}
+            {isLoading ? null : <>Detalle de la Venta: {Ven.id - 19000}</>}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -367,29 +394,29 @@ const callBackToast = (mensaje, tipo) => {
           )}
         </Modal.Body>
         <Modal.Footer className="d-flex justify-content-between">
-        {loadingDelete ? 
-            <div style={{marginLeft:"30px"}}>
-            <Loading tipo="small"/>
+          {loadingDelete ?
+            <div style={{ marginLeft: "30px" }}>
+              <Loading tipo="small" />
             </div>
-            : 
+            :
 
-          ConfirmDelete ? (
-            <Button
-              style={{ background: "red", borderColor: "red" }}
-              onClick={() => handleDelete()}
-            >
-              Seguro que desea eliminar la orden?
-            </Button>
-            
-          ) : (
-            <Button
-              style={{ background: "red", borderColor: "red" }}
-              onClick={() => setConfirmDelete(true)}
-            >
-              Eliminar
-            </Button>
-          )}
-          
+            ConfirmDelete ? (
+              <Button
+                style={{ background: "red", borderColor: "red" }}
+                onClick={() => handleDelete()}
+              >
+                Seguro que desea eliminar la orden?
+              </Button>
+
+            ) : (
+              <Button
+                style={{ background: "red", borderColor: "red" }}
+                onClick={() => setConfirmDelete(true)}
+              >
+                Eliminar
+              </Button>
+            )}
+
           <Button variant="secondary" onClick={handleClose}>
             Volver
           </Button>
@@ -403,7 +430,7 @@ const callBackToast = (mensaje, tipo) => {
         </Modal.Header>
         <Modal.Body>
           <AgregarArticulo />
-          <Button style={{margin:"40px",width:"80%"}} variant="primary" onClick={ConfirmAddArt}>
+          <Button style={{ margin: "40px", width: "80%" }} variant="primary" onClick={ConfirmAddArt}>
             Agregar
           </Button>
         </Modal.Body>
@@ -416,50 +443,50 @@ const callBackToast = (mensaje, tipo) => {
 
       {/*modal confirmar agregar articulo */}
       <Modal
-            show={ShowModalConfirmArt}
-            onHide={() => setShowModalConfirmArt(false)}
-            dialogClassName="custom-modal"
-          >
-            <Modal.Header closeButton>
-              <Modal.Title style={{ textAlign: "center", width: "100%" }}>
-                Cortinas a agregar
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <VentaPreview Venta={VentaInfo}/>
-              <Row className="button-row">
-                <Col className="d-flex justify-content-center">
-                  {Agregando ?
-                  <Loading tipo="small"/>
-                  :
-                  <Button
-                    className="custom-button"
-                    variant="primary"
-                    onClick={() => {
-                      ConfirmAgregarArticulos();
-                    }}
-                  >
-                    Agregar
-                  </Button>
-                  }
-                </Col>
-                <Col className="d-flex justify-content-center">
-                  <Button
-                    className="custom-button"
-                    style={{ backgroundColor: "red", borderColor: "red" }}
-                    onClick={() => setShowModalConfirmArt(false)}
-                  >
-                    Cancelar
-                  </Button>
-                </Col>
-              </Row>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowModal(false)}>
-                Volver
+        show={ShowModalConfirmArt}
+        onHide={() => setShowModalConfirmArt(false)}
+        dialogClassName="custom-modal"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title style={{ textAlign: "center", width: "100%" }}>
+            Cortinas a agregar
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <VentaPreview Venta={VentaInfo} />
+          <Row className="button-row">
+            <Col className="d-flex justify-content-center">
+              {Agregando ?
+                <Loading tipo="small" />
+                :
+                <Button
+                  className="custom-button"
+                  variant="primary"
+                  onClick={() => {
+                    ConfirmAgregarArticulos();
+                  }}
+                >
+                  Agregar
+                </Button>
+              }
+            </Col>
+            <Col className="d-flex justify-content-center">
+              <Button
+                className="custom-button"
+                style={{ backgroundColor: "red", borderColor: "red" }}
+                onClick={() => setShowModalConfirmArt(false)}
+              >
+                Cancelar
               </Button>
-            </Modal.Footer>
-          </Modal>
+            </Col>
+          </Row>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Volver
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div>
         <Toaster
           position="bottom-center"
@@ -472,17 +499,17 @@ const callBackToast = (mensaje, tipo) => {
         />
       </div>
       <Row>
-      <div style={{ padding: '20px' }}>
-      <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
-        <button onClick={restarPagina} disabled={Pagina === 0}>
-        ⬅️ 
-        </button>
-        <span>Página {Pagina+1}</span>
-        <button onClick={sumarPagina}>
-          ➡️
-        </button>
-      </div>
-    </div>
+        <div style={{ padding: '20px' }}>
+          <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+            <button onClick={restarPagina} disabled={Pagina === 0}>
+              ⬅️
+            </button>
+            <span>Página {Pagina + 1}</span>
+            <button onClick={sumarPagina}>
+              ➡️
+            </button>
+          </div>
+        </div>
       </Row>
     </div>
   );
