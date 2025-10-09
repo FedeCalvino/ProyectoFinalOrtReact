@@ -30,10 +30,7 @@ const getstatustela = () => {
   };
 
   const items = [
-    { key: 'telaCortada', label: 'Tela' },
-    { key: 'canoCortado', label: 'Caño' },
-    { key: 'armado', label: 'Armado' },
-    { key: 'probado', label: 'Probado' },
+    { key: 'telaCortada', label: 'Tela' }
   ];
 
   return (
