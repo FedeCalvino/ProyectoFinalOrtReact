@@ -75,7 +75,7 @@ export default function StatusInline(statuses) {
               )
             )}
           </span>
-          <span>{it.label}</span>
+          <span><span>{getstatustela() !== null && it.label}</span></span>
         </div>
       ))}
     </div>
