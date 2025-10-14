@@ -12,10 +12,10 @@ export default function StatusCorteTela({ status }) {
 
   const estadoTela = getStatusTela();
 
-  // Si no hay pasos, no mostrar nada
+  // Si no hay pasos o el estado es nulo → no mostrar nada
   if (estadoTela === null) return null;
 
-  // Determinar ícono según estado
+  // Elegir ícono según estado
   const getIcon = () => {
     if (estadoTela === true)
       return <img src="/cheque.png" alt="Completado" style={{ width: 20, height: 20 }} />;
@@ -24,7 +24,15 @@ export default function StatusCorteTela({ status }) {
     if (estadoTela === 0)
       return <img src="/circulo.png" alt="En proceso" style={{ width: 20, height: 20 }} />;
   };
-
+   const getText = () => {
+    if (estadoTela === true)
+     return "Tela Cortada"
+    if (estadoTela === false)
+     return "Tela Sin Cortar"
+    if (estadoTela === 0)
+    return "Tela en Proceso"
+  };
+  // Render
   return (
     <div
       style={{
@@ -46,7 +54,7 @@ export default function StatusCorteTela({ status }) {
           fontSize: "14px",
         }}
       >
-        Tela cortada
+        {getText()}
       </span>
     </div>
   );

@@ -19,7 +19,7 @@ import { Loading } from "../Componentes/Loading";
 import { AgregarArticulo } from "../Componentes/AgregarArticulo.jsx";
 import { removeAllArticulos, selectArticulos } from "../Features/ArticulosReducer";
 import { VentaPreview } from "../Componentes/VentaPreview";
-import StatusCard from "../Componentes/StatusCard.jsx";
+import StatusCorteTela from "../Componentes/StatusCorteTela.jsx";
 export const Ventas = () => {
   const [isLoading, setIsLoading] = useState(false);
   const Ven = useSelector(selectVenta);
@@ -43,7 +43,7 @@ export const Ventas = () => {
   const ConfigRoller = useSelector(selectRollerConfig);
 
 
-  
+
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/VentasEP/";
@@ -297,7 +297,7 @@ export const Ventas = () => {
       toast.success(mensaje);
     }
   };
-  const getStatuses =()=>{
+  const getStatuses = () => {
 
   }
 
@@ -351,13 +351,12 @@ export const Ventas = () => {
                         <span style={{ color: "red" }}>
                           Sin fecha de entrega
                         </span>
-                      ) : new Date(Ven.fechaInstalacion) < Date.now() ? (
-                         <span style={{ color: "green" }}>
+                      ) : new Date(Ven.fechaInstalacion).getTime() < Date.now() ? (
+                        <span style={{ color: "green" }}>
                           Fecha de entrega pasada
                         </span>
                       ) : (
-                        <StatusCard statuses={{ telaCortada: Ven.estadoCorteTela, canoCortado: false, armado: true, probado: false }} />
-                       
+                        <StatusCorteTela status={Ven.estadoCorteTela} />
                       )}
 
                     </Col>
