@@ -37,7 +37,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import html2pdf from "html2pdf.js";
 import html2canvas from "html2canvas";
 
-export const VentaView = ({ callBackToast, callBackAddArt }) => {
+export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
   const dispatch = useDispatch();
 
   const ConfigRoller = useSelector(selectRollerConfig);
@@ -638,6 +638,13 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
     }
   };
 
+  const getIcon = (estado) => {
+    if (estado === "TERMINADO")
+      return <img src="/cheque.png" alt="Completado" style={{ width: 20, height: 20 }} />;
+    if (estado === "SIN TERMINAR")
+      return <img src="/eliminar.png" alt="No completado" style={{ width: 20, height: 20 }} />;
+  };
+
   const downloadTicket = async () => {
     console.log("Ven", Ven);
     console.log("CortinasRoller", Rollers);
@@ -1178,6 +1185,12 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
                     <th>Lado Cadena</th>
                     <th>Posición</th>
                     <th>Motorizado</th>
+                    {estado!=="todas" &&
+                    <>
+                    <th>Tela</th>
+                    <th>Caño</th>
+                    </>
+                    }
                   </tr>
                 </thead>
                 <tbody>
@@ -1202,6 +1215,12 @@ export const VentaView = ({ callBackToast, callBackAddArt }) => {
                       <td>{findNameLadoCadena(Cor.ladoCadena?.ladoId)}</td>
                       <td>{findNamePos(Cor.posicion?.posicionId)}</td>
                       <td>{findNameMotor(Cor.motorRoller?.idMotor)}</td>
+                      {estado!=="todas" &&
+                      <>
+                      <th>{getIcon(Cor.estadoCorteTela)}</th>
+                      <th>{getIcon(Cor.estadoCorteCano)}</th>
+                      </>
+                      }
                     </tr>
                   ))}
                 </tbody>

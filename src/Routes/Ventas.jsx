@@ -53,10 +53,10 @@ export const Ventas = () => {
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlDelete = "/VentasEP/";
-  /*
-
+  
+/*
   const UrlVentas = "http://200.40.89.254:8085/Ventas";
-  const UrlVenta = "http://200.40.89.254:8086/Ventas/";
+  const UrlVenta = "http://localhost:8085/Ventas/";
   const UrlDelete = "http://200.40.89.254:8086/Ventas/";
 */
   const setVentaView = async (Venta) => {
@@ -67,6 +67,7 @@ export const Ventas = () => {
         setIsLoading(true);
 
         try {
+          if(filterType==="todas"){
           const res = await fetch(UrlVenta + Venta.id, {
             method: "GET",
             headers: {
@@ -79,6 +80,20 @@ export const Ventas = () => {
           console.log(data.body);
           dispatch(setArticulos(data.body.listaArticulos));
           dispatch(setVenta(data.body));
+        }else{
+            const res = await fetch(UrlVenta+"EstadoPasos/"+ Venta.id, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzM4NzY4NjA3LCJleHAiOjE3Mzg3NzIyMDcsIm5vbWJyZSI6IjEyMzQ1In0.Ihx6ZdPhMp9xP8-5erZDkD5lUS-afw5SciY75OPweu2vtAAS4XMnVUX0yM02wggCcOqVhdzgcm18oV55y9kP0w`,
+                "Content-Type": "application/json",
+              },
+            });
+            const data = await res.json();
+            console.log("articulos", data.body.listaArticulos);
+            console.log(data.body);
+            dispatch(setArticulos(data.body.listaArticulos));
+            dispatch(setVenta(data.body));
+        }
         } catch (error) {
           console.log(error);
         } finally {
@@ -202,6 +217,19 @@ export const Ventas = () => {
       <div className="day-header mt-4">
         <h3>
           {formatDate(fechaInstalacion)}{" "}
+          {
+            diffDays ===1  ? 
+            <>
+            <span
+            style={{
+              color: "white",
+              fontSize: "18px",
+            }}
+          >
+            Mañana
+          </span>
+          </>
+            :
           <span
             style={{
               color: "white",
@@ -214,6 +242,7 @@ export const Ventas = () => {
               ? "(Hoy)"
               : `(Faltan ${diffDays} días)`}
           </span>
+          }
         </h3>
       </div>
     );
@@ -489,7 +518,9 @@ export const Ventas = () => {
                           Fecha de entrega pasada
                         </span>
                       ) : (
+                        filterType==="activas" && 
                         <StatusCorteTela status={Ven.estadoCorteTela} />
+                       
                       )}
                     </Col>
                   </Row>
@@ -525,6 +556,7 @@ export const Ventas = () => {
             <VentaView
               callBackToast={callBackToast}
               callBackAddArt={callBackAddArt}
+              estado={filterType}
             />
           )}
         </Modal.Body>
