@@ -21,6 +21,10 @@
     },
     {
       "source": "/VentasEP/:path*",
+      "destination": "http://200.40.89.254:8088/Ventas/:path*"
+    },
+    {
+      "source": "/VentasEP2/:path*",
       "destination": "http://200.40.89.254:8085/Ventas/:path*"
     },
     {

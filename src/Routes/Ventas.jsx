@@ -23,6 +23,8 @@ import {
 } from "../Features/ArticulosReducer";
 import { VentaPreview } from "../Componentes/VentaPreview";
 import StatusCorteTela from "../Componentes/StatusCorteTela.jsx";
+import { Client } from '@stomp/stompjs';
+
 export const Ventas = () => {
   const [isLoading, setIsLoading] = useState(false);
   const Ven = useSelector(selectVenta);
@@ -49,14 +51,16 @@ export const Ventas = () => {
   const [Pagina, setPagina] = useState(0);
   const ConfigRoller = useSelector(selectRollerConfig);
 
-  
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
+  const UrlVenta2 = "/VentasEP2/";
   const UrlDelete = "/VentasEP/";
+
   
 /*
   const UrlVentas = "http://200.40.89.254:8085/Ventas";
-  const UrlVenta = "http://localhost:8085/Ventas/";
+  const UrlVenta = "http://200.40.89.254:8088/Ventas/";
+  const UrlVenta2 = "http://200.40.89.254:8085/Ventas/";
   const UrlDelete = "http://200.40.89.254:8086/Ventas/";
 */
   const setVentaView = async (Venta) => {
@@ -81,7 +85,7 @@ export const Ventas = () => {
           dispatch(setArticulos(data.body.listaArticulos));
           dispatch(setVenta(data.body));
         }else{
-            const res = await fetch(UrlVenta+"EstadoPasos/"+ Venta.id, {
+            const res = await fetch(UrlVenta2+"EstadoPasos/"+ Venta.id, {
               method: "GET",
               headers: {
                 Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzM4NzY4NjA3LCJleHAiOjE3Mzg3NzIyMDcsIm5vbWJyZSI6IjEyMzQ1In0.Ihx6ZdPhMp9xP8-5erZDkD5lUS-afw5SciY75OPweu2vtAAS4XMnVUX0yM02wggCcOqVhdzgcm18oV55y9kP0w`,
@@ -156,8 +160,31 @@ export const Ventas = () => {
     }
   };
 
+  const connect = () => {
+    const client = new Client({
+      brokerURL: 'ws://localhost:8085/OrdenesSocket', 
+      reconnectDelay: 5000, 
+      debug: (msg) => console.log(msg), 
+      onConnect: () => {
+        console.log('Conexión WebSocket exitosa');
+        // Suscribirse al canal
+        client.subscribe('/topic/orders', (message) => {
+          console.log('Mensaje recibido:', message.body);
+          FetchVentas()
+        });
+      },
+      onStompError: (frame) => {
+        console.error('Error en STOMP:', frame);
+      },
+    });
+  
+    // Activar la conexión
+    client.activate();
+  };
+
   useEffect(() => {
     FetchVentas(0);
+    connect()
   }, []);
 
   const MostrarDia = ({ Day }) => {
