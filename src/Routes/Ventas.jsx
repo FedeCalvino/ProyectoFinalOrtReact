@@ -291,7 +291,7 @@ export const Ventas = () => {
       setFilterType("todas")
       try {
         const res = await fetch(
-          `${UrlVentas}/VentaNombreCli/${debouncedSearchText}`
+          `${UrlVenta2}/VentaNombreCli/${debouncedSearchText}`
         );
         const data = await res.json();
         console.log("dataaa", data);
