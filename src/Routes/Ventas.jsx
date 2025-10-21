@@ -139,7 +139,7 @@ export const Ventas = () => {
       setVentasTotales(sortedData);
 
       try {
-        const res = await fetch(`${UrlVentas}/Activas`);
+        const res = await fetch(`${UrlVenta2}/Activas`);
         const data = await res.json();
         console.log("activas", data);
 
@@ -184,7 +184,7 @@ export const Ventas = () => {
 
   useEffect(() => {
     FetchVentas(0);
-    connect()
+    //connect()
   }, []);
 
   const MostrarDia = ({ Day }) => {
