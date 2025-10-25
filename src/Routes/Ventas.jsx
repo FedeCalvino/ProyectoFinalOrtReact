@@ -22,8 +22,8 @@ import {
   selectArticulos,
 } from "../Features/ArticulosReducer";
 import { VentaPreview } from "../Componentes/VentaPreview";
-import StatusCorteTela from "../Componentes/StatusCorteTela.jsx";
-import { Client } from '@stomp/stompjs';
+import Status from "../Componentes/Status.jsx";
+import { Client } from "@stomp/stompjs";
 
 export const Ventas = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -50,17 +50,16 @@ export const Ventas = () => {
   const [loadingDelete, setloadingDelete] = useState(false);
   const [Pagina, setPagina] = useState(0);
   const ConfigRoller = useSelector(selectRollerConfig);
-
+  
   const UrlVentas = "/VentasEP";
   const UrlVenta = "/VentasEP/";
   const UrlVenta2 = "/VentasEP2/";
   const UrlDelete = "/VentasEP/";
 
-  
 /*
   const UrlVentas = "http://200.40.89.254:8085/Ventas";
   const UrlVenta = "http://200.40.89.254:8088/Ventas/";
-  const UrlVenta2 = "http://200.40.89.254:8085/Ventas/";
+  const UrlVenta2 = "http://200.40.89.254:8081/Ventas/";
   const UrlDelete = "http://200.40.89.254:8086/Ventas/";
 */
   const setVentaView = async (Venta) => {
@@ -71,21 +70,8 @@ export const Ventas = () => {
         setIsLoading(true);
 
         try {
-          if(filterType==="todas"){
-          const res = await fetch(UrlVenta + Venta.id, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzM4NzY4NjA3LCJleHAiOjE3Mzg3NzIyMDcsIm5vbWJyZSI6IjEyMzQ1In0.Ihx6ZdPhMp9xP8-5erZDkD5lUS-afw5SciY75OPweu2vtAAS4XMnVUX0yM02wggCcOqVhdzgcm18oV55y9kP0w`,
-              "Content-Type": "application/json",
-            },
-          });
-          const data = await res.json();
-          console.log("articulos", data.body.listaArticulos);
-          console.log(data.body);
-          dispatch(setArticulos(data.body.listaArticulos));
-          dispatch(setVenta(data.body));
-        }else{
-            const res = await fetch(UrlVenta2+"EstadoPasos/"+ Venta.id, {
+          if (filterType === "todas") {
+            const res = await fetch(UrlVenta + Venta.id, {
               method: "GET",
               headers: {
                 Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzM4NzY4NjA3LCJleHAiOjE3Mzg3NzIyMDcsIm5vbWJyZSI6IjEyMzQ1In0.Ihx6ZdPhMp9xP8-5erZDkD5lUS-afw5SciY75OPweu2vtAAS4XMnVUX0yM02wggCcOqVhdzgcm18oV55y9kP0w`,
@@ -97,7 +83,20 @@ export const Ventas = () => {
             console.log(data.body);
             dispatch(setArticulos(data.body.listaArticulos));
             dispatch(setVenta(data.body));
-        }
+          } else {
+            const res = await fetch(UrlVenta2 + "EstadoPasos/" + Venta.id, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzM4NzY4NjA3LCJleHAiOjE3Mzg3NzIyMDcsIm5vbWJyZSI6IjEyMzQ1In0.Ihx6ZdPhMp9xP8-5erZDkD5lUS-afw5SciY75OPweu2vtAAS4XMnVUX0yM02wggCcOqVhdzgcm18oV55y9kP0w`,
+                "Content-Type": "application/json",
+              },
+            });
+            const data = await res.json();
+            console.log("articulos", data.body.listaArticulos);
+            console.log(data.body);
+            dispatch(setArticulos(data.body.listaArticulos));
+            dispatch(setVenta(data.body));
+          }
         } catch (error) {
           console.log(error);
         } finally {
@@ -139,7 +138,7 @@ export const Ventas = () => {
       setVentasTotales(sortedData);
 
       try {
-        const res = await fetch(`${UrlVenta2}/Activas`);
+        const res = await fetch(`${UrlVenta2}Activas`);
         const data = await res.json();
         console.log("activas", data);
 
@@ -160,31 +159,55 @@ export const Ventas = () => {
     }
   };
 
+  const FetchVentasActivas = async () => {
+    try {
+      const res = await fetch(`${UrlVenta2}Activas`);
+      const data = await res.json();
+      console.log("activas", data);
+
+      const sortedData = data.body.sort((a, b) => {
+        const fechaA = new Date(a.fechaInstalacion || a.fecha);
+        const fechaB = new Date(b.fechaInstalacion || b.fecha);
+        return fechaA - fechaB; // ascendente por fecha de instalación
+      });
+
+      setVentasActivas(sortedData);
+
+      // Si el filtro activo es "activas", también actualizar el estado Ventas
+      if (filterType === "activas") {
+        setVentas(sortedData);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error al cargar las ventas activas");
+    }
+  };
+
   const connect = () => {
     const client = new Client({
-      brokerURL: 'ws://localhost:8085/OrdenesSocket', 
-      reconnectDelay: 5000, 
-      debug: (msg) => console.log(msg), 
+      brokerURL: "ws://localhost:8083/OrdenesSocket",
+      reconnectDelay: 5000,
+      debug: (msg) => console.log(msg),
       onConnect: () => {
-        console.log('Conexión WebSocket exitosa');
+        console.log("Conexión WebSocket exitosa");
         // Suscribirse al canal
-        client.subscribe('/topic/orders', (message) => {
-          console.log('Mensaje recibido:', message.body);
-          FetchVentas()
+        client.subscribe("/topic/orders", (message) => {
+          console.log("Mensaje recibido:", message.body);
+          FetchVentasActivas();
         });
       },
       onStompError: (frame) => {
-        console.error('Error en STOMP:', frame);
+        console.error("Error en STOMP:", frame);
       },
     });
-  
+
     // Activar la conexión
     client.activate();
   };
 
   useEffect(() => {
     FetchVentas(0);
-    //connect()
+    connect();
   }, []);
 
   const MostrarDia = ({ Day }) => {
@@ -234,7 +257,7 @@ export const Ventas = () => {
 
     const formatDate = (dateString) => {
       const date = new Date(dateString);
-      const day = String(date.getDate() +1).padStart(2, "0");
+      const day = String(date.getDate() + 1).padStart(2, "0");
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const year = date.getFullYear();
       return `${day}/${month}`;
@@ -244,32 +267,31 @@ export const Ventas = () => {
       <div className="day-header mt-4">
         <h3>
           {formatDate(fechaInstalacion)}{" "}
-          {
-            diffDays ===1  ? 
+          {diffDays === 1 ? (
             <>
+              <span
+                style={{
+                  color: "white",
+                  fontSize: "18px",
+                }}
+              >
+                Mañana
+              </span>
+            </>
+          ) : (
             <span
-            style={{
-              color: "white",
-              fontSize: "18px",
-            }}
-          >
-            Mañana
-          </span>
-          </>
-            :
-          <span
-            style={{
-              color: "white",
-              fontSize: "18px",
-            }}
-          >
-            {diffDays < 0
-              ? `(${Math.abs(diffDays)} días atrás)`
-              : diffDays === 0
-              ? "(Hoy)"
-              : `(Faltan ${diffDays} días)`}
-          </span>
-          }
+              style={{
+                color: "white",
+                fontSize: "18px",
+              }}
+            >
+              {diffDays < 0
+                ? `(${Math.abs(diffDays)} días atrás)`
+                : diffDays === 0
+                ? "(Hoy)"
+                : `(Faltan ${diffDays} días)`}
+            </span>
+          )}
         </h3>
       </div>
     );
@@ -288,10 +310,10 @@ export const Ventas = () => {
 
   const FiltrarVentas = async () => {
     if (debouncedSearchText.trim() && debouncedSearchText.trim().length >= 3) {
-      setFilterType("todas")
+      setFilterType("todas");
       try {
         const res = await fetch(
-          `${UrlVenta2}/VentaNombreCli/${debouncedSearchText}`
+          `${UrlVenta2}VentaNombreCli/${debouncedSearchText}`
         );
         const data = await res.json();
         console.log("dataaa", data);
@@ -399,6 +421,11 @@ export const Ventas = () => {
       toast.error("No hay articulos");
     }
   };
+
+  const getTieneRieles = (ven) => !((ven.estadoCorteRiel || "").includes("SIN PASOS"));
+
+  const getTieneRollers = (ven) => !((ven.estadoCorteTela || "").includes("SIN PASOS"));
+  
 
   const ConfirmAddArt = () => {
     const VentaInfoObj = {
@@ -526,7 +553,7 @@ export const Ventas = () => {
                   key={Ven.id}
                 >
                   <Row className="align-items-center">
-                    <Col md={7}>
+                    <Col md={3}>
                       <div style={{ fontSize: "26px" }} className="fw-bold">
                         {Ven.obra.cliente?.nombre}
                       </div>
@@ -545,9 +572,95 @@ export const Ventas = () => {
                           Fecha de entrega pasada
                         </span>
                       ) : (
-                        filterType==="activas" && 
-                        <StatusCorteTela status={Ven.estadoCorteTela} />
-                       
+                        filterType === "activas" && (
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "flex-start",
+                              gap: "25px",
+                              marginTop: "15px",
+                            }}
+                          >
+                            {
+                            getTieneRollers(Ven) &&
+                            <div
+                              style={{
+                                border: "2px solid #ccc",
+                                borderRadius: "10px",
+                                padding: "10px 15px",
+                                textAlign: "center",
+                                minWidth: "220px",
+                                boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                              }}
+                            >
+                              <p
+                                style={{
+                                  fontWeight: "600",
+                                  fontSize: "16px",
+                                  marginBottom: "8px",
+                                }}
+                              >
+                                Rollers
+                              </p>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  gap: "10px",
+                                }}
+                              >
+                                <Status
+                                  status={Ven.estadoCorteTela}
+                                  tipo="Tela"
+                                />
+                                <Status
+                                  status={Ven.estadoCorteCano}
+                                  tipo="Cano"
+                                />
+                              </div>
+                            </div>
+                            }
+
+                            {
+                            getTieneRieles(Ven) &&
+                            <div
+                              style={{
+                                border: "2px solid #ccc",
+                                borderRadius: "10px",
+                                padding: "10px 15px",
+                                textAlign: "center",
+                                minWidth: "220px",
+                                boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                              }}
+                            >
+                              <p
+                                style={{
+                                  fontWeight: "600",
+                                  fontSize: "16px",
+                                  marginBottom: "8px",
+                                }}
+                              >
+                                Rieles
+                              </p>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  gap: "10px",
+                                }}
+                              >
+                                <Status
+                                  status={Ven.estadoCorteRiel}
+                                  tipo="Riel"
+                                />
+                              </div>
+                            </div>
+                          }
+                          </div>
+                        )
                       )}
                     </Col>
                   </Row>

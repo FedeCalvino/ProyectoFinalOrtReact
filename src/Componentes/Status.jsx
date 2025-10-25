@@ -1,8 +1,8 @@
 import React from "react";
 
-export default function StatusCorteTela({ status }) {
+export default function Status({ status,tipo }) {
   // Función que interpreta el estado textual
-  const getStatusTela = () => {
+  const getStatus = () => {
     if (status === "TODOS TERMINADOS") return true;
     if (status === "EN PROCESO") return 0;
     if (status === "NINGUNO TERMINADO") return false;
@@ -10,27 +10,53 @@ export default function StatusCorteTela({ status }) {
     return null;
   };
 
-  const estadoTela = getStatusTela();
+  const estado = getStatus();
 
   // Si no hay pasos o el estado es nulo → no mostrar nada
-  if (estadoTela === null) return null;
+  if (estado === null) return null;
 
   // Elegir ícono según estado
   const getIcon = () => {
-    if (estadoTela === true)
+    if (estado === true)
       return <img src="/cheque.png" alt="Completado" style={{ width: 20, height: 20 }} />;
-    if (estadoTela === false)
+    if (estado === false)
       return <img src="/eliminar.png" alt="No completado" style={{ width: 20, height: 20 }} />;
-    if (estadoTela === 0)
+    if (estado === 0)
       return <img src="/circulo.png" alt="En proceso" style={{ width: 20, height: 20 }} />;
   };
    const getText = () => {
-    if (estadoTela === true)
-     return "Tela Cortada"
-    if (estadoTela === false)
-     return "Tela Sin Cortar"
-    if (estadoTela === 0)
-    return "Tela en Proceso"
+    if(tipo==="Tela"){
+      if (estado === true)
+      return "Tela Cortada"
+      if (estado === false)
+      return "Tela Sin Cortar"
+      if (estado === 0)
+      return "Tela en Proceso"
+    }
+    if(tipo==="Armado"){
+      if (estado === true)
+      return "Armado"
+      if (estado === false)
+      return "Sin Armar"
+      if (estado === 0)
+      return "Armado en Proceso"
+    }
+    if(tipo==="Riel"){
+      if (estado === true)
+      return "Riel Cortado"
+      if (estado === false)
+      return "Riel sin Cortar"
+      if (estado === 0)
+      return "Rieles en Proceso"
+    }
+    if(tipo==="Cano"){
+      if (estado === true)
+      return "Caño Cortado"
+      if (estado === false)
+      return "Caño sin cortar"
+      if (estado === 0)
+      return "Caño en Proceso"
+    }
   };
   // Render
   return (
@@ -50,7 +76,7 @@ export default function StatusCorteTela({ status }) {
       {getIcon()}
       <span
         style={{
-          fontWeight: estadoTela === true ? "600" : "400",
+          fontWeight: estado === true ? "600" : "400",
           fontSize: "14px",
         }}
       >
