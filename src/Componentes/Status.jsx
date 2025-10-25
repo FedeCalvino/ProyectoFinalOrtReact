@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function Status({ status,tipo }) {
-  // Función que interpreta el estado textual
+
   const getStatus = () => {
     if (status === "TODOS TERMINADOS") return true;
     if (status === "EN PROCESO") return 0;
@@ -27,7 +27,7 @@ export default function Status({ status,tipo }) {
    const getText = () => {
     if(tipo==="Tela"){
       if (estado === true)
-      return "Tela Cortada"
+      return "Tela "
       if (estado === false)
       return "Tela Sin Cortar"
       if (estado === 0)
@@ -80,7 +80,7 @@ export default function Status({ status,tipo }) {
           fontSize: "14px",
         }}
       >
-        {getText()}
+        {tipo}
       </span>
     </div>
   );
