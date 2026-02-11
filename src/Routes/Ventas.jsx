@@ -110,7 +110,7 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
             dispatch(setArticulos(data.body.listaArticulos));
             dispatch(setVenta(data.body));
           } else {
-            const res = await fetch(UrlVenta2 + "EstadoPasos/" + Venta.id, {
+            const res = await fetch(UrlVenta2 + "/EstadoPasos/" + Venta.id, {
               method: "GET",
               headers: {
                 ...getAuthHeaders(),
@@ -158,6 +158,7 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
   // ✅ traer acciones (con opción notify para WS)
   const FetchActividades = async ({ notify = false } = {}) => {
     try {
+      console.log("UrlActividades",UrlActividades)
       const res = await fetch(UrlActividades);
       const data = await res.json();
       console.log("Actividades",data)
@@ -212,7 +213,7 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
       setVentasTotales(sortedData);
 
       try {
-        const res = await fetch(`${UrlVenta2}Activas`);
+        const res = await fetch(`${UrlVenta2}/Activas`);
         const data = await res.json();
 
         const sortedActivas = data.body.sort((a, b) => {
@@ -234,7 +235,7 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
 
   const FetchVentasActivas = async () => {
     try {
-      const res = await fetch(`${UrlVenta2}Activas`);
+      const res = await fetch(`${UrlVenta2}/Activas`);
       const data = await res.json();
 
       const sortedData = data.body.sort((a, b) => {
