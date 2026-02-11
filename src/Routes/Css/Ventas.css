@@ -239,3 +239,18 @@
     transform: scale(1.05);
   }
   
+  /* Ventas.css (AGREGAR AL FINAL) */
+@keyframes blinkGreen {
+  0%,
+  100% {
+    background: white;
+  }
+  50% {
+    background: rgba(0, 180, 0, 0.12);
+  }
+}
+
+.accion-flash {
+  animation: blinkGreen 0.45s ease-in-out 6; /* ~2.7s */
+  border: 3px solid rgba(0, 180, 0, 0.35) !important;
+}

@@ -30,7 +30,7 @@ const App = () => {
 /*
   const UrlTipoConfig = "http://localhost:8086/Conf"
     const UrlTelas = "http://localhost:8086/Telas"
-  */ 
+  */
     const fetchRollerConf = async () => {
       try {
         const res = await fetch(UrlTipoConfig);

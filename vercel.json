@@ -28,6 +28,10 @@
       "destination": "http://200.40.89.254:8085/Ventas/:path*"
     },
     {
+      "source": "/VentasEP3/:path*",
+      "destination": "http://200.40.89.254:8081/:path*"
+    },
+    {
       "source": "/LoteEp/:path*",
       "destination": "http://200.40.89.254:8088/Lote/:path*"
     },

@@ -24,40 +24,6 @@ export default function Status({ status,tipo }) {
     if (estado === 0)
       return <img src="/circulo.png" alt="En proceso" style={{ width: 20, height: 20 }} />;
   };
-   const getText = () => {
-    if(tipo==="Tela"){
-      if (estado === true)
-      return "Tela "
-      if (estado === false)
-      return "Tela Sin Cortar"
-      if (estado === 0)
-      return "Tela en Proceso"
-    }
-    if(tipo==="Armado"){
-      if (estado === true)
-      return "Armado"
-      if (estado === false)
-      return "Sin Armar"
-      if (estado === 0)
-      return "Armado en Proceso"
-    }
-    if(tipo==="Riel"){
-      if (estado === true)
-      return "Riel Cortado"
-      if (estado === false)
-      return "Riel sin Cortar"
-      if (estado === 0)
-      return "Rieles en Proceso"
-    }
-    if(tipo==="Cano"){
-      if (estado === true)
-      return "Caño Cortado"
-      if (estado === false)
-      return "Caño sin cortar"
-      if (estado === 0)
-      return "Caño en Proceso"
-    }
-  };
   // Render
   return (
     <div
