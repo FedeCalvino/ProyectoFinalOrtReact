@@ -85,6 +85,7 @@ const UrlVenta = "/VentasEP/";
 const UrlVenta2 = "/VentasEP3/Ventas";
 const UrlDelete = "/VentasEP/";
 const UrlActividades = "/VentasEP3/Acciones/Ultimas";
+
   // ✅ auth helper (NO hardcode token)
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token"); // ajustá el key si es otro
@@ -296,7 +297,7 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
     if (clientOrdenesRef.current?.active) return;
 
     const client = new Client({
-      brokerURL: "ws://localhost:8081/OrdenesSocket",
+      brokerURL: "ws://200.40.89.254:8081/OrdenesSocket",
       reconnectDelay: 5000,
       debug: (msg) => console.log("[ORDENES]", msg),
 
@@ -687,7 +688,9 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
                       }}
                       title={nombreCliente}
                     >
-                      {nombreCliente}
+                      {nombreCliente ?? "-"}{" "}
+                      <span style={{ opacity: 0.7 }}>—</span>{" "}
+                      <b>Empleado:</b> {a?.empleado?.nombre ?? "-"}
                     </div>
 
                     <div
