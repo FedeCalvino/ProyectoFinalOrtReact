@@ -276,6 +276,10 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
   const findTelaTradi = (IdTela) => {
     return TiposTelasTradi?.find((Tela) => Tela.id === IdTela);
   };
+  const findLadoAcumula = (idLado) => {
+    return ladosAcumula?.find((acc) => acc.ladoAcumulaId === parseInt(idLado))
+      ?.nombre;
+  };
   const [Cadena, setCadena] = useState("");
 
   /* const AddCor = async () => {
@@ -369,6 +373,9 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
         newCor.coloTela = findTelaTradi(newCor.IdTipoTela)?.color;
         newCor.Pinza.nombre = findNameTipoPinza(newCor.Pinza?.idPinza);
         newCor.ganchos.nombre = findNameTipoGancho(newCor.ganchos?.idGanchos);
+      }
+      if (newCor.nombre === "Riel") {
+        newCor.ladoAcumula.nombre = findLadoAcumula(newCor.ladoAcumula.ladoAcumulaId);
       }
 
       console.log("ArticuloDesp", newCor);

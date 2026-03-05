@@ -161,6 +161,44 @@ export const TicketCortina = ({ NombreCli, Articulos }) => {
 
   return (
     <Document>
+      
+      {CortinasRiel.map((cor) => (
+        <Page size={[34, 12]} style={styles.page} key={cor.idCortina}>
+          <View style={styles.tableContainer1}>
+            <View style={styles.tableRow}>
+              <Text style={[styles.tableCell131]}>{NombreCli}</Text>
+            </View>
+          </View>
+          <View style={styles.tableRow2}>
+          <Text
+                    style={[
+                      styles.tableCell255
+                    ]}
+                  >
+                    Riel
+                  </Text>
+            <Text
+              style={[
+                styles.tableCell25,
+                { fontSize: cor.ambiente.length >= 6 ? 1.8 : fontSize },
+              ]}
+            >
+              {cor.ambiente}
+            </Text>
+          </View>
+          <View style={styles.tableContainer}>
+            <View style={styles.tableRow}>
+              <Text style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}>
+                Ancho: {cor.ancho.toFixed(3)}
+              </Text>
+              <Text style={[styles.tableCell9, { fontSize: 2 }]}>/</Text>
+              <Text style={[styles.tableCell911, { fontSize: 2 }]}>
+                {cor.ladoAcumula.nombre}
+              </Text>
+            </View>
+          </View>
+        </Page>
+      ))}
       {Cortinasroller.map((cor) => (
         <Page size={[34, 12]} style={styles.page} key={cor.idCortina}>
           <View style={styles.tableContainer1}>

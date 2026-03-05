@@ -601,7 +601,13 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
     const formatHora = (value) => {
       const d = new Date(value);
       if (Number.isNaN(d.getTime())) return "";
-      return d.toLocaleTimeString("es-UY", { hour: "2-digit", minute: "2-digit" });
+    
+      return d.toLocaleString("es-UY", {
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
     };
 
     const labelTipo = (tipo) => {
@@ -657,6 +663,7 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
                 a.nombreCliente || a.NombreCliente || a.cliente || "Cliente";
               const tipo = labelTipo(a.tipoAccion || a.Accion || a.accion);
               const hora = formatHora(a.fechaHora || a.fecha || a.Fecha);
+              
               const terminar = esTerminar(a);
 
               const id = getActionId(a);
