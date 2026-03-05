@@ -56,6 +56,11 @@ const styles = StyleSheet.create({
     width: "18%",
     textAlign: "center",
   },
+  tableCell71: {
+    fontSize: 2,
+    width: "40%",
+    textAlign: "center",
+  },
   tableCell8: {
     fontSize: 2,
     width: "18%",
@@ -78,6 +83,12 @@ const styles = StyleSheet.create({
   tableCell911: {
     fontSize: 2,
     width: "10%",
+    textAlign: "center",
+    borderBottomColor: "#000000",
+  },
+  tableCell9112: {
+    fontSize: 2,
+    width: "20%",
     textAlign: "center",
     borderBottomColor: "#000000",
   },
@@ -188,11 +199,11 @@ export const TicketCortina = ({ NombreCli, Articulos }) => {
           </View>
           <View style={styles.tableContainer}>
             <View style={styles.tableRow}>
-              <Text style={[styles.tableCell7, { fontSize: fontSizeMedidas }]}>
-                Ancho: {cor.ancho.toFixed(3)}
+              <Text style={[styles.tableCell71, { fontSize: fontSizeMedidas }]}>
+                {cor.ancho.toFixed(3)}
               </Text>
               <Text style={[styles.tableCell9, { fontSize: 2 }]}>/</Text>
-              <Text style={[styles.tableCell911, { fontSize: 2 }]}>
+              <Text style={[styles.tableCell9112, { fontSize: 2 }]}>
                 {cor.ladoAcumula.nombre}
               </Text>
             </View>
