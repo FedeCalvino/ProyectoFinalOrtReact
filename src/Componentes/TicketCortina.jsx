@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   },
   tableCell9112: {
     fontSize: 2,
-    width: "20%",
+    width: "30%",
     textAlign: "center",
     borderBottomColor: "#000000",
   },
