@@ -14,6 +14,8 @@ import { Ordenes } from '../Routes/Ordenes';
 import { Lotes } from '../Routes/Lotes';
 import { Toaster, toast } from "react-hot-toast";
 import { CrearVentaObra } from '../Routes/CrearVentaObra';
+import { Deposito } from '../Routes/Deposito';
+
 const App = () => {
     
     const dispatch = useDispatch()
@@ -160,6 +162,12 @@ const App = () => {
                 <Route path='/Lotes' element={
                     <ProtectedRoute user={User} login={login}>
                        <Lotes/>
+                    </ProtectedRoute>} >
+                    
+                </Route>
+                <Route path='/Deposito' element={
+                    <ProtectedRoute user={User} login={login}>
+                       <Deposito/>
                     </ProtectedRoute>} >
                     
                 </Route>
