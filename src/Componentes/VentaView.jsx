@@ -513,6 +513,7 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
     }
     return Cor.AnchoTela?.toFixed(3)
   }
+  //check
   const GetAnchoTubo=(Cor)=>{
     if(findNameCano(Cor.cano?.id)===38){
       return (Cor.AnchoTubo - 0.005).toFixed(3)
