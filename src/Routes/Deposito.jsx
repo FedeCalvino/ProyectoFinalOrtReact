@@ -3,7 +3,7 @@ import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import TabDepositoRollos from "../Componentes/TabDepositoRollos";
 import TabAgregarRollo from "../Componentes/TabAgregarRollo";
-
+import TabEditarRollos from "../Componentes/TabEditarRollos";
 export const Deposito = () => {
   return (
     <>
@@ -35,6 +35,10 @@ export const Deposito = () => {
   >
     <TabAgregarRollo />
   </Tab>
+
+  <Tab eventKey="editar" title="Editar Rollos">
+        <TabEditarRollos />
+      </Tab>
 
 </Tabs>
 </>

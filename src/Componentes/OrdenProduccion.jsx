@@ -244,7 +244,18 @@ const ItemDetail = ({ label, value }) => (
     {value || "N/A"}
   </Text>
 );
-
+const GetAnchoTela=(Roll)=>{
+  if(findNameCano(Roll.cano?.id)===38){
+    return (Roll.AnchoTela - 0.005).toFixed(3)
+  }
+  return Roll.AnchoTela?.toFixed(3)
+}
+const GetAnchoTubo=(Roll)=>{
+  if(findNameCano(Cor.cano?.id)===38){
+    return (Roll.AnchoTubo - 0.005).toFixed(3)
+  }
+  return Roll.AnchoTubo?.toFixed(3)
+}
 const TelaTitle = ({ tela }) => <Text style={styles.title}>Tela: {tela}</Text>;
 
 export const OrdenProduccion = ({ Venta }) => {
@@ -362,10 +373,10 @@ export const OrdenProduccion = ({ Venta }) => {
                   {Roll.ancho.toFixed(3)}
                 </Text>
                 <Text style={[styles.tableCell, styles.text]}>
-                  {Roll.AnchoTela.toFixed(3)}
+                  {GetAnchoTela(Roll)}
                 </Text>
                 <Text style={[styles.tableCell, styles.text]}>
-                  {Roll.AnchoTubo.toFixed(3)}
+                  {GetAnchoTubo(Roll)}
                 </Text>
                 <Text style={[styles.tableCell, styles.text]}>
                   {Roll.cano.tipo}

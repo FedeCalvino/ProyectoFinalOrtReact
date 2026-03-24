@@ -19,9 +19,9 @@ const TabAgregarRollo = () => {
 
   const fetchTelas = async () => {
     try {
-      const res = await fetch("http://localhost:8085/telas");
+      const res = await fetch("http://200.40.89.254:8088/Telas");
       const data = await res.json();
-      setTelas(data);
+      setTelas(data.body);
     } catch (err) {
       console.error(err);
     }
@@ -35,32 +35,28 @@ const TabAgregarRollo = () => {
   };
 
   const guardarRollo = async () => {
-
-    if (!form.idTela || !form.largo || !form.ancho) {
+    form.idTela = parseInt(form.idTela);
+    console.log("form",form)
+    
+    if (!form.idTela) {
       toast.error("Completa los datos obligatorios");
       return;
     }
 
     try {
-
-      const res = await fetch("http://localhost:8085/rollos", {
+      const res = await fetch("http://localhost:8081/deposito/rollo", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(form)
+        body: JSON.stringify(form),
       });
-
-      if (!res.ok) throw new Error();
-
+      
+      console.log("response", res);
+      
+      const data = await res.json();
+      console.log("data", data);
       toast.success("Rollo agregado al depósito");
-
-      setForm({
-        idTela: "",
-        largo: "",
-        ancho: "",
-        ubicacion: ""
-      });
 
     } catch (error) {
       toast.error("Error al guardar rollo");
@@ -89,7 +85,7 @@ const TabAgregarRollo = () => {
                 <option value="">Seleccionar tela</option>
 
                 {telas.map((t) => (
-                  <option key={t.idTela} value={t.idTela}>
+                  <option key={t.id} value={t.id}>
                     {t.nombre} - {t.color}
                   </option>
                 ))}

@@ -1,233 +1,307 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Row,
-  Col,
-  Form,
-  Table,
-  Card,
-  Badge,
-  Spinner,
-  InputGroup,
-} from "react-bootstrap";
+import { Row, Col, Form, Table, Card, Badge, Spinner, InputGroup, Nav } from "react-bootstrap";
 
 const TabDepositoRollos = () => {
   const [rollos, setRollos] = useState([]);
   const [tipos, setTipos] = useState([]);
+  const [telas, setTelas] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const [filtroTipo, setFiltroTipo] = useState("");
+  const [filtroTela, setFiltroTela] = useState("");
   const [busqueda, setBusqueda] = useState("");
   const [soloEnStock, setSoloEnStock] = useState(true);
+  const [tabActiva, setTabActiva] = useState("tabla");
 
   useEffect(() => {
-    fetchData();
+    const cargarDatos = async () => {
+      setLoading(true);
+      await fetchTipos();
+      await fetchRollos();
+      setLoading(false);
+    };
+    cargarDatos();
   }, []);
 
-  const fetchData = async () => {
+  const getTipoNombreById = (tipo) => {
+    if (String(tipo) === "1") return "Tradicional";
+    if (String(tipo) === "2") return "Roller";
+    if (String(tipo) === "3") return "Exterior";
+    return `Tipo ${tipo}`;
+  };
+
+  const fetchRollos = async () => {
     try {
-      setLoading(true);
-
-      // Podés usar uno o ambos endpoints.
-      const [rollosRes, tiposRes] = await Promise.all([
-        fetch("http://localhost:8085/rollos/stock"),
-        fetch("http://localhost:8085/telas/tipos"),
-      ]);
-
-      if (!rollosRes.ok) throw new Error("Error al obtener rollos");
-      if (!tiposRes.ok) throw new Error("Error al obtener tipos");
-
-      const rollosData = await rollosRes.json();
-      const tiposData = await tiposRes.json();
-
-      setRollos(Array.isArray(rollosData) ? rollosData : []);
-      setTipos(Array.isArray(tiposData) ? tiposData : []);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+      const res = await fetch("http://localhost:8081/deposito/rollos");
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setRollos(Array.isArray(data?.body) ? data.body : []);
+    } catch {
+      setRollos([]);
     }
   };
 
-  const normalizarNumero = (valor) => {
-    if (valor === null || valor === undefined) return 0;
-    const limpio = String(valor).replace(",", ".").trim();
-    const num = parseFloat(limpio);
-    return Number.isNaN(num) ? 0 : num;
+  const fetchTipos = async () => {
+    try {
+      const res = await fetch("http://200.40.89.254:8088/Telas");
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      const telasArray = Array.isArray(data?.body) ? data.body : Array.isArray(data) ? data : [];
+      setTelas(telasArray);
+      const tiposMap = new Map();
+      telasArray.forEach((t) => {
+        if (t.tipo != null && !tiposMap.has(String(t.tipo)))
+          tiposMap.set(String(t.tipo), { id: t.tipo, nombre: getTipoNombreById(t.tipo) });
+      });
+      setTipos(Array.from(tiposMap.values()).sort((a, b) => Number(a.id) - Number(b.id)));
+    } catch {
+      setTipos([]);
+      setTelas([]);
+    }
   };
 
-  const formatearFecha = (fecha) => {
-    if (!fecha) return "-";
-    const d = new Date(fecha);
-    if (Number.isNaN(d.getTime())) return fecha;
-    return d.toLocaleDateString("es-UY");
+  const formatUbicacion = (ubicacion) => {
+    if (!ubicacion) return "Sin ubicación";
+    const ld = ubicacion.match(/^LD(\d+)$/i);
+    if (ld) return `Lateral derecho ${ld[1]}`;
+    const li = ubicacion.match(/^LI(\d+)$/i);
+    if (li) return `Lateral izquierdo ${li[1]}`;
+    const s = ubicacion.match(/^S-E(\d+)-P(\d+)$/i);
+    if (s) return `Subsuelo · Estante ${s[1]} · Piso ${s[2]}`;
+    const e = ubicacion.match(/^E(\d+)-P(\d+)$/i);
+    if (e) return `Estante ${e[1]} · Piso ${e[2]}`;
+    return ubicacion;
+  };
+
+  const normalizarNumero = (valor) => {
+    if (valor == null) return 0;
+    const num = parseFloat(String(valor).replace(",", ".").trim());
+    return isNaN(num) ? 0 : num;
   };
 
   const getNombreTipo = (tipo) => {
-    const encontrado = tipos.find((t) => String(t.id) === String(tipo));
-    return encontrado ? encontrado.nombre : `Tipo ${tipo ?? "-"}`;
+    const found = tipos.find((t) => String(t.id) === String(tipo));
+    return found ? found.nombre : getTipoNombreById(tipo);
   };
+
+  const telasFiltradasPorTipo = useMemo(() => {
+    if (filtroTipo === "") return [];
+    const map = new Map();
+    telas.forEach((t) => {
+      console.log("tipo tela:", t.tipo, "filtroTipo:", filtroTipo); // sacalo después de verificar
+      if (String(t.tipo) === String(filtroTipo)) {
+        const key = (t.nombre || "").trim().toLowerCase();
+        if (key && !map.has(key)) map.set(key, { id: t.nombre, nombre: t.nombre });
+      }
+    });
+    return Array.from(map.values()).sort((a, b) => a.nombre.localeCompare(b.nombre));
+  }, [telas, filtroTipo]);
 
   const rollosFiltrados = useMemo(() => {
     return rollos.filter((r) => {
-      const coincideTipo =
-        filtroTipo === "" || String(r.tipo) === String(filtroTipo);
-
+      const coincideTipo = filtroTipo === "" || String(r.tipo) === String(filtroTipo);
+      const coincideTela = filtroTela === "" || String(r.nombreTela || "").toLowerCase() === String(filtroTela).toLowerCase();
       const texto = `${r.nombreTela || ""} ${r.color || ""} ${r.codigo || ""} ${r.ubicacion || ""}`.toLowerCase();
       const coincideBusqueda = texto.includes(busqueda.toLowerCase());
-
-      const enStock = !r.fechaSalida;
-      const coincideStock = soloEnStock ? enStock : true;
-
-      return coincideTipo && coincideBusqueda && coincideStock;
+      const coincideStock = soloEnStock ? !r.fechaSalida : true;
+      return coincideTipo && coincideTela && coincideBusqueda && coincideStock;
     });
-  }, [rollos, filtroTipo, busqueda, soloEnStock]);
+  }, [rollos, filtroTipo, filtroTela, busqueda, soloEnStock]);
 
-  const totalRollos = rollosFiltrados.length;
-
-  const totalMetros = useMemo(() => {
-    return rollosFiltrados.reduce((acc, r) => acc + normalizarNumero(r.largo), 0);
+  const stats = useMemo(() => {
+    const porTela = new Map();
+    const porColor = new Map();
+    const porUbicacion = new Map();
+    const porAncho = new Map();
+    rollosFiltrados.forEach((r) => {
+      const tela = r.nombreTela || "Sin nombre";
+      const color = r.color || "Sin color";
+      const ubic = formatUbicacion(r.ubicacion);
+      const ancho = r.ancho ? `${normalizarNumero(r.ancho)} m` : "Sin dato";
+      porTela.set(tela, (porTela.get(tela) || 0) + 1);
+      porColor.set(color, (porColor.get(color) || 0) + 1);
+      porUbicacion.set(ubic, (porUbicacion.get(ubic) || 0) + 1);
+      porAncho.set(ancho, (porAncho.get(ancho) || 0) + 1);
+    });
+    const ordenar = (map) =>
+      Array.from(map.entries()).sort((a, b) => b[1] - a[1]).map(([nombre, cantidad]) => ({ nombre, cantidad }));
+    return {
+      porTela: ordenar(porTela),
+      porColor: ordenar(porColor),
+      porUbicacion: ordenar(porUbicacion),
+      porAncho: ordenar(porAncho),
+      total: rollosFiltrados.length,
+      enStock: rollosFiltrados.filter((r) => !r.fechaSalida).length,
+      empezados: rollosFiltrados.filter((r) => r.empezado).length,
+    };
   }, [rollosFiltrados]);
 
-  const totalMetrosTexto = totalMetros.toFixed(2);
+  const Barra = ({ nombre, cantidad, max, color }) => (
+    <div style={{ marginBottom: 10 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 3 }}>
+        <span style={{ fontWeight: 500, color: "#212529", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "80%" }}>{nombre}</span>
+        <span style={{ color: "#6c757d", flexShrink: 0, marginLeft: 8 }}>{cantidad}</span>
+      </div>
+      <div style={{ height: 8, background: "#e9ecef", borderRadius: 4, overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${Math.round((cantidad / max) * 100)}%`, background: color, borderRadius: 4, transition: "width 0.4s ease" }} />
+      </div>
+    </div>
+  );
+
+  const StatCard = ({ label, valor, color }) => (
+    <div style={{ flex: 1, minWidth: 0, background: "#fff", border: "1px solid #dee2e6", borderRadius: 10, padding: "14px 18px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+      <div style={{ fontSize: 12, color: "#6c757d", marginBottom: 2 }}>{label}</div>
+      <div style={{ fontSize: 30, fontWeight: 700, color, lineHeight: 1.1 }}>{valor}</div>
+    </div>
+  );
+
+  const GraficaCard = ({ titulo, items, max, color }) => (
+    <div style={{ flex: 1, minWidth: 0, background: "#fff", border: "1px solid #dee2e6", borderRadius: 10, padding: "16px 20px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+      <div style={{ fontSize: 13, fontWeight: 600, color: "#495057", marginBottom: 14 }}>{titulo}</div>
+      {items.length === 0
+        ? <div style={{ fontSize: 13, color: "#6c757d" }}>Sin datos</div>
+        : items.map(({ nombre, cantidad }) => (
+            <Barra key={nombre} nombre={nombre} cantidad={cantidad} max={max} color={color} />
+          ))
+      }
+    </div>
+  );
 
   return (
-    <div>
-      <Row className="mb-3 g-3">
-        <Col md={4}>
-          <Card className="shadow-sm border-0 h-100">
-            <Card.Body>
-              <div style={{ fontSize: 13, color: "#6c757d" }}>Rollos visibles</div>
-              <div style={{ fontSize: 28, fontWeight: 700 }}>{totalRollos}</div>
-            </Card.Body>
-          </Card>
-        </Col>
+    <div style={{ width: "100%", boxSizing: "border-box" }}>
+      {/* Filtros */}
+      <div style={{ background: "#fff", border: "1px solid #dee2e6", borderRadius: 10, padding: "18px 20px", marginBottom: 16, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+        <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-end" }}>
+          <div style={{ flex: "1 1 180px" }}>
+            <label style={{ fontSize: 13, fontWeight: 500, display: "block", marginBottom: 4 }}>Tipo de tela</label>
+            <select
+              value={filtroTipo}
+              onChange={(e) => { setFiltroTipo(e.target.value); setFiltroTela(""); }}
+              style={{ width: "100%", padding: "6px 10px", borderRadius: 6, border: "1px solid #ced4da", fontSize: 14 }}
+            >
+              <option value="">Todos</option>
+              {tipos.map((t) => <option key={t.id} value={t.id}>{t.nombre}</option>)}
+            </select>
+          </div>
 
-        <Col md={4}>
-          <Card className="shadow-sm border-0 h-100">
-            <Card.Body>
-              <div style={{ fontSize: 13, color: "#6c757d" }}>Metros visibles</div>
-              <div style={{ fontSize: 28, fontWeight: 700 }}>{totalMetrosTexto} m</div>
-            </Card.Body>
-          </Card>
-        </Col>
+          <div style={{ flex: "1 1 220px" }}>
+            <label style={{ fontSize: 13, fontWeight: 500, display: "block", marginBottom: 4 }}>Tela</label>
+            <select
+              value={filtroTela}
+              onChange={(e) => setFiltroTela(e.target.value)}
+              disabled={filtroTipo === ""}
+              style={{ width: "100%", padding: "6px 10px", borderRadius: 6, border: "1px solid #ced4da", fontSize: 14, background: filtroTipo === "" ? "#f8f9fa" : "#fff" }}
+            >
+              <option value="">{filtroTipo === "" ? "Primero elegí un tipo" : "Todas"}</option>
+              {telasFiltradasPorTipo.map((t) => <option key={t.id} value={t.nombre}>{t.nombre}</option>)}
+            </select>
+          </div>
 
-        <Col md={4}>
-          <Card className="shadow-sm border-0 h-100">
-            <Card.Body>
-              <div style={{ fontSize: 13, color: "#6c757d" }}>Filtro activo</div>
-              <div style={{ fontSize: 20, fontWeight: 600 }}>
-                {filtroTipo === "" ? "Todos los tipos" : getNombreTipo(filtroTipo)}
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+          <div style={{ flex: "2 1 260px" }}>
+            <label style={{ fontSize: 13, fontWeight: 500, display: "block", marginBottom: 4 }}>Buscar</label>
+            <input
+              type="text"
+              placeholder="Nombre, color, código o ubicación"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              style={{ width: "100%", padding: "6px 10px", borderRadius: 6, border: "1px solid #ced4da", fontSize: 14, boxSizing: "border-box" }}
+            />
+          </div>
 
-      <Card className="shadow-sm border-0">
-        <Card.Body>
-          <Row className="g-3 mb-3">
-            <Col md={4}>
-              <Form.Group>
-                <Form.Label>Tipo de tela</Form.Label>
-                <Form.Select
-                  value={filtroTipo}
-                  onChange={(e) => setFiltroTipo(e.target.value)}
-                >
-                  <option value="">Todos</option>
-                  {tipos.map((tipo) => (
-                    <option key={tipo.id} value={tipo.id}>
-                      {tipo.nombre}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
+          <div style={{ fontSize: 13, color: "#6c757d", whiteSpace: "nowrap", paddingBottom: 2 }}>
+            <strong style={{ color: "#212529" }}>
+              {filtroTipo === "" ? "Todos los tipos" : getNombreTipo(filtroTipo)}
+              {filtroTela !== "" ? ` / ${filtroTela}` : ""}
+            </strong>
+          </div>
+        </div>
+      </div>
 
-            <Col md={5}>
-              <Form.Group>
-                <Form.Label>Buscar</Form.Label>
-                <InputGroup>
-                  <Form.Control
-                    type="text"
-                    placeholder="Nombre, color, código o ubicación"
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
+      {/* Tabs */}
+      <div style={{ display: "flex", gap: 4, marginBottom: -1, paddingLeft: 2 }}>
+        {[
+          { key: "tabla", label: <span>Rollos <span style={{ background: "#6c757d", color: "#fff", borderRadius: 10, padding: "1px 7px", fontSize: 11, marginLeft: 4 }}>{rollosFiltrados.length}</span></span> },
+          { key: "estadisticas", label: "Estadísticas" },
+        ].map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => setTabActiva(key)}
+            style={{
+              padding: "8px 18px", border: "1px solid #dee2e6", borderBottom: tabActiva === key ? "1px solid #fff" : "1px solid #dee2e6",
+              borderRadius: "8px 8px 0 0", background: tabActiva === key ? "#fff" : "#f8f9fa",
+              fontWeight: tabActiva === key ? 600 : 400, fontSize: 14, cursor: "pointer",
+              color: tabActiva === key ? "#212529" : "#6c757d", position: "relative", zIndex: tabActiva === key ? 1 : 0,
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
 
-            <Col md={3} className="d-flex align-items-end">
-              <Form.Check
-                type="switch"
-                id="solo-en-stock"
-                label="Mostrar solo en stock"
-                checked={soloEnStock}
-                onChange={(e) => setSoloEnStock(e.target.checked)}
-              />
-            </Col>
-          </Row>
-
-          {loading ? (
-            <div className="text-center py-5">
-              <Spinner animation="border" />
-            </div>
-          ) : (
-            <div style={{ overflowX: "auto" }}>
-              <Table bordered hover responsive className="align-middle">
-                <thead style={{ background: "#f8f9fa" }}>
-                  <tr>
-                    <th>ID Rollo</th>
-                    <th>Tela</th>
-                    <th>Color</th>
-                    <th>Código</th>
-                    <th>Tipo</th>
-                    <th>Ancho</th>
-                    <th>Largo</th>
-                    <th>Ubicación</th>
-                    <th>Fecha entrada</th>
-                    <th>Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rollosFiltrados.length === 0 ? (
-                    <tr>
-                      <td colSpan={10} className="text-center py-4">
-                        No hay rollos para mostrar
-                      </td>
+      {/* Contenido */}
+      <div style={{ background: "#fff", border: "1px solid #dee2e6", borderRadius: "0 8px 8px 8px", padding: "20px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "40px 0" }}>
+            <Spinner animation="border" />
+          </div>
+        ) : (
+          <>
+            {/* ── TABLA ── */}
+            {tabActiva === "tabla" && (
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+                  <thead>
+                    <tr style={{ background: "#f8f9fa" }}>
+                      {["Tela", "Color", "Código", "Tipo", "Ancho", "Ubicación", "Empezado"].map((h) => (
+                        <th key={h} style={{ padding: "10px 12px", textAlign: "left", borderBottom: "2px solid #dee2e6", fontWeight: 600, whiteSpace: "nowrap" }}>{h}</th>
+                      ))}
                     </tr>
-                  ) : (
-                    rollosFiltrados.map((r) => {
-                      const enStock = !r.fechaSalida;
-
-                      return (
-                        <tr key={r.idRollo}>
-                          <td>{r.idRollo}</td>
-                          <td style={{ fontWeight: 600 }}>{r.nombreTela || "-"}</td>
-                          <td>{r.color || "-"}</td>
-                          <td>{r.codigo || "-"}</td>
-                          <td>{getNombreTipo(r.tipo)}</td>
-                          <td>{r.ancho || "-"}</td>
-                          <td>{r.largo || "-"}</td>
-                          <td>{r.ubicacion || "-"}</td>
-                          <td>{formatearFecha(r.fechaEntrada)}</td>
-                          <td>
-                            {enStock ? (
-                              <Badge bg="success">En stock</Badge>
-                            ) : (
-                              <Badge bg="secondary">Sin stock</Badge>
-                            )}
-                          </td>
+                  </thead>
+                  <tbody>
+                    {rollosFiltrados.length === 0 ? (
+                      <tr><td colSpan={7} style={{ textAlign: "center", padding: "32px 0", color: "#6c757d" }}>No hay rollos para mostrar</td></tr>
+                    ) : (
+                      rollosFiltrados.map((r) => (
+                        <tr key={r.idRollo} style={{ borderBottom: "1px solid #f0f0f0" }}>
+                          <td style={{ padding: "9px 12px", fontWeight: 600 }}>{r.nombreTela || "-"}</td>
+                          <td style={{ padding: "9px 12px" }}>{r.color || "-"}</td>
+                          <td style={{ padding: "9px 12px" }}>{r.codigo || "-"}</td>
+                          <td style={{ padding: "9px 12px" }}>{getNombreTipo(r.tipo)}</td>
+                          <td style={{ padding: "9px 12px" }}>{r.ancho || "-"}</td>
+                          <td style={{ padding: "9px 12px" }}>{formatUbicacion(r.ubicacion)}</td>
+                          <td style={{ padding: "9px 12px" }}>{r.empezado ? "Sí" : "No"}</td>
                         </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </Table>
-            </div>
-          )}
-        </Card.Body>
-      </Card>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* ── ESTADÍSTICAS ── */}
+            {tabActiva === "estadisticas" && (
+              <div>
+                {/* Tarjetas resumen */}
+                <div style={{ display: "flex", gap: 14, marginBottom: 20, flexWrap: "wrap" }}>
+                  <StatCard label="Total rollos"   valor={stats.total}             color="#0d6efd" />
+                  <StatCard label="En stock"        valor={stats.enStock}           color="#198754" />
+                  <StatCard label="Empezados"       valor={stats.empezados}         color="#fd7e14" />
+                  <StatCard label="Tipos de tela"   valor={stats.porTela.length}    color="#6f42c1" />
+                </div>
+
+                {/* Gráficas 2x2 */}
+                <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 14 }}>
+                  <GraficaCard titulo="Rollos por tela"      items={stats.porTela}      max={stats.porTela[0]?.cantidad || 1}      color="#0d6efd" />
+                  <GraficaCard titulo="Rollos por color"     items={stats.porColor}     max={stats.porColor[0]?.cantidad || 1}     color="#6f42c1" />
+                </div>
+                <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                  <GraficaCard titulo="Rollos por ubicación" items={stats.porUbicacion} max={stats.porUbicacion[0]?.cantidad || 1} color="#198754" />
+                  <GraficaCard titulo="Rollos por ancho"     items={stats.porAncho}     max={stats.porAncho[0]?.cantidad || 1}     color="#fd7e14" />
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };
