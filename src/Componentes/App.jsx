@@ -15,6 +15,7 @@ import { Lotes } from '../Routes/Lotes';
 import { Toaster, toast } from "react-hot-toast";
 import { CrearVentaObra } from '../Routes/CrearVentaObra';
 import { Deposito } from '../Routes/Deposito';
+import {Estadisticas} from '../Routes/Estadisticas';
 
 const App = () => {
     
@@ -47,6 +48,7 @@ const App = () => {
         try {
             const res = await fetch(UrlTelas);
             const data = await res.json();
+            console.log("telas",data)
             return data.body; 
         } catch (error) {
             console.error("Error fetching roller configuration:", error);
@@ -144,13 +146,21 @@ const App = () => {
                     </ProtectedRoute>
                 } >
                 </Route>
-
+{/*
+                <Route path='/Estadisticas' element={
+                    <ProtectedRoute user={User} login={login}>
+                        <Estadisticas/>
+                  </ProtectedRoute>
+                } >
+                </Route>
+*/}
                 <Route path='/*' element={
                     <ProtectedRoute user={User} login={login}>
-                       <CrearVentaObra />
+                       <Ventas/>
                     </ProtectedRoute>} >
                     
                 </Route>
+
 
                 <Route path='/Instalaciones' element={
                     <ProtectedRoute user={User} login={login}>

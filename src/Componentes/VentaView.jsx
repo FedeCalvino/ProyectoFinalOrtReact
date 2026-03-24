@@ -507,6 +507,18 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
     }
     return grupos;
   }
+  const GetAnchoTela=(Cor)=>{
+    if(findNameCano(Cor.cano?.id)===38){
+      return (Cor.AnchoTela - 0.005).toFixed(3)
+    }
+    return Cor.AnchoTela?.toFixed(3)
+  }
+  const GetAnchoTubo=(Cor)=>{
+    if(findNameCano(Cor.cano?.id)===38){
+      return (Cor.AnchoTubo - 0.005).toFixed(3)
+    }
+    return Cor.AnchoTubo?.toFixed(3)
+  }
 
   const DescPdf = () => {
     if (Ven.listaArticulos.length > 0) {
@@ -1209,8 +1221,8 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
                       <td>{findTela(Cor.IdTipoTela)?.nombre || null}</td>
                       <td>{findTela(Cor.IdTipoTela)?.color}</td>
                       <td>{Cor.ancho?.toFixed(3)}</td>
-                      <td>{Cor.AnchoTela?.toFixed(3)}</td>
-                      <td>{Cor.AnchoTubo?.toFixed(3)}</td>
+                      <td>{GetAnchoTela(Cor)}</td>
+                      <td>{GetAnchoTubo(Cor)}</td>
                       <td>{findNameCano(Cor.cano?.id)}</td>
                       <td>{Cor.alto?.toFixed(3)}</td>
                       <td>{Cor.AltoTela?.toFixed(3)}</td>
