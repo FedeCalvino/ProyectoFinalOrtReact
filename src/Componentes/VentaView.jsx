@@ -516,6 +516,8 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
   //check
   const GetAnchoTubo=(Cor)=>{
     if(findNameCano(Cor.cano?.id)===38){
+      console.log("antes",Cor.AnchoTubo.toFixed(3))
+      console.log("despues",(Cor.AnchoTubo - 0.005).toFixed(3))
       return (Cor.AnchoTubo - 0.005).toFixed(3)
     }
     return Cor.AnchoTubo?.toFixed(3)
