@@ -244,18 +244,28 @@ const ItemDetail = ({ label, value }) => (
     {value || "N/A"}
   </Text>
 );
-const GetAnchoTela=(Roll)=>{
-  if(Roll.cano.id===2){
-    return (Roll.AnchoTela - 0.005).toFixed(3)
+const GetAnchoTela = (Roll) => {
+  const ancho = Number(Roll?.AnchoTela);
+  if (isNaN(ancho)) return "";
+
+  if (Roll?.cano?.id === 2) {
+    return (ancho - 0.005).toFixed(3);
   }
-  return Roll.AnchoTela?.toFixed(3)
-}
-const GetAnchoTubo=(Roll)=>{
-  if(Roll.cano.id===2){
-    return (Roll.AnchoTubo - 0.005).toFixed(3)
+
+  return ancho.toFixed(3);
+};
+
+const GetAnchoTubo = (Roll) => {
+  const ancho = Number(Roll?.AnchoTubo);
+  if (isNaN(ancho)) return "";
+
+  if (Roll?.cano?.id === 2) {
+    return (ancho - 0.005).toFixed(3);
   }
-  return Roll.AnchoTubo?.toFixed(3)
-}
+
+  return ancho.toFixed(3);
+};
+
 const TelaTitle = ({ tela }) => <Text style={styles.title}>Tela: {tela}</Text>;
 
 export const OrdenProduccion = ({ Venta }) => {
@@ -483,10 +493,10 @@ export const OrdenProduccion = ({ Venta }) => {
                             {Roll.ancho.toFixed(3)}
                           </Text>
                           <Text style={[styles.tableCell, styles.text]}>
-                            {Roll.AnchoTela.toFixed(3)}
+                            {GetAnchoTela(Roll)}
                           </Text>
                           <Text style={[styles.tableCell, styles.text]}>
-                            {Roll.AnchoTubo.toFixed(3)}
+                            {GetAnchoTubo(Roll)}
                           </Text>
                           <Text style={[styles.tableCell, styles.text]}>
                             {Roll.cano.tipo}
