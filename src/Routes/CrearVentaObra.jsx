@@ -87,9 +87,9 @@ export const CrearVentaObra = () => {
   
 
   const CrearVenta = async () => {
-    if(!FechaInstalacion){
+    /*if(!FechaInstalacion){
       toast.error("Ingrese una fecha de instalacion")
-    }else{
+    }else{*/
     const VentaInfoObj = {
       CliNombre: cliente.Nombre,
       Obra: Obra,
@@ -100,7 +100,7 @@ export const CrearVentaObra = () => {
     
     setVentaInfo(VentaInfoObj);
     setShowModal(true);
-  }
+    //}
   };
 
   const toastCallBack = (mensaje, tipo) => {
