@@ -37,7 +37,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import html2pdf from "html2pdf.js";
 import html2canvas from "html2canvas";
 
-export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
+export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE }) => {
   const dispatch = useDispatch();
 
   const ConfigRoller = useSelector(selectRollerConfig);
@@ -59,8 +59,14 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
   const Pinzas = ConfigTadicional?.pinzas;
   const Ganchos = ConfigTadicional?.ganchos;
   const Dobladillos = ConfigTadicional?.dobladillos;
+  const soportes=ConfigRoller?.soportes
+
   const findNameTipoPinza = (id_tipo) => {
     return Pinzas?.find((tipo) => tipo.idPinza === parseInt(id_tipo))?.nombre;
+  };
+
+  const findNameTipoSoporte = (id_tipo) => {
+    return soportes?.find((tipo) => tipo.idTipoSoporte === parseInt(id_tipo))?.nombre;
   };
 
   const findNameTipoGancho = (id_tipo) => {
@@ -152,6 +158,7 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
       setTradicionalTryEdited(Art);
       setcontenido(Art.contenidoProduccion);
     }
+    callBackAddENE(Art.idArticulo)
     setShowModal(true);
   };
 
@@ -160,6 +167,7 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
     setCortrtinaEdited(null);
     setRielEdited(null);
     setShowModal(false);
+    callBackAddENE(null)
   };
   const CortinaEditedFnct = () => {
     setCortrtinaEdited(null);
@@ -167,9 +175,14 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
     setCortrtinaTrtyEdited(null);
     setRielTryEdited(null);
     setShowModal(false);
+    callBackAddENE(null)
     setopenEdit(false);
     FetchVentaCortinas();
   };
+
+  useEffect(() => {
+    callBackAddENE(null)
+  }, []);
 
   const handleClose = () => setShowModal(false);
   const handleCloseRiel = () => setshowModalRiel(false);
@@ -233,6 +246,13 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
       FetchVentas();
     }
   };
+  const algunaMotorizada = () => {
+    return Rollers.some(roll => roll.MotorRoller.idMotor !== 1);
+  };
+
+  const SoporteColor = ()=>{
+    return true 
+  }
 
   const FetchVentaCortinas = async () => {
     console.log("ventas");
@@ -1206,7 +1226,14 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
                     <th>Cadena</th>
                     <th>Lado Cadena</th>
                     <th>Posición</th>
+                    {
+                    algunaMotorizada() &&
                     <th>Motorizado</th>
+                    }
+                    {
+                    SoporteColor() &&
+                    <th>Soporte</th>
+                    }
                     {estado!=="todas" &&
                     <>
                     <th>Tela</th>
@@ -1236,7 +1263,14 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado }) => {
                       </td>
                       <td>{findNameLadoCadena(Cor.ladoCadena?.ladoId)}</td>
                       <td>{findNamePos(Cor.posicion?.posicionId)}</td>
-                      <td>{findNameMotor(Cor.motorRoller?.idMotor)}</td>
+                      {
+                        algunaMotorizada() &&
+                        <td>{findNameMotor(Cor.motorRoller?.idMotor)}</td>
+                      }
+                      {
+                        SoporteColor() &&
+                        <td>{findNameTipoSoporte(Cor.soporte?.idTipo)}</td>
+                      }
                       {estado!=="todas" &&
                       <>
                       <th>{getIcon(Cor.estadoCorteTela)}</th>

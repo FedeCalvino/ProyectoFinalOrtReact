@@ -48,6 +48,8 @@ export const Ventas = () => {
 
   const [ConfirmDelete, setConfirmDelete] = useState(false);
   const [loadingDelete, setloadingDelete] = useState(false);
+  const [editarNoEditar, seteditarNoEditar] = useState(false);
+
   const [Pagina, setPagina] = useState(0);
 
   const ConfigRoller = useSelector(selectRollerConfig);
@@ -76,15 +78,18 @@ export const Ventas = () => {
   /*
   const UrlVentas = "http://200.40.89.254:8088/Ventas";
   const UrlVenta = "http://200.40.89.254:8088/Ventas/";
-  const UrlVenta2 = "http://200.40.89.254:8081/Ventas/";
+  const UrlVenta2 = "http://200.40.89.254:8081/Ventas";
   const UrlDelete = "http://200.40.89.254:8088/Ventas/";
-  const UrlActividades = "http://200.40.89.254:8081/Acciones/Ultimas";
+  const UrlDeleteArt = "http://200.40.89.254:8081/Ventas/Articulo/";
+  const UrlActividades = "http://localhost:8081/Acciones/Ultimas";
 */
 const UrlVentas = "/VentasEP";
 const UrlVenta = "/VentasEP/";
 const UrlVenta2 = "/VentasEP3/Ventas";
 const UrlDelete = "/VentasEP/";
 const UrlActividades = "/VentasEP3/Acciones/Ultimas";
+const UrlDeleteArt = "/VentasEP3/Articulo/";
+
 
   // ✅ auth helper (NO hardcode token)
   const getAuthHeaders = () => {
@@ -162,6 +167,7 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
       console.log("UrlActividades",UrlActividades)
       const res = await fetch(UrlActividades);
       const data = await res.json();
+      console.log("data",data)
       console.log("Actividades",data)
 
       const lista = data?.body ?? data ?? [];
@@ -217,12 +223,40 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
         const res = await fetch(`${UrlVenta2}/Activas`);
         const data = await res.json();
 
-        const sortedActivas = data.body.sort((a, b) => {
-          const fechaA = new Date(a.fechaInstalacion || a.fecha);
-          const fechaB = new Date(b.fechaInstalacion || b.fecha);
-          return fechaA - fechaB;
+        const sortedActivas = [...data.body].sort((a, b) => {
+          const now = Date.now();
+        
+          const fechaA = a.fechaInstalacion
+            ? new Date(a.fechaInstalacion).getTime()
+            : null;
+        
+          const fechaB = b.fechaInstalacion
+            ? new Date(b.fechaInstalacion).getTime()
+            : null;
+        
+          const getGrupo = (fecha) => {
+            if (fecha === null) return 2; // sin fecha
+            if (fecha >= now) return 1;   // futuras
+            return 3;                     // vencidas
+          };
+        
+          const grupoA = getGrupo(fechaA);
+          const grupoB = getGrupo(fechaB);
+        
+          // ordenar por grupo
+          if (grupoA !== grupoB) return grupoA - grupoB;
+        
+          // dentro de cada grupo
+          if (grupoA === 1) {
+            return fechaA - fechaB; // futuras → más cercana primero
+          }
+        
+          if (grupoA === 3) {
+            return fechaB - fechaA; // vencidas → la menos vieja primero
+          }
+        
+          return 0;
         });
-
         setVentasActivas(sortedActivas);
       } catch (error) {
         console.log(error);
@@ -400,40 +434,54 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
   }, [Ventas, filterType]);
 
   const MostrarFechaInstalacion = ({ fechaInstalacion }) => {
-    if (!fechaInstalacion) return null;
-
     const fecha = new Date(fechaInstalacion);
+  
+    console.log("fecha", fecha);
+  
+    // 👇 VALIDACIÓN CORRECTA
+    if (!fechaInstalacion || isNaN(fecha.getTime())) {
+      return (
+        <div className="day-header mt-4">
+          <h3>
+            <span style={{ color: "white", fontSize: "28px" }}>
+              Sin fecha de instalación
+            </span>
+          </h3>
+        </div>
+      );
+    }
+  
     const hoy = new Date();
+  
+    fecha.setHours(0, 0, 0, 0);
+    hoy.setHours(0, 0, 0, 0);
+  
     const diffTime = fecha - hoy;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      const day = String(date.getDate() + 1).padStart(2, "0");
+  
+    const formatDate = (date) => {
+      const day = String(date.getDate()).padStart(2, "0");
       const month = String(date.getMonth() + 1).padStart(2, "0");
       return `${day}/${month}`;
     };
-
+  
     return (
       <div className="day-header mt-4">
         <h3>
-          {formatDate(fechaInstalacion)}{" "}
+          {formatDate(fecha)}{" "}
           {diffDays === 1 ? (
-            <span style={{ color: "white", fontSize: "18px" }}>Mañana</span>
+            <span>(Mañana)</span>
+          ) : diffDays === 0 ? (
+            <span>(Hoy)</span>
+          ) : diffDays < 0 ? (
+            <span>({Math.abs(diffDays)} días atrás)</span>
           ) : (
-            <span style={{ color: "white", fontSize: "18px" }}>
-              {diffDays < 0
-                ? `(${Math.abs(diffDays)} días atrás)`
-                : diffDays === 0
-                ? "(Hoy)"
-                : `(Faltan ${diffDays} días)`}
-            </span>
+            <span>(Faltan {diffDays} días)</span>
           )}
         </h3>
       </div>
     );
   };
-
   const aplicarFiltroPorTipo = async () => {
     switch (filterType) {
       case "activas":
@@ -565,20 +613,38 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
         method: "DELETE",
         headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
       };
-      try {
-        const response = await fetch(UrlDelete + idVenta, requestOptionsventa);
-        if (response.ok) {
-          setloadingDelete(false);
-          handleClose();
-          FetchVentas(0);
-          toast.success("Venta eliminada");
-        } else {
+      if(editarNoEditar){
+        try {
+          const response = await fetch(UrlDeleteArt+ editarNoEditar, requestOptionsventa);
+          if (response.ok) {
+            setloadingDelete(false);
+            handleClose();
+            FetchVentas(0);
+            toast.success("Articulo eliminado");
+          } else {
+            toast.error("Error al eliminarel Articulo");
+            setloadingDelete(false);
+          }
+        } catch (error) {
           toast.error("Error al eliminar");
           setloadingDelete(false);
         }
-      } catch (error) {
-        toast.error("Error al eliminar");
-        setloadingDelete(false);
+      }else{
+        try {
+          const response = await fetch(UrlDelete + idVenta, requestOptionsventa);
+          if (response.ok) {
+            setloadingDelete(false);
+            handleClose();
+            FetchVentas(0);
+            toast.success("Venta eliminada");
+          } else {
+            toast.error("Error al eliminar la venta");
+            setloadingDelete(false);
+          }
+        } catch (error) {
+          toast.error("Error al eliminar");
+          setloadingDelete(false);
+        }
       }
     }
   };
@@ -812,143 +878,173 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
 
       {/* ✅ Layout: cuando es "activas" mostramos panel derecha */}
       <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          {Object.entries(groupedVentas).map(([date, ventasDelDia]) => {
-            const sortedVentasDelDia = ventasDelDia.sort((a, b) => {
-              const fechaA = new Date(
-                filterType === "activas" ? a.fechaInstalacion : a.fecha
-              );
-              const fechaB = new Date(
-                filterType === "activas" ? b.fechaInstalacion : b.fecha
-              );
-              return fechaA - fechaB;
-            });
+      <div style={{ flex: 1, minWidth: 0 }}>
+    {Object.entries(groupedVentas).map(([date, ventasDelDia]) => {
+    const sortedVentasDelDia = [...ventasDelDia].sort((a, b) => {
+      if (filterType !== "activas") {
+        const fechaA = new Date(a.fecha).getTime();
+        const fechaB = new Date(b.fecha).getTime();
+        return fechaA - fechaB;
+      }
 
-            return (
-              <React.Fragment key={date}>
+      const now = Date.now();
+
+      const fechaA = a.fechaInstalacion
+        ? new Date(a.fechaInstalacion).getTime()
+        : null;
+      const fechaB = b.fechaInstalacion
+        ? new Date(b.fechaInstalacion).getTime()
+        : null;
+
+      const getGrupo = (fecha) => {
+        if (fecha === null) return 2; // sin fecha
+        if (fecha >= now) return 1;   // futuras
+        return 3;                     // vencidas
+      };
+
+      const grupoA = getGrupo(fechaA);
+      const grupoB = getGrupo(fechaB);
+
+      if (grupoA !== grupoB) return grupoA - grupoB;
+
+      if (grupoA === 1) {
+        return fechaA - fechaB; // futuras: la más cercana primero
+      }
+
+      if (grupoA === 3) {
+        return fechaB - fechaA; // vencidas: la menos vieja primero
+      }
+
+      return 0; // sin fecha
+    });
+
+    return (
+      <React.Fragment key={date}>
+        {filterType === "activas" ? (
+          <MostrarFechaInstalacion fechaInstalacion={date} />
+        ) : (
+          <MostrarDia Day={date} />
+        )}
+
+        {sortedVentasDelDia.map((Ven) => (
+          <div
+            className={`venta-card${Tamano} shadow-sm p-3 mb-4 bg-white rounded`}
+            onClick={() => setVentaView(Ven)}
+            key={Ven.id}
+          >
+            <Row className="align-items-center">
+              <Col md={3}>
+                <div style={{ fontSize: "26px" }} className="fw-bold">
+                  {Ven.obra.cliente?.nombre}
+                </div>
+                <div className="text-muted">
+                  {Ven.obra.nombre && Ven.obra.nombre}
+                </div>
+              </Col>
+
+              <Col>
                 {filterType === "activas" ? (
-                  <MostrarFechaInstalacion fechaInstalacion={date} />
-                ) : (
-                  <MostrarDia Day={date} />
-                )}
-
-                {sortedVentasDelDia.map((Ven) => (
                   <div
-                    className={`venta-card${Tamano} shadow-sm p-3 mb-4 bg-white rounded`}
-                    onClick={() => setVentaView(Ven)}
-                    key={Ven.id}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "flex-start",
+                      gap: "25px",
+                      marginTop: "15px",
+                    }}
                   >
-                    <Row className="align-items-center">
-                      <Col md={3}>
-                        <div style={{ fontSize: "26px" }} className="fw-bold">
-                          {Ven.obra.cliente?.nombre}
+                    {getTieneRollers(Ven) && (
+                      <div
+                        style={{
+                          border: "2px solid #ccc",
+                          borderRadius: "10px",
+                          padding: "10px 15px",
+                          textAlign: "center",
+                          minWidth: "220px",
+                          boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                        }}
+                      >
+                        <p
+                          style={{
+                            fontWeight: "600",
+                            fontSize: "16px",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          Rollers
+                        </p>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            gap: "10px",
+                          }}
+                        >
+                          <Status status={Ven.estadoCorteTela} tipo="Tela" />
+                          <Status status={Ven.estadoCorteCano} tipo="Cano" />
+                          <Status
+                            status={Ven.estadoCorteContrapeso}
+                            tipo="Contrapeso"
+                          />
                         </div>
-                        <div className="text-muted">
-                          {Ven.obra.nombre && Ven.obra.nombre}
+                      </div>
+                    )}
+
+                    {getTieneRieles(Ven) && (
+                      <div
+                        style={{
+                          border: "2px solid #ccc",
+                          borderRadius: "10px",
+                          padding: "10px 15px",
+                          textAlign: "center",
+                          minWidth: "220px",
+                          boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                        }}
+                      >
+                        <p
+                          style={{
+                            fontWeight: "600",
+                            fontSize: "16px",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          Rieles
+                        </p>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            gap: "10px",
+                          }}
+                        >
+                          <Status status={Ven.estadoCorteRiel} tipo="Riel" />
                         </div>
-                      </Col>
-
-                      <Col>
-                        {!Ven.fechaInstalacion ? (
-                          <span style={{ color: "red" }}>
-                            Sin fecha de entrega
-                          </span>
-                        ) : new Date(Ven.fechaInstalacion).getTime() < Date.now() ? (
-                          <span style={{ color: "green" }}>
-                            Fecha de entrega pasada
-                          </span>
-                        ) : (
-                          filterType === "activas" && (
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "flex-start",
-                                gap: "25px",
-                                marginTop: "15px",
-                              }}
-                            >
-                              {getTieneRollers(Ven) && (
-                                <div
-                                  style={{
-                                    border: "2px solid #ccc",
-                                    borderRadius: "10px",
-                                    padding: "10px 15px",
-                                    textAlign: "center",
-                                    minWidth: "220px",
-                                    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-                                  }}
-                                >
-                                  <p
-                                    style={{
-                                      fontWeight: "600",
-                                      fontSize: "16px",
-                                      marginBottom: "8px",
-                                    }}
-                                  >
-                                    Rollers
-                                  </p>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      gap: "10px",
-                                    }}
-                                  >
-                                    <Status status={Ven.estadoCorteTela} tipo="Tela" />
-                                    <Status status={Ven.estadoCorteCano} tipo="Cano" />
-                                    <Status
-                                      status={Ven.estadoCorteContrapeso}
-                                      tipo="Contrapeso"
-                                    />
-                                  </div>
-                                </div>
-                              )}
-
-                              {getTieneRieles(Ven) && (
-                                <div
-                                  style={{
-                                    border: "2px solid #ccc",
-                                    borderRadius: "10px",
-                                    padding: "10px 15px",
-                                    textAlign: "center",
-                                    minWidth: "220px",
-                                    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-                                  }}
-                                >
-                                  <p
-                                    style={{
-                                      fontWeight: "600",
-                                      fontSize: "16px",
-                                      marginBottom: "8px",
-                                    }}
-                                  >
-                                    Rieles
-                                  </p>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      gap: "10px",
-                                    }}
-                                  >
-                                    <Status status={Ven.estadoCorteRiel} tipo="Riel" />
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          )
-                        )}
-                      </Col>
-                    </Row>
+                      </div>
+                    )}
                   </div>
-                ))}
-              </React.Fragment>
-            );
-          })}
-        </div>
+                ) : !Ven.fechaInstalacion ? (
+                  <span style={{ color: "red" }}>
+                    Sin fecha de entrega
+                  </span>
+                ) : new Date(Ven.fechaInstalacion).getTime() < Date.now() ? (
+                  <span style={{ color: "green" }}>
+                    Fecha de entrega pasada
+                  </span>
+                ) : (
+                  <span style={{ color: "#b8860b" }}>
+                    Entrega pendiente
+                  </span>
+                )}
+              </Col>
+            </Row>
+          </div>
+        ))}
+      </React.Fragment>
+    );
+  })}
+</div>
 
         {/* ✅ SOLO cuando está en Ventas Activas */}
         {filterType === "activas" && (
@@ -979,6 +1075,7 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
             <VentaView
               callBackToast={callBackToast}
               callBackAddArt={callBackAddArt}
+              callBackAddENE={seteditarNoEditar}
               estado={filterType}
             />
           )}
@@ -993,15 +1090,15 @@ const UrlActividades = "/VentasEP3/Acciones/Ultimas";
               style={{ background: "red", borderColor: "red" }}
               onClick={() => handleDelete()}
             >
-              Seguro que desea eliminar la orden?
+              {editarNoEditar ? "Seguro que desea eliminar el artículo?" : "Seguro que desea eliminar la venta?"}
             </Button>
           ) : (
             <Button
-              style={{ background: "red", borderColor: "red" }}
-              onClick={() => setConfirmDelete(true)}
-            >
-              Eliminar
-            </Button>
+            style={{ background: "red", borderColor: "red" }}
+            onClick={() => setConfirmDelete(true)}
+          >
+            {editarNoEditar ? "Eliminar artículo" : "Eliminar venta"}
+          </Button>
           )}
 
           <Button variant="secondary" onClick={handleClose}>
