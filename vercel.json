@@ -82,6 +82,9 @@
     {
       "source": "/Ventas/ObrasEP/:path*",
       "destination": "http://200.40.89.254:8088/Ventas/Obras/:path*"
+    },{
+      "source": "/deposito/:path*",
+      "destination": "http://200.40.89.254:8081/deposito/:path*"
     }
   ]
 }

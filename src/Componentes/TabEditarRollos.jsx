@@ -41,7 +41,7 @@ const TabEditarRollos = () => {
 
   const fetchRollos = async () => {
     try {
-      const res = await fetch("http://localhost:8081/deposito/rollos");
+      const res = await fetch("/deposito/rollos");
       if (!res.ok) throw new Error("Error al obtener rollos");
 
       const data = await res.json();
@@ -55,7 +55,7 @@ const TabEditarRollos = () => {
 
   const fetchTipos = async () => {
     try {
-      const res = await fetch("http://200.40.89.254:8088/Telas");
+      const res = await fetch("/VentasEP3/Telas2");
       if (!res.ok) throw new Error("Error al obtener telas");
 
       const data = await res.json();
@@ -183,7 +183,7 @@ const TabEditarRollos = () => {
         fechaSalida: rolloSeleccionado.fechaSalida || null,
       };
 
-      const res = await fetch("http://localhost:8081/deposito/rollo", {
+      const res = await fetch("/deposito/rollo", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

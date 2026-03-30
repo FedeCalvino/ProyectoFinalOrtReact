@@ -40,14 +40,19 @@ export const NavBar = ({ logged, onLogout }) => {
                   <div>Instalaciones</div>
                 </div>
               </Nav.Link>
-              {/*
+              
               <Nav.Link as={Link} to="Deposito" className="nav-link-custom">
                 <div className="nav-item">
                   <div>Deposito</div>
                 </div>
               </Nav.Link>
               
-              
+              <Nav.Link as={Link} to="Estadisticas" className="nav-link-custom">
+                <div className="nav-item">
+                  <div>Estadisticas</div>
+                </div>
+              </Nav.Link>
+              {/*
               <Nav.Link as={Link} to="Lotes" className="nav-link-custom">
                 <div className="nav-item">
                   <div>Lotes</div>

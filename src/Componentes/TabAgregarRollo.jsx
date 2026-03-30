@@ -19,7 +19,7 @@ const TabAgregarRollo = () => {
 
   const fetchTelas = async () => {
     try {
-      const res = await fetch("http://200.40.89.254:8088/Telas");
+      const res = await fetch("/VentasEP3/Telas2");
       const data = await res.json();
       setTelas(data.body);
     } catch (err) {
@@ -44,7 +44,7 @@ const TabAgregarRollo = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:8081/deposito/rollo", {
+      const res = await fetch("/deposito/rollo", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
