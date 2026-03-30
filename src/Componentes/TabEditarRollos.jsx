@@ -15,7 +15,7 @@ const TabEditarRollos = () => {
   const [rollos, setRollos] = useState([]);
   const [tipos, setTipos] = useState([]);
   const [telas, setTelas] = useState([]);
-  
+
   const [loading, setLoading] = useState(false);
   const [guardando, setGuardando] = useState(false);
 
@@ -50,6 +50,7 @@ const TabEditarRollos = () => {
 
       const data = await res.json();
       const rollosArray = Array.isArray(data?.body) ? data.body : [];
+      console.log(rollosArray)
       setRollos(rollosArray);
     } catch (error) {
       console.error("Error cargando rollos:", error);
