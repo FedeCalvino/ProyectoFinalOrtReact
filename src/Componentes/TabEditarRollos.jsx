@@ -39,9 +39,9 @@ const TabEditarRollos = () => {
     return `Tipo ${tipo}`;
   };
   const getIdTela=(nombreTela,ColorTela)=>{
-    return Telas.find(tela=>{tela.color===ColorTela && tela.nombre===nombreTela}).id
+    return telas.find(tela=>{tela.color===ColorTela && tela.nombre===nombreTela}).id
   }
-  
+
   const fetchRollos = async () => {
     try {
       const res = await fetch("/deposito/rollos");
