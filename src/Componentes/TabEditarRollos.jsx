@@ -15,6 +15,7 @@ const TabEditarRollos = () => {
   const [rollos, setRollos] = useState([]);
   const [tipos, setTipos] = useState([]);
   const [telas, setTelas] = useState([]);
+  
   const [loading, setLoading] = useState(false);
   const [guardando, setGuardando] = useState(false);
 
