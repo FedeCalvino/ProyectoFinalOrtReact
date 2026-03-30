@@ -363,7 +363,7 @@ const TabEditarRollos = () => {
                     <Form.Group>
                       <Form.Label>Tela</Form.Label>
                       <Form.Select
-                        value={String(rolloSeleccionado.idTela ?? "")}
+                        value={String(rolloSeleccionado.nombre + rolloSeleccionado.color?? "")}
                         onChange={(e) => handleChangeTela(e.target.value)}
                       >
                         <option value="">Seleccionar</option>
