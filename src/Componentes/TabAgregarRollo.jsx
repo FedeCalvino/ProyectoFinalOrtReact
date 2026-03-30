@@ -19,7 +19,7 @@ const TabAgregarRollo = () => {
 
   const fetchTelas = async () => {
     try {
-      const res = await fetch("/VentasEP3/Telas2");
+      const res = await fetch("/VentasEP3/Ventas/Telas2");
       const data = await res.json();
       setTelas(data.body);
     } catch (err) {

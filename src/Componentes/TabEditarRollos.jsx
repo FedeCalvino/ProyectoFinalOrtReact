@@ -55,7 +55,7 @@ const TabEditarRollos = () => {
 
   const fetchTipos = async () => {
     try {
-      const res = await fetch("/VentasEP3/Telas2");
+      const res = await fetch("/VentasEP3/Ventas/Telas2");
       if (!res.ok) throw new Error("Error al obtener telas");
 
       const data = await res.json();
