@@ -38,7 +38,10 @@ const TabEditarRollos = () => {
     if (String(tipo) === "2") return "Tradicional";
     return `Tipo ${tipo}`;
   };
-
+  const getIdTela=(nombreTela,ColorTela)=>{
+    return Telas.find(tela=>{tela.color===ColorTela && tela.nombre===nombreTela}).id
+  }
+  
   const fetchRollos = async () => {
     try {
       const res = await fetch("/deposito/rollos");
@@ -363,7 +366,7 @@ const TabEditarRollos = () => {
                     <Form.Group>
                       <Form.Label>Tela</Form.Label>
                       <Form.Select
-                        value={String(rolloSeleccionado.nombre + rolloSeleccionado.color?? "")}
+                        value={rolloSeleccionado ? getIdTela(rolloSeleccionado.nombre , rolloSeleccionado.color):""}
                         onChange={(e) => handleChangeTela(e.target.value)}
                       >
                         <option value="">Seleccionar</option>
