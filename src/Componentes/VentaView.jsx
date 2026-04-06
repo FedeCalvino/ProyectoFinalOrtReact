@@ -1251,8 +1251,8 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
                       <td>{findTela(Cor.IdTipoTela)?.nombre || null}</td>
                       <td>{findTela(Cor.IdTipoTela)?.color}</td>
                       <td>{Cor.ancho?.toFixed(3)}</td>
-                      <td>{GetAnchoTela(Cor)}</td>
-                      <td>{GetAnchoTubo(Cor)}</td>
+                      <td>{Cor.AnchoTela.toFixed(3)}</td>
+                      <td>{Cor.AnchoTubo.toFixed(3)}</td>
                       <td>{findNameCano(Cor.cano?.id)}</td>
                       <td>{Cor.alto?.toFixed(3)}</td>
                       <td>{Cor.AltoTela?.toFixed(3)}</td>
