@@ -383,10 +383,10 @@ export const OrdenProduccion = ({ Venta }) => {
                   {Roll.ancho.toFixed(3)}
                 </Text>
                 <Text style={[styles.tableCell, styles.text]}>
-                  {GetAnchoTela(Roll)}
+                  {Roll.AnchoTela.toFixed(3)}
                 </Text>
                 <Text style={[styles.tableCell, styles.text]}>
-                  {GetAnchoTubo(Roll)}
+                  {Roll.AnchoTubo.toFixed(3)}
                 </Text>
                 <Text style={[styles.tableCell, styles.text]}>
                   {Roll.cano.tipo}
@@ -493,10 +493,10 @@ export const OrdenProduccion = ({ Venta }) => {
                             {Roll.ancho.toFixed(3)}
                           </Text>
                           <Text style={[styles.tableCell, styles.text]}>
-                            {GetAnchoTela(Roll)}
+                            {Roll.AnchoTela.toFixed(3)}
                           </Text>
                           <Text style={[styles.tableCell, styles.text]}>
-                            {GetAnchoTubo(Roll)}
+                            {Roll.AnchoTubo.toFixed(3)}
                           </Text>
                           <Text style={[styles.tableCell, styles.text]}>
                             {Roll.cano.tipo}
