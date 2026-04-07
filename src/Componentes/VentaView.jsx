@@ -1,7 +1,7 @@
 import React from "react";
 import "../Routes/Css/ventaView.css";
 import { useState, useEffect, useRef } from "react";
-import { Table, Button, Row, Col } from "react-bootstrap";
+import { Table, Button, Row, Col, Modal as BsModal } from "react-bootstrap";
 import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
 import { OrdenProduccion } from "./OrdenProduccion";
 import Modal from "@mui/material/Modal";
@@ -115,6 +115,14 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
   const [TradiEdited, setTradiEdited] = useState([]);
 
   const [loadingAct, setloadingAct] = useState(false);
+
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const [ticketSelection, setTicketSelection] = useState({ rollers: false, tradicionales: false, rieles: false });
+  const [ticketArticulos, setTicketArticulos] = useState(new Set());
+  const [editingTicketType, setEditingTicketType] = useState(null);
+
+  const [showOrdenModal, setShowOrdenModal] = useState(false);
+  const [ordenSelection, setOrdenSelection] = useState({ rollers: false, tradicionales: false, rieles: false });
 
   const [CortrtinaTrtyEdited, setCortrtinaTrtyEdited] = useState(null);
   const [RielTryEdited, setRielTryEdited] = useState(null);
@@ -543,7 +551,7 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
     return Cor.AnchoTubo?.toFixed(3)
   }
 
-  const DescPdf = () => {
+  const DescPdf = (selection) => {
     if (Ven.listaArticulos.length > 0) {
       const datos = {
         fechaInst: Ven.fechaInstalacion,
@@ -556,21 +564,26 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
         cliente: Ven.obra.cliente.nombre,
         obra: Ven.obra.nombre,
       };
+      const todosArticulos = GetConfiguracionArticulos();
+      const articulosFiltrados = todosArticulos.filter((art) => {
+        if (selection.rollers && (art.nombre === "Roller" || art.nombre === "Romana")) return true;
+        if (selection.tradicionales && art.nombre === "Tradicional") return true;
+        if (selection.rieles && art.nombre === "Riel") return true;
+        return false;
+      });
       const ven = {
         fecha: Ven.fecha,
-        listaArticulos: GetConfiguracionArticulos(),
+        listaArticulos: articulosFiltrados,
         Datos: datos,
       };
-      let tradicionales = ven.listaArticulos.filter(
-        (art) => art.nombre === "Tradicional"
-      );
+      const tradicionales = articulosFiltrados.filter((art) => art.nombre === "Tradicional");
       if (tradicionales.length >= 1) {
         imprimirContenido(tradicionales, datosHeader);
       }
-
-      if (ven.listaArticulos.some((art) => art.nombre !== "Tradicional")) {
+      if (articulosFiltrados.some((art) => art.nombre !== "Tradicional")) {
         downloadPDF(ven);
       }
+      setShowOrdenModal(false);
     } else {
       callBackToast("no se encontraron articulos", "error");
     }
@@ -687,30 +700,35 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
       return <img src="/eliminar.png" alt="No completado" style={{ width: 20, height: 20 }} />;
   };
 
-  const downloadTicket = async () => {
-    console.log("Ven", Ven);
-    console.log("CortinasRoller", Rollers);
-    // Generar el documento PDF utilizando la función `pdf`
-    //setloadingTicket(true);
+  const downloadTicket = async (selection, articulosSet = ticketArticulos) => {
+    const todos = GetConfiguracionArticulos();
+    const filtrados = todos.filter((art) => {
+      if (!articulosSet.has(art.idArticulo)) return false;
+      if (selection.rollers && (art.nombre === "Roller" || art.nombre === "Romana")) return true;
+      if (selection.tradicionales && art.nombre === "Tradicional") return true;
+      if (selection.rieles && art.nombre === "Riel") return true;
+      return false;
+    });
+
+    if (filtrados.length === 0) return;
 
     const blob = await pdf(
       <TicketCortina
         NombreCli={Ven.obra.cliente.nombre}
-        Articulos={GetConfiguracionArticulos()}
+        Articulos={filtrados}
       />
     ).toBlob();
-    const base64PDF = await blobToBase64(blob);
-    // Crear un enlace de descarga
+    const partes = [];
+    if (selection.rollers) partes.push("Rollers");
+    if (selection.tradicionales) partes.push("Tradicionales");
+    if (selection.rieles) partes.push("Rieles");
+
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `${Ven.obra.cliente.nombre} ETQ.pdf`;
-
-    // Simular el clic en el enlace de descarga
+    link.download = `${Ven.obra.cliente.nombre} ETQ ${partes.join("-")}.pdf`;
     link.click();
-
-    // Liberar la URL del objeto
     URL.revokeObjectURL(link.href);
-    //setloadingTicket(false);
+    setShowTicketModal(false);
   };
 
   const confirmEditVen = async () => {
@@ -793,8 +811,264 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
     }
   };
 
+  const tieneRollers = Rollers.length > 0 || Romanas.length > 0;
+  const tieneTradicionales = Tradicionales.length > 0;
+  const tieneRieles = Rieles.length > 0;
+
   return (
     <>
+      <BsModal show={showTicketModal} onHide={() => { setShowTicketModal(false); setEditingTicketType(null); }} centered size="lg">
+        <BsModal.Header closeButton>
+          <BsModal.Title>Seleccionar tickets a imprimir</BsModal.Title>
+        </BsModal.Header>
+        <BsModal.Body>
+          {/* Tarjetas de tipo */}
+          <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
+            {tieneRollers && (() => {
+              const arts = [...Rollers, ...Romanas];
+              const selCount = arts.filter(a => ticketArticulos.has(a.idArticulo)).length;
+              return (
+                <div style={{
+                  flex: 1, minWidth: "160px",
+                  border: ticketSelection.rollers ? "3px solid #0d6efd" : "3px solid #ccc",
+                  borderRadius: "12px", padding: "24px 16px", textAlign: "center",
+                  backgroundColor: ticketSelection.rollers ? "#e8f0fe" : "#f9f9f9",
+                  userSelect: "none", transition: "all 0.15s",
+                }}>
+                  <div
+                    onClick={() => setTicketSelection((prev) => {
+                      const next = !prev.rollers;
+                      if (next) {
+                        setTicketArticulos((prevIds) => {
+                          const newIds = new Set(prevIds);
+                          [...Rollers, ...Romanas].forEach((a) => newIds.add(a.idArticulo));
+                          return newIds;
+                        });
+                      }
+                      return { ...prev, rollers: next };
+                    })}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div style={{ fontSize: "22px", fontWeight: "700", color: ticketSelection.rollers ? "#0d6efd" : "#555" }}>Rollers</div>
+                    <div style={{ fontSize: "13px", color: "#888", marginTop: "4px" }}>{selCount}/{arts.length} artículos</div>
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setEditingTicketType(editingTicketType === "rollers" ? null : "rollers"); }}
+                    style={{ marginTop: "12px", fontSize: "12px", padding: "4px 12px", borderRadius: "8px", border: "1px solid #aaa", background: "white", cursor: "pointer" }}
+                  >
+                    {editingTicketType === "rollers" ? "Cerrar" : "Editar"}
+                  </button>
+                </div>
+              );
+            })()}
+            {tieneTradicionales && (() => {
+              const selCount = Tradicionales.filter(a => ticketArticulos.has(a.idArticulo)).length;
+              return (
+                <div style={{
+                  flex: 1, minWidth: "160px",
+                  border: ticketSelection.tradicionales ? "3px solid #0d6efd" : "3px solid #ccc",
+                  borderRadius: "12px", padding: "24px 16px", textAlign: "center",
+                  backgroundColor: ticketSelection.tradicionales ? "#e8f0fe" : "#f9f9f9",
+                  userSelect: "none", transition: "all 0.15s",
+                }}>
+                  <div
+                    onClick={() => setTicketSelection((prev) => {
+                      const next = !prev.tradicionales;
+                      if (next) {
+                        setTicketArticulos((prevIds) => {
+                          const newIds = new Set(prevIds);
+                          Tradicionales.forEach((a) => newIds.add(a.idArticulo));
+                          return newIds;
+                        });
+                      }
+                      return { ...prev, tradicionales: next };
+                    })}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div style={{ fontSize: "22px", fontWeight: "700", color: ticketSelection.tradicionales ? "#0d6efd" : "#555" }}>Tradicionales</div>
+                    <div style={{ fontSize: "13px", color: "#888", marginTop: "4px" }}>{selCount}/{Tradicionales.length} artículos</div>
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setEditingTicketType(editingTicketType === "tradicionales" ? null : "tradicionales"); }}
+                    style={{ marginTop: "12px", fontSize: "12px", padding: "4px 12px", borderRadius: "8px", border: "1px solid #aaa", background: "white", cursor: "pointer" }}
+                  >
+                    {editingTicketType === "tradicionales" ? "Cerrar" : "Editar"}
+                  </button>
+                </div>
+              );
+            })()}
+            {tieneRieles && (() => {
+              const selCount = Rieles.filter(a => ticketArticulos.has(a.idArticulo)).length;
+              return (
+                <div style={{
+                  flex: 1, minWidth: "160px",
+                  border: ticketSelection.rieles ? "3px solid #0d6efd" : "3px solid #ccc",
+                  borderRadius: "12px", padding: "24px 16px", textAlign: "center",
+                  backgroundColor: ticketSelection.rieles ? "#e8f0fe" : "#f9f9f9",
+                  userSelect: "none", transition: "all 0.15s",
+                }}>
+                  <div
+                    onClick={() => setTicketSelection((prev) => {
+                      const next = !prev.rieles;
+                      if (next) {
+                        setTicketArticulos((prevIds) => {
+                          const newIds = new Set(prevIds);
+                          Rieles.forEach((a) => newIds.add(a.idArticulo));
+                          return newIds;
+                        });
+                      }
+                      return { ...prev, rieles: next };
+                    })}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div style={{ fontSize: "22px", fontWeight: "700", color: ticketSelection.rieles ? "#0d6efd" : "#555" }}>Rieles</div>
+                    <div style={{ fontSize: "13px", color: "#888", marginTop: "4px" }}>{selCount}/{Rieles.length} artículos</div>
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setEditingTicketType(editingTicketType === "rieles" ? null : "rieles"); }}
+                    style={{ marginTop: "12px", fontSize: "12px", padding: "4px 12px", borderRadius: "8px", border: "1px solid #aaa", background: "white", cursor: "pointer" }}
+                  >
+                    {editingTicketType === "rieles" ? "Cerrar" : "Editar"}
+                  </button>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Panel de artículos individuales */}
+          {editingTicketType && (
+            <div style={{ marginTop: "20px", border: "1px solid #ddd", borderRadius: "10px", padding: "16px" }}>
+              <div style={{ fontWeight: "700", marginBottom: "12px", fontSize: "15px" }}>
+                Artículos — {editingTicketType === "rollers" ? "Rollers" : editingTicketType === "tradicionales" ? "Tradicionales" : "Rieles"}
+              </div>
+              {(editingTicketType === "rollers" ? [...Rollers, ...Romanas] :
+                editingTicketType === "tradicionales" ? Tradicionales : Rieles
+              ).map((art) => {
+                const id = art.idArticulo;
+                const checked = ticketArticulos.has(id);
+                const label = `#${art.numeroArticulo} — ${art.Ambiente || art.ambiente || ""}`;
+                return (
+                  <div
+                    key={id}
+                    onClick={() => {
+                      setTicketArticulos((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(id)) next.delete(id); else next.add(id);
+
+                        const grupoArts = editingTicketType === "rollers" ? [...Rollers, ...Romanas]
+                          : editingTicketType === "tradicionales" ? Tradicionales : Rieles;
+                        const quedaAlguno = grupoArts.some((a) => next.has(a.idArticulo));
+                        if (!quedaAlguno) {
+                          setTicketSelection((prevSel) => ({ ...prevSel, [editingTicketType]: false }));
+                        }
+
+                        return next;
+                      });
+                    }}
+                    style={{
+                      display: "flex", alignItems: "center", gap: "10px",
+                      padding: "10px 12px", marginBottom: "6px", borderRadius: "8px",
+                      cursor: "pointer", userSelect: "none",
+                      background: checked ? "#e8f0fe" : "#f5f5f5",
+                      border: checked ? "2px solid #0d6efd" : "2px solid #ddd",
+                    }}
+                  >
+                    <div style={{
+                      width: "20px", height: "20px", borderRadius: "4px", flexShrink: 0,
+                      background: checked ? "#0d6efd" : "white",
+                      border: checked ? "2px solid #0d6efd" : "2px solid #aaa",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      {checked && <span style={{ color: "white", fontSize: "13px", fontWeight: "bold" }}>✓</span>}
+                    </div>
+                    <span style={{ fontWeight: "500", color: checked ? "#0d6efd" : "#444" }}>{label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </BsModal.Body>
+        <BsModal.Footer>
+          <Button variant="secondary" onClick={() => { setShowTicketModal(false); setEditingTicketType(null); }}>
+            Cancelar
+          </Button>
+          <Button
+            variant="primary"
+            disabled={!ticketSelection.rollers && !ticketSelection.tradicionales && !ticketSelection.rieles}
+            onClick={() => downloadTicket(ticketSelection)}
+          >
+            Imprimir
+          </Button>
+        </BsModal.Footer>
+      </BsModal>
+
+      <BsModal show={showOrdenModal} onHide={() => setShowOrdenModal(false)} centered>
+        <BsModal.Header closeButton>
+          <BsModal.Title>Seleccionar orden a imprimir</BsModal.Title>
+        </BsModal.Header>
+        <BsModal.Body>
+          <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
+            {tieneRollers && (
+              <div
+                onClick={() => setOrdenSelection((prev) => ({ ...prev, rollers: !prev.rollers }))}
+                style={{
+                  flex: 1, minWidth: "160px",
+                  border: ordenSelection.rollers ? "3px solid #0d6efd" : "3px solid #ccc",
+                  borderRadius: "12px", padding: "32px 24px", textAlign: "center",
+                  cursor: "pointer",
+                  backgroundColor: ordenSelection.rollers ? "#e8f0fe" : "#f9f9f9",
+                  userSelect: "none", transition: "all 0.15s",
+                }}
+              >
+                <div style={{ fontSize: "22px", fontWeight: "700", color: ordenSelection.rollers ? "#0d6efd" : "#555" }}>Rollers</div>
+              </div>
+            )}
+            {tieneTradicionales && (
+              <div
+                onClick={() => setOrdenSelection((prev) => ({ ...prev, tradicionales: !prev.tradicionales }))}
+                style={{
+                  flex: 1, minWidth: "160px",
+                  border: ordenSelection.tradicionales ? "3px solid #0d6efd" : "3px solid #ccc",
+                  borderRadius: "12px", padding: "32px 24px", textAlign: "center",
+                  cursor: "pointer",
+                  backgroundColor: ordenSelection.tradicionales ? "#e8f0fe" : "#f9f9f9",
+                  userSelect: "none", transition: "all 0.15s",
+                }}
+              >
+                <div style={{ fontSize: "22px", fontWeight: "700", color: ordenSelection.tradicionales ? "#0d6efd" : "#555" }}>Tradicionales</div>
+              </div>
+            )}
+            {tieneRieles && (
+              <div
+                onClick={() => setOrdenSelection((prev) => ({ ...prev, rieles: !prev.rieles }))}
+                style={{
+                  flex: 1, minWidth: "160px",
+                  border: ordenSelection.rieles ? "3px solid #0d6efd" : "3px solid #ccc",
+                  borderRadius: "12px", padding: "32px 24px", textAlign: "center",
+                  cursor: "pointer",
+                  backgroundColor: ordenSelection.rieles ? "#e8f0fe" : "#f9f9f9",
+                  userSelect: "none", transition: "all 0.15s",
+                }}
+              >
+                <div style={{ fontSize: "22px", fontWeight: "700", color: ordenSelection.rieles ? "#0d6efd" : "#555" }}>Rieles</div>
+              </div>
+            )}
+          </div>
+        </BsModal.Body>
+        <BsModal.Footer>
+          <Button variant="secondary" onClick={() => setShowOrdenModal(false)}>
+            Cancelar
+          </Button>
+          <Button
+            variant="primary"
+            disabled={!ordenSelection.rollers && !ordenSelection.tradicionales && !ordenSelection.rieles}
+            onClick={() => DescPdf(ordenSelection)}
+          >
+            Descargar
+          </Button>
+        </BsModal.Footer>
+      </BsModal>
+
       {
         <Modal
           open={showModal}
@@ -1442,22 +1716,31 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
           </Row>
           <Row>
             <Col className="d-flex justify-content-center">
-              <Button variant="primary" onClick={DescPdf}>
-                Orden Produccion
+              <Button variant="primary" onClick={() => {
+                const tipos = [tieneRollers, tieneTradicionales, tieneRieles].filter(Boolean).length;
+                if (tipos === 1) {
+                  DescPdf({ rollers: tieneRollers, tradicionales: tieneTradicionales, rieles: tieneRieles });
+                } else {
+                  setOrdenSelection({ rollers: false, tradicionales: false, rieles: false });
+                  setShowOrdenModal(true);
+                }
+              }}>
+                Orden
               </Button>
             </Col>
             <Col className="d-flex justify-content-center">
               <Button
                 variant="primary"
-                onClick={downloadTicket}
+                onClick={() => {
+                  const todosIds = new Set(Articulos.map((a) => a.idArticulo));
+                  setTicketArticulos(todosIds);
+                  setEditingTicketType(null);
+                  setTicketSelection({ rollers: false, tradicionales: false, rieles: false });
+                  setShowTicketModal(true);
+                }}
                 className="w-auto"
               >
                 Tickets
-              </Button>
-            </Col>
-            <Col className="d-flex justify-content-center">
-              <Button variant="primary" onClick={DescPdfInstalacion}>
-                Orden Instalacion
               </Button>
             </Col>
           </Row>
