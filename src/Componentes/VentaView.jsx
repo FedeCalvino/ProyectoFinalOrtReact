@@ -997,7 +997,7 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
             disabled={!ticketSelection.rollers && !ticketSelection.tradicionales && !ticketSelection.rieles}
             onClick={() => downloadTicket(ticketSelection)}
           >
-            Imprimir
+            Descargar
           </Button>
         </BsModal.Footer>
       </BsModal>
