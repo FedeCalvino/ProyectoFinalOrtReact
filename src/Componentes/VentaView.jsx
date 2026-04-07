@@ -390,10 +390,14 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
         newCor.colorTela = telaArt?.color;
       }
       if (newCor.nombre === "Riel") {
-        newCor.ladoAcumula.nombre = findNameladoAcumula(
-          newCor.ladoAcumula.ladoAcumulaId
-        );
-        newCor.tipoRiel.tipo = findNameTipoRiel(newCor.tipoRiel.tipoId);
+        if (newCor.ladoAcumula) {
+          newCor.ladoAcumula.nombre = findNameladoAcumula(
+            newCor.ladoAcumula.ladoAcumulaId
+          );
+        }
+        if (newCor.tipoRiel) {
+          newCor.tipoRiel.tipo = findNameTipoRiel(newCor.tipoRiel.tipoId);
+        }
       }
       if (newCor.nombre === "Tradicional") {
         console.log("contenido", contenido);
@@ -403,7 +407,9 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
         newCor.ganchos.nombre = findNameTipoGancho(newCor.ganchos?.idGanchos);
       }
       if (newCor.nombre === "Riel") {
-        newCor.ladoAcumula.nombre = findLadoAcumula(newCor.ladoAcumula.ladoAcumulaId);
+        if (newCor.ladoAcumula) {
+          newCor.ladoAcumula.nombre = findLadoAcumula(newCor.ladoAcumula.ladoAcumulaId);
+        }
       }
 
       console.log("ArticuloDesp", newCor);
@@ -581,7 +587,10 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
         imprimirContenido(tradicionales, datosHeader);
       }
       if (articulosFiltrados.some((art) => art.nombre !== "Tradicional")) {
-        downloadPDF(ven);
+        downloadPDF(ven).catch((err) => {
+          console.error("Error generando PDF:", err);
+          callBackToast("Error al generar el PDF", "error");
+        });
       }
       setShowOrdenModal(false);
     } else {

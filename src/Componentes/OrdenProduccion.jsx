@@ -433,10 +433,10 @@ export const OrdenProduccion = ({ Venta }) => {
                 <View style={styles.itemContainerRiel} key={rielIndex}>
                   <ItemDetail label="Numero" value={riel.numeroArticulo} />
                   <ItemDetail label="Ambiente" value={riel.ambiente} />
-                  <ItemDetail label="Ancho" value={riel.ancho.toFixed(3)} />
-                  <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
-                  <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
-                  {riel.bastones.nombre !== "Sin Bastones" && (
+                  <ItemDetail label="Ancho" value={riel.ancho != null ? Number(riel.ancho).toFixed(3) : "N/A"} />
+                  <ItemDetail label="Tipo" value={riel.tipoRiel?.tipo} />
+                  <ItemDetail label="Acumula" value={riel.ladoAcumula?.nombre} />
+                  {riel.bastones?.nombre && riel.bastones.nombre !== "Sin Bastones" && (
                     <>
                       <ItemDetail
                         label="Bastones"
@@ -448,10 +448,10 @@ export const OrdenProduccion = ({ Venta }) => {
                       />
                     </>
                   )}
-                  <ItemDetail label="Soportes" value={riel.soportes.nombre} />
+                  <ItemDetail label="Soportes" value={riel.soportes?.nombre} />
                   <ItemDetail
                     label="Cantidad de Soportes"
-                    value={riel.soportes.cantidad}
+                    value={riel.soportes?.cantidad}
                   />
                   <ItemDetail label="Detalle" value={riel.detalle} />
                 </View>
@@ -549,10 +549,10 @@ export const OrdenProduccion = ({ Venta }) => {
                 <View style={styles.itemContainerRiel} key={rielIndex}>
                   <ItemDetail label="Numero" value={riel.numeroArticulo} />
                   <ItemDetail label="Ambiente" value={riel.ambiente} />
-                  <ItemDetail label="Ancho" value={riel.ancho.toFixed(3)} />
-                  <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
-                  <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
-                  {riel.bastones.nombre !== "Sin Bastones" && (
+                  <ItemDetail label="Ancho" value={riel.ancho != null ? Number(riel.ancho).toFixed(3) : "N/A"} />
+                  <ItemDetail label="Tipo" value={riel.tipoRiel?.tipo} />
+                  <ItemDetail label="Acumula" value={riel.ladoAcumula?.nombre} />
+                  {riel.bastones?.nombre && riel.bastones.nombre !== "Sin Bastones" && (
                     <>
                       <ItemDetail
                         label="Bastones"
@@ -564,10 +564,10 @@ export const OrdenProduccion = ({ Venta }) => {
                       />
                     </>
                   )}
-                  <ItemDetail label="Soportes" value={riel.soportes.nombre} />
+                  <ItemDetail label="Soportes" value={riel.soportes?.nombre} />
                   <ItemDetail
                     label="Cantidad de Soportes"
-                    value={riel.soportes.cantidad}
+                    value={riel.soportes?.cantidad}
                   />
                   <ItemDetail label="Detalle" value={riel.detalle} />
                 </View>
