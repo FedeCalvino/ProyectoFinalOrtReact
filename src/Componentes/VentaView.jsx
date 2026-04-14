@@ -134,15 +134,15 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
   console.log("Ven", Ven);
 
   //Edit Venta
-  const [ObraEdit, setObraEdit] = useState(Ven.obra.nombre);
-  const [FechaInstEdit, setFechaInstEdit] = useState(Ven.fechaInstalacion);
-  const [DireccionEdit, setDireccionEdit] = useState(Ven.obra.direccion);
-  const [LocalidadEdit, setLocalidadEdit] = useState(Ven.obra.localidad);
-  const [ProvinciaEdit, setProvinciaEdit] = useState(Ven.obra.provincia);
-  const [CPEdit, setCPEdit] = useState(Ven.obra.cp);
-  const [TelefonoEdit, setTelefonoEdit] = useState(Ven.obra.telefono);
-  const [EmailEdit, setEmailEdit] = useState(Ven.obra.email);
-  const [ContactoEdit, setContactoEdit] = useState(Ven.obra.contacto);
+  const [ObraEdit, setObraEdit] = useState(Ven?.obra?.nombre);
+  const [FechaInstEdit, setFechaInstEdit] = useState(Ven?.fechaInstalacion);
+  const [DireccionEdit, setDireccionEdit] = useState(Ven?.obra?.direccion);
+  const [LocalidadEdit, setLocalidadEdit] = useState(Ven?.obra?.localidad);
+  const [ProvinciaEdit, setProvinciaEdit] = useState(Ven?.obra?.provincia);
+  const [CPEdit, setCPEdit] = useState(Ven?.obra?.cp);
+  const [TelefonoEdit, setTelefonoEdit] = useState(Ven?.obra?.telefono);
+  const [EmailEdit, setEmailEdit] = useState(Ven?.obra?.email);
+  const [ContactoEdit, setContactoEdit] = useState(Ven?.obra?.contacto);
 
   const VentasEp = "/VentasEP/";
   //const VentasEp = "http://localhost:8083/Ventas/";
@@ -493,6 +493,58 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
 
     html2pdf().from(html).set(opt).save();
   };
+  function sincronizarContenidoTradicional(trad) {
+    let contenido = trad.contenidoProduccion || "";
+
+    const reemplazarCampo = (label, nuevoValor) => {
+      if (nuevoValor === null || nuevoValor === undefined || nuevoValor === "") return;
+      const regex = new RegExp(
+        `(<strong>${label}<\\/strong>\\s*)([^<]*)(<br|<\\/p)`,
+        "i"
+      );
+      contenido = contenido.replace(regex, `$1${nuevoValor}$3`);
+    };
+
+    const ambiente = trad.ambiente || trad.Ambiente;
+    if (ambiente) reemplazarCampo("Ambiente:", ambiente);
+
+    const nombreTela = trad.nombreTela || "";
+    const colorTela = trad.coloTela || "";
+    if (nombreTela) reemplazarCampo("Tela:", `${nombreTela} ${colorTela}`.trim());
+
+    const cantPanos = trad.cantidadPanos ?? trad.CantidadPanos;
+    if (cantPanos !== undefined && cantPanos !== null)
+      reemplazarCampo("Cantidad de Pa&ntilde;os:", cantPanos);
+
+    const anchoIzq = trad.ancho ?? trad.Ancho;
+    if (anchoIzq !== undefined && anchoIzq !== null) {
+      // Single-pane: label is "Ancho:", dual-pane: "Ancho Izquierdo:"
+      reemplazarCampo("Ancho:", anchoIzq);
+      reemplazarCampo("Ancho Izquierdo:", anchoIzq);
+    }
+
+    const anchoDer = trad.anchoDerecho ?? trad.AnchoDerecho;
+    if (anchoDer !== undefined && anchoDer !== null)
+      reemplazarCampo("Ancho Derecho:", anchoDer);
+
+    const alto = trad.alto ?? trad.Alto;
+    if (alto !== undefined && alto !== null) reemplazarCampo("Alto:", alto);
+
+    const pinzaNombre =
+      trad.Pinza?.nombre || trad.pinza?.nombre;
+    if (pinzaNombre) reemplazarCampo("Pinza:", pinzaNombre);
+
+    const ganchosNombre =
+      trad.ganchos?.nombre || trad.Ganchos?.nombre;
+    if (ganchosNombre) reemplazarCampo("Ganchos:", ganchosNombre);
+
+    const dobladilloValor =
+      trad.Dobladillo?.valor || trad.dobladillo?.valor;
+    if (dobladilloValor) reemplazarCampo("Dobladillo:", dobladilloValor);
+
+    return contenido;
+  }
+
   function generarPaginaTradicionales(tradicionales, datosHeader) {
     return `
       <div style="width: 100%; box-sizing: border-box; padding: 20px 10px 10px 10px;">
@@ -525,7 +577,7 @@ export const VentaView = ({ callBackToast, callBackAddArt,estado,callBackAddENE 
               box-sizing: border-box;
               font-size: 18px;
             ">
-              ${trad.contenidoProduccion || ""}
+              ${sincronizarContenidoTradicional(trad)}
             </div>
           `
             )
